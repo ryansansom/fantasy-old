@@ -6,6 +6,6 @@ router.get('/', function(req, res) {
   return res.send({"hello": "test"});
 });
 
-router.get('/test', testData);
+router.use('/test', testData);
 
 export default router;
