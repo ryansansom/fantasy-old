@@ -1,5 +1,6 @@
 import getLeagues from '../lib/get-leagues';
 import getPlayers from '../lib/get-players';
+import getPlayerPoints from '../lib/get-player-points';
 import getStandings from '../lib/get-standings';
 import getWeek from '../lib/get-week';
 import { Router } from 'express';
@@ -23,10 +24,16 @@ router.get('/league-standings/:leagueType/:leagueID', function(req, res) {
   return res.send(standings);
 });
 
-router.get('/players/:playerID/:week', function(req, res) {
-  const players = getPlayers(req.params.playerID, req.params.week);
+router.get('/players/:userID/:week', function(req, res) {
+  const players = getPlayers(req.params.userID, req.params.week);
 
   return res.send(players);
+});
+
+router.get('/player-points/:playerID', function(req, res) {
+  const playerPoints = getPlayerPoints(req.params.playerID);
+
+  return res.send(playerPoints);
 });
 
 export default router;
