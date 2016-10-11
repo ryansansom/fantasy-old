@@ -28,6 +28,7 @@
     "pug": "^2.0.0-beta6",
     "react": "^15.0.0-rc.1",
     "react-dom": "^15.0.0-rc.1",
+    "request": "^2.75.0",
     "serve-favicon": "~2.3.0",
     "slash": "^1.0.0",
     "webpack": "^1.12.13"
