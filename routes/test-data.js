@@ -33,7 +33,7 @@ router.get('/players/:userID/:week', function(req, res) {
 });
 
 router.get('/player-points/:playerID', function(req, res) {
-  getPlayerPoints(req.params.playerID)
+  getPlayerPoints([{element: req.params.playerID, multiplier: 1}, {element: 174, multiplier: 1}])
     .then(playerPoints => res.send(playerPoints))
     .catch(err => next(err));
 });
