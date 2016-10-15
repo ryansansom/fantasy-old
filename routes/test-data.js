@@ -24,8 +24,8 @@ router.get('/classic-league-standings/:leagueID', errHandler(async(req, res, nex
   return res.send(standings);
 }));
 
-router.get('/players/:userID/:week', errHandler(async(req, res, next) => { // eslint-disable-line no-unused-vars
-  const players = await getPlayers(req.params.userID, req.params.week);
+router.get('/players/:teamID/:week', errHandler(async(req, res, next) => { // eslint-disable-line no-unused-vars
+  const players = await getPlayers(req.params.teamID, req.params.week);
   return res.send(players);
 }));
 
@@ -34,13 +34,13 @@ router.get('/player-points/:playerID', errHandler(async(req, res, next) => { // 
   return res.send(playerPoints);
 }));
 
-router.get('/team-points/:userID/:week', errHandler(async(req, res, next) => { // eslint-disable-line no-unused-vars
-  const teamPoints = await getTeamPoints(req.params.userID, req.params.week);
+router.get('/team-points/:teamID/:week', errHandler(async(req, res, next) => { // eslint-disable-line no-unused-vars
+  const teamPoints = await getTeamPoints(req.params.teamID, req.params.week);
   return res.send(teamPoints);
 }));
 
-router.get('/total-points/:userID/:week', errHandler(async(req, res, next) => { // eslint-disable-line no-unused-vars
-  const totalPoints = await getTotalPoints(req.params.userID, req.params.week);
+router.get('/total-points/:teamID/:week', errHandler(async(req, res, next) => { // eslint-disable-line no-unused-vars
+  const totalPoints = await getTotalPoints(req.params.teamID, req.params.week);
   return res.send(totalPoints);
 }));
 
