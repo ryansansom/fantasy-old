@@ -19,8 +19,8 @@ router.get('/week', errHandler(async(req, res, next) =>  { // eslint-disable-lin
   return res.send(week);
 }));
 
-router.get('/league-standings/:leagueType/:leagueID', errHandler(async(req, res, next) => { // eslint-disable-line no-unused-vars
-  const standings = await getStandings(req.params.leagueType, req.params.leagueID);
+router.get('/classic-league-standings/:leagueID', errHandler(async(req, res, next) => { // eslint-disable-line no-unused-vars
+  const standings = await getStandings(req.params.leagueID);
   return res.send(standings);
 }));
 
