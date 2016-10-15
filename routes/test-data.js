@@ -9,8 +9,8 @@ import getWeek from '../lib/get-week';
 import { Router } from 'express';
 const router = Router();
 
-router.get('/leagues/:type', errHandler(async(req, res, next) => { // eslint-disable-line no-unused-vars
-  const leagues = await getLeagues(req.params.type, req.query.teamID);
+router.get('/leagues', errHandler(async(req, res, next) => { // eslint-disable-line no-unused-vars
+  const leagues = await getLeagues(req.query.teamID);
   return res.send(leagues);
 }));
 
