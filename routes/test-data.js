@@ -10,7 +10,7 @@ import { Router } from 'express';
 const router = Router();
 
 router.get('/leagues/:type', errHandler(async(req, res, next) => { // eslint-disable-line no-unused-vars
-  const leagues = await getLeagues(req.params.type);
+  const leagues = await getLeagues(req.params.type, req.query.teamID);
   return res.send(leagues);
 }));
 
