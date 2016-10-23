@@ -25,7 +25,7 @@ router.get('/classic-league-standings/:leagueID', errHandler(async(req, res, nex
 }));
 
 router.get('/players/:teamID/:week', errHandler(async(req, res, next) => { // eslint-disable-line no-unused-vars
-  const players = await getPlayers(req.params.teamID, req.params.week);
+  const players = await getPlayers([req.params.teamID], req.params.week);
   return res.send(players);
 }));
 
