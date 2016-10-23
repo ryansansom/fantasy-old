@@ -3,6 +3,7 @@ import getLeagues from '../lib/get-leagues';
 import getPlayers from '../lib/get-players';
 import getPlayerPoints from '../lib/get-player-points';
 import getStandings from '../lib/get-standings';
+import getDetailedStandings from '../lib/get-detailed-standings';
 import getTeamPoints from '../lib/get-team-points';
 import getTotalPoints from '../lib/get-total-points';
 import getWeek from '../lib/get-week';
@@ -17,6 +18,11 @@ router.get('/leagues', errHandler(async(req, res, next) => { // eslint-disable-l
 router.get('/week', errHandler(async(req, res, next) =>  { // eslint-disable-line no-unused-vars
   const week = await getWeek();
   return res.send(week);
+}));
+
+router.get('/new-classic-league-standings/:leagueID/:week', errHandler(async(req, res, next) => { // eslint-disable-line no-unused-vars
+  const detailedStandings = await getDetailedStandings(req.params.leagueID, req.params.week);
+  return res.send(detailedStandings);
 }));
 
 router.get('/classic-league-standings/:leagueID', errHandler(async(req, res, next) => { // eslint-disable-line no-unused-vars
