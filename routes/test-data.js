@@ -6,6 +6,7 @@ import getStandings from '../lib/get-standings';
 import getDetailedStandings from '../lib/get-detailed-standings';
 import getTeamPoints from '../lib/get-team-points';
 import getTotalPoints from '../lib/get-total-points';
+import getNewTotal from '../lib/get-new-total';
 import getWeek from '../lib/get-week';
 import { Router } from 'express';
 const router = Router();
@@ -47,6 +48,11 @@ router.get('/team-points/:teamID/:week', errHandler(async(req, res, next) => { /
 
 router.get('/total-points/:teamID/:week', errHandler(async(req, res, next) => { // eslint-disable-line no-unused-vars
   const totalPoints = await getTotalPoints(req.params.teamID, req.params.week);
+  return res.send(totalPoints);
+}));
+
+router.get('/new-total-points/:teamID/:week', errHandler(async(req, res, next) => { // eslint-disable-line no-unused-vars
+  const totalPoints = await getNewTotal([req.params.teamID], {id: req.params.week, finished: true});
   return res.send(totalPoints);
 }));
 
