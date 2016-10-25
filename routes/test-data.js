@@ -1,4 +1,5 @@
 import errHandler from './async-route-handler';
+import { getEvents } from '../lib/fetch-data';
 import getLeagues from '../lib/get-leagues';
 import getPlayers from '../lib/get-players';
 import getPlayerPoints from '../lib/get-player-points';
@@ -21,8 +22,17 @@ router.get('/week', errHandler(async(req, res, next) =>  { // eslint-disable-lin
   return res.send(week);
 }));
 
-router.get('/new-classic-league-standings/:leagueID/:week', errHandler(async(req, res, next) => { // eslint-disable-line no-unused-vars
-  const detailedStandings = await getDetailedStandings(req.params.leagueID, req.params.week);
+router.get('/new-classic-league-standings/:leagueID', errHandler(async(req, res, next) => { // eslint-disable-line no-unused-vars
+  const { week } = req.query;
+  let weekData;
+  if (week && !isNaN(week)) {
+    const events = await getEvents();
+    const currEvent = events[Number(week) - 1];
+    weekData = currEvent.id !== Number(week) ? events.find(event => event.id === Number(week)) : currEvent;
+  } else {
+    weekData = await getWeek();
+  }
+  const detailedStandings = await getDetailedStandings(req.params.leagueID, weekData);
   return res.send(detailedStandings);
 }));
 
