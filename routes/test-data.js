@@ -3,8 +3,10 @@ import getLeagues from '../lib/get-leagues';
 import getPlayers from '../lib/get-players';
 import getPlayerPoints from '../lib/get-player-points';
 import getStandings from '../lib/get-standings';
+import getDetailedStandings from '../lib/get-detailed-standings';
 import getTeamPoints from '../lib/get-team-points';
 import getTotalPoints from '../lib/get-total-points';
+import getNewTotal from '../lib/get-new-total';
 import getWeek from '../lib/get-week';
 import { Router } from 'express';
 const router = Router();
@@ -19,13 +21,18 @@ router.get('/week', errHandler(async(req, res, next) =>  { // eslint-disable-lin
   return res.send(week);
 }));
 
+router.get('/new-classic-league-standings/:leagueID', errHandler(async(req, res, next) => { // eslint-disable-line no-unused-vars
+  const detailedStandings = await getDetailedStandings(req.params.leagueID, req.query.week);
+  return res.send(detailedStandings);
+}));
+
 router.get('/classic-league-standings/:leagueID', errHandler(async(req, res, next) => { // eslint-disable-line no-unused-vars
   const standings = await getStandings(req.params.leagueID);
   return res.send(standings);
 }));
 
 router.get('/players/:teamID/:week', errHandler(async(req, res, next) => { // eslint-disable-line no-unused-vars
-  const players = await getPlayers(req.params.teamID, req.params.week);
+  const players = await getPlayers([req.params.teamID], req.params.week);
   return res.send(players);
 }));
 
@@ -41,6 +48,11 @@ router.get('/team-points/:teamID/:week', errHandler(async(req, res, next) => { /
 
 router.get('/total-points/:teamID/:week', errHandler(async(req, res, next) => { // eslint-disable-line no-unused-vars
   const totalPoints = await getTotalPoints(req.params.teamID, req.params.week);
+  return res.send(totalPoints);
+}));
+
+router.get('/new-total-points/:teamID/:week', errHandler(async(req, res, next) => { // eslint-disable-line no-unused-vars
+  const totalPoints = await getNewTotal([req.params.teamID], {id: req.params.week, finished: true});
   return res.send(totalPoints);
 }));
 
