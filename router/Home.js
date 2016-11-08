@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router'
 
 if (process.env.CLIENT_RENDER) {
   require('./styles.less')
@@ -6,6 +7,9 @@ if (process.env.CLIENT_RENDER) {
 
 export default class Home extends React.Component {
   render() {
-    return <div className='home'>Home</div>
+    return (<div className='home'>
+      <span>Go to...</span>
+      <Link to='/about'>About</Link>
+    </div>);
   }
 }
