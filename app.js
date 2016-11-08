@@ -6,12 +6,16 @@ import bodyParser from 'body-parser';
 import routes from './routes/index';
 import {notFound, devError, prodError} from './routes/error-handler';
 
+import reactRouter from './router/react-router'
+
 const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, '/')));
+app.use(express.static(path.join(__dirname, 'site/public')));
+
+app.use(reactRouter);
 
 app.use('/', routes);
 

@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "build": "webpack --progress --colors",
     "start": "node index"
   },
   "dependencies": {
