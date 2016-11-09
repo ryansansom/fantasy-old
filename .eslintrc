@@ -1,21 +1,26 @@
 {
-  "parser": "babel-eslint",
-  "plugins": [
-    "react"
-  ],
+  "parser":"babel-eslint",
   "parserOptions": {
-    "ecmaFeatures": {
-      "jsx": true,
-      "modules": true
+    "ecmaFeatures":{
+      "jsx":true,
+      "modules":true
     }
   },
-  "env": {
-    "browser": true,
-    "node": true,
-    "es6": true
+  "globals":{
+    "newrelic":true
   },
-  "extends": "eslint:recommended",
+  "env":{
+    "browser":true,
+    "es6":true,
+    "node":true
+  },
+  "extends":"eslint:recommended",
+  "plugins":[
+    "react"
+  ],
   "rules": {
-    "strict": 0
+    "strict": 0,
+    "react/jsx-uses-react": "error",
+    "react/jsx-uses-vars": "error"
   }
 }

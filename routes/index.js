@@ -1,11 +1,10 @@
 import { Router } from 'express';
-import testData from './test-data';
+import handleRoutes from './ui/handle-routes';
+import apiRoute from './api/api-routes';
 const router = Router();
 
-router.get('/', function(req, res) {
-  return res.send({"hello": "test"});
-});
+router.use('/api', apiRoute);
 
-router.use('/test', testData);
+router.use('/', handleRoutes);
 
 export default router;

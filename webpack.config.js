@@ -3,7 +3,7 @@ var webpack = require('webpack');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
-  entry: './router/client.js',
+  entry: './routes/ui/client.js',
   output: {
     filename: '[name].js',
     path: path.join(__dirname, 'site/public/wp')

@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "webpack --progress --colors",
+    "full-start": "rm -rf site/public/wp/* && npm run build && npm start",
     "start": "node index"
   },
   "dependencies": {
@@ -29,8 +30,9 @@
     "morgan": "^1.7.0",
     "path": "^0.12.7",
     "pug": "^2.0.0-beta6",
-    "react": "^15.0.0-rc.1",
-    "react-dom": "^15.0.0-rc.1",
+    "react": "^15.3.2",
+    "react-dom": "^15.3.2",
+    "react-router": "^3.0.0",
     "request": "^2.75.0",
     "serve-favicon": "~2.3.0",
     "slash": "^1.0.0",
