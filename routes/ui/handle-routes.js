@@ -6,7 +6,7 @@ import { renderToString } from 'react-dom/server';
 import { match, RouterContext } from 'react-router';
 import routes from './routes';
 
-const layoutLoc = path.join(__dirname, '../../views/new.pug');
+const layoutLoc = path.join(__dirname, '../../views/layout.pug');
 const masterLayout = fs.readFileSync(layoutLoc, 'utf8');
 const layoutFunc = compile(masterLayout, {filename: layoutLoc});
 
