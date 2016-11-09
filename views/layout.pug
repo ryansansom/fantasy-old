@@ -1,0 +1,14 @@
+doctype html
+html.no-js(
+page-props= JSON.stringify(props))
+    head
+        title=title
+        meta(charset='utf-8')
+        meta(http-equiv='X-UA-Compatible', content='IE=edge')
+        meta(name='description', content='')
+        meta(name='viewport', content='width=device-width, initial-scale=1')
+        link(rel="stylesheet" type="text/css" href="/wp/main.css")
+    body
+        #content!= content
+    script(type='text/javascript' src='/wp/common.js')
+    script(type='text/javascript' src='/wp/main.js')
