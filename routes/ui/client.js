@@ -8,7 +8,8 @@ import counterApp from '../../redux/reducers';
 import thunkMiddleware from 'redux-thunk';
 
 let content = document.getElementById('content');
-let store = createStore(counterApp, applyMiddleware(thunkMiddleware));
+let reduxState = JSON.parse(document.documentElement.getAttribute('redux-state'));
+let store = createStore(counterApp, reduxState, applyMiddleware(thunkMiddleware));
 
 ReactDOM.render(
   <Provider store={store}>

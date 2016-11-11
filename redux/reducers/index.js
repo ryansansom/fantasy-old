@@ -1,5 +1,4 @@
-import { INCREMENT, DECREMENT, NEWCOUNT } from '../actions'
-import { combineReducers } from 'redux';
+import { INCREMENT, DECREMENT, NEWCOUNT } from '../actions';
 
 const initialState = {
   count: 0
