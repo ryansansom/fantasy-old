@@ -6,7 +6,8 @@ import { renderToString } from 'react-dom/server';
 import { match, RouterContext } from 'react-router';
 import routes from './routes';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
+import thunkMiddleware from 'redux-thunk';
 import counterApp from '../../redux/reducers';
 
 const layoutLoc = path.join(__dirname, '../../views/layout.pug');
@@ -21,7 +22,7 @@ export default (req, res) => {
     } else if (redirectLocation) {
       res.redirect(302, redirectLocation.pathname + redirectLocation.search)
     } else if (renderProps) {
-      let store = createStore(counterApp);
+      let store = createStore(counterApp, applyMiddleware(thunkMiddleware));
       templateLocals.content = renderToString(
         <Provider store={store}>
           <RouterContext {...renderProps} />
