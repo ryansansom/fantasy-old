@@ -16,6 +16,7 @@ class Home extends React.Component {
   }
 
   componentDidMount() {
+    document.title = pageName;
     if (this.props.page !== pageName) this.props.mockFetch(mockAPI(10), pageName);
   }
 
