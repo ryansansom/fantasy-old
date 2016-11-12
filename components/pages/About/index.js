@@ -12,8 +12,7 @@ if (process.env.CLIENT_RENDER) {
 
 class About extends React.Component {
   static fetchData(dispatch) {
-    const promise = mockFetch(mockAPI(20), pageName);
-    return promise(dispatch)
+    return mockFetch(mockAPI(20), pageName)(dispatch);
   }
 
   componentDidMount() {

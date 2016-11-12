@@ -12,8 +12,7 @@ if (process.env.CLIENT_RENDER) {
 
 class Home extends React.Component {
   static fetchData(dispatch) {
-    const promise = mockFetch(mockAPI(10), pageName);
-    return promise(dispatch)
+    return mockFetch(mockAPI(10), pageName)(dispatch);
   }
 
   componentDidMount() {
