@@ -30,6 +30,7 @@ export default (req, res) => {
           const state = store.getState();
           templateLocals.title = state.page; // Page title on server rendered page only
           templateLocals.reduxState = JSON.stringify(state);
+          templateLocals.apiUrl = process.env.NODE_ENV === 'production' ? 'https://ryan-fantasy.herokuapp.com' : 'http://localhost:5000';
           templateLocals.content = renderToString(
             <Provider store={store}>
               <RouterContext {...renderProps} />
