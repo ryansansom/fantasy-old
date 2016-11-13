@@ -12,23 +12,12 @@ export function decrement() {
   return { type: DECREMENT }
 }
 
-export function mockFetch(method, page) {
+export function mockFetch(method, page, real = false) {
   return (dispatch) => {
     dispatch({ type: UPDATING, page });
     return method
       .then(res => dispatch({
-        type: NEWCOUNT,
-        value: res
-      }));
-  }
-}
-
-export function mockRealFetch(method, page) {
-  return (dispatch) => {
-    dispatch({ type: UPDATING, page });
-    return method
-      .then(res => dispatch({
-        type: REAL_DATA,
+        type: real ? REAL_DATA : NEWCOUNT,
         value: res
       }));
   }
