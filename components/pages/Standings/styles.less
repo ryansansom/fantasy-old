@@ -1,0 +1,68 @@
+@header-height: 60px;
+@header-padding: 5px;
+
+.standings {
+  * {
+    text-align: center;
+    width: 100%;
+  }
+
+  .table-wrapper {
+    padding-top: 10px;
+  }
+
+  table {
+    max-width: 350px;
+    margin: 0 auto;
+
+    td, th {
+      font-size: 0.6em;
+      line-height: 1.5em;
+    }
+
+    th {
+      text-decoration: underline;
+    }
+
+    tr:hover {
+      background-color: lightgrey;
+    }
+  }
+
+  .league-name {
+    text-decoration: underline;
+  }
+
+  .refresh-results {
+    margin: 10px auto 0;
+    text-decoration: none;
+    padding: 5px;
+    width: 100px;
+    display: block;
+    position: relative;
+    border: 1px solid darkgreen;
+    color: black;
+
+    &:visited {
+      text-decoration: none;
+      color: black;
+    }
+  }
+}
+
+.standings--header {
+  padding: @header-padding;
+  height: @header-height;
+  line-height: @header-height / 2 - @header-padding;
+  font-weight: bold;
+  text-align: center;
+  vertical-align: middle;
+  position: fixed;
+  background-color: lightgray;
+  border-bottom: 1px solid darkgrey;
+  z-index: 1;
+}
+
+.standings--content {
+  padding: (@header-height + @header-padding) @header-padding @header-padding;
+}

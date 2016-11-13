@@ -24,7 +24,8 @@ export default (req, res) => {
     } else if (renderProps) {
       const { components } = renderProps;
       let store = createStore(counterApp, applyMiddleware(thunkMiddleware));
-      components[components.length - 1].fetchData(store.dispatch)
+      const options = { leagueID: renderProps.params.leagueID };
+      components[components.length - 1].fetchData(store.dispatch, options)
         .then(() => {
           const state = store.getState();
           templateLocals.title = state.page; // Page title on server rendered page only
