@@ -2,6 +2,9 @@
   "name": "test",
   "version": "0.0.0",
   "private": true,
+  "engines": {
+    "node": "7.1.0"
+  },
   "scripts": {
     "build": "webpack --progress --colors",
     "full-start": "rm -rf site/public/wp/* && npm run build && npm start",
