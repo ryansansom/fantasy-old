@@ -54,21 +54,26 @@ class Standings extends React.Component {
   render() {
     const { standings } = this.props;
     return (
-      this.props.updating ?
-      <span>Updating</span>
-      :
       <div className='standings'>
         <div className="standings--header">Welcome to the new, improved view of Fantasy Premier League</div>
         <div className="standings--content">
           <div>
             <h2>League Information</h2>
             <div className="league-name">{standings.leagueName}</div>
+            <a
+              className="refresh-results"
+              onClick={e => {
+                e.preventDefault();
+                return this.props.mockRealFetch(mockRealAPI(), pageName);
+              }}
+              href="/standings">Refresh</a>
             <div className="table-wrapper">
-              {this.renderTable()}
+              {this.props.updating ? <span>Updating...</span> : this.renderTable()}
             </div>
           </div>
         </div>
-      </div>);
+      </div>
+    );
   }
 }
 
