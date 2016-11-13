@@ -11,12 +11,6 @@ import getWeek from '../../lib/get-week';
 import { Router } from 'express';
 const router = Router();
 
-router.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
-
 router.get('/leagues', errHandler(async(req, res, next) => { // eslint-disable-line no-unused-vars
   const leagues = await getLeagues(req.query.teamID);
   return res.send(leagues);
