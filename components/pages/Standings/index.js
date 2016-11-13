@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { mockRealFetch } from '../../../redux/actions';
 import { mockRealAPI } from '../../mock-api';
@@ -22,8 +21,11 @@ class Standings extends React.Component {
 
   renderTable() {
     const { players } = this.props.standings;
-    const abc = players.map(player => {
+    const abc = players
+      .sort((a, b) => (b.prevTotal + b.currentPoints) - (a.prevTotal + a.currentPoints)) // Change when projected becomes optional
+      .map((player, i) => {
       return (<tr key={player.entry}>
+        <td>{i + 1}</td>
         <td>{player.player_name}</td>
         <td>{player.prevTotal}</td>
         <td>{player.currentPoints}</td>
@@ -36,6 +38,7 @@ class Standings extends React.Component {
     return (<table>
       <thead>
         <tr>
+          <th>Position</th>
           <th>Player</th>
           <th>Previous Total</th>
           <th>Current Points</th>
@@ -59,7 +62,7 @@ class Standings extends React.Component {
         <div className="standings--content">
           <div>
             <h2>League Information</h2>
-            <div>{standings.leagueName}</div>
+            <div className="league-name">{standings.leagueName}</div>
             <div className="table-wrapper">
               {this.renderTable()}
             </div>
