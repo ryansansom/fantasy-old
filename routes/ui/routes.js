@@ -10,5 +10,6 @@ export default (
     <IndexRoute component={Home}/>
     <Route path="/about" component={About}/>
     <Route path="/standings" component={Standings}/>
+    <Route path="/standings/:leagueID" component={Standings}/>
   </Route>
 )

@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { mockRealFetch } from '../../../redux/actions';
 import { mockRealAPI } from '../../mock-api';
+import getDetailedStandings from '../../../lib/get-detailed-standings';
 
 const pageName = 'Standings';
 
@@ -9,14 +10,14 @@ if (process.env.CLIENT_RENDER) {
   require('./styles.less')
 }
 
-class Standings extends React.Component {
-  static fetchData(dispatch) {
-    return mockRealFetch(mockRealAPI(), pageName)(dispatch);
+class Standings extends Component {
+  static fetchData(dispatch, { leagueID }) {
+    return mockRealFetch(leagueID ? getDetailedStandings(leagueID) : mockRealAPI(), pageName)(dispatch);
   }
 
   componentDidMount() {
     document.title = pageName;
-    if (this.props.page !== pageName) this.props.mockRealFetch(mockRealAPI(), pageName);
+    if (this.props.page !== pageName) this.props.mockRealFetch(this.props.params.leagueID ? getDetailedStandings(this.props.params.leagueID) : mockRealAPI(), pageName)
   }
 
   renderTable() {
@@ -64,7 +65,7 @@ class Standings extends React.Component {
               className="refresh-results"
               onClick={e => {
                 e.preventDefault();
-                return this.props.mockRealFetch(mockRealAPI(), pageName);
+                return this.props.mockRealFetch(this.props.params.leagueID ? getDetailedStandings(this.props.params.leagueID) : mockRealAPI(), pageName);
               }}
               href="/standings">Refresh</a>
             <div className="table-wrapper">

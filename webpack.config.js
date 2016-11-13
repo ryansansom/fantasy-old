@@ -44,5 +44,10 @@ module.exports = {
     new ExtractTextPlugin('[name].css', {
       allChunks: true
     })
-  ]
+  ],
+  node: {
+    fs: 'empty',
+    net: 'empty',
+    tls: 'empty'
+  }
 };
