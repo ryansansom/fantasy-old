@@ -21,6 +21,7 @@ export function mockRealAPI() {
 const data_131116 = {
   "leagueId": 73007,
   "leagueName": "Tesco Grads Classic",
+  "gw_ended": true,
   "players": [{
     "entry": 7407,
     "team_name": "Validus F.C.",

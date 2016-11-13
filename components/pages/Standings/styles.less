@@ -1,7 +1,42 @@
-div {
-  color: blue;
+body {
+  background-color: lightgreen;
 }
 
-.home {
+* {
+  box-sizing: border-box;
+}
+
+@header-height: 50px;
+@header-padding: 5px;
+
+.standings {
+  * {
+    text-align: center;
+    width: 100%;
+  }
+
+  table {
+    max-width: 400px;
+    margin: 20px auto 0;
+
+    td, th {
+      font-size: 0.65em;
+    }
+  }
+}
+
+.standings--header {
+  padding: @header-padding;
+  height: @header-height;
+  line-height: @header-height / 2 - @header-padding;
   font-weight: bold;
+  text-align: center;
+  vertical-align: middle;
+  position: fixed;
+  background-color: lightgray;
+  border-bottom: 1px solid darkgrey;
+}
+
+.standings--content {
+  padding: (@header-height + @header-padding) @header-padding @header-padding;
 }

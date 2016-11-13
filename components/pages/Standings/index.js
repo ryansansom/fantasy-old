@@ -20,15 +20,51 @@ class Standings extends React.Component {
     if (this.props.page !== pageName) this.props.mockRealFetch(mockRealAPI(), pageName);
   }
 
+  renderTable() {
+    const { players } = this.props.standings;
+    const abc = players.map(player => {
+      return (<tr key={player.entry}>
+        <td>{player.player_name}</td>
+        <td>{player.prevTotal}</td>
+        <td>{player.currentPoints}</td>
+        <td>{player.projectedPoints}</td>
+        <td>{player.prevTotal + player.currentPoints}</td>
+        <td>{player.prevTotal + player.projectedPoints}</td>
+      </tr>)
+    });
+
+    return (<table>
+      <thead>
+        <tr>
+          <th>Player</th>
+          <th>Previous Total</th>
+          <th>Current Points</th>
+          <th>Projected Points</th>
+          <th>Current Total</th>
+          <th>Projected Total</th>
+        </tr>
+      </thead>
+      <tbody>{abc}</tbody>
+    </table>)
+  }
+
   render() {
+    const { standings } = this.props;
     return (
       this.props.updating ?
       <span>Updating</span>
       :
-      <div className='home'>
-        <span>{`I have ${typeof this.props.standings} as data`}</span>
-        <Link to='/about'>About</Link>
-        <button onClick={() => this.props.mockRealFetch(mockRealAPI(), pageName)}>Refresh</button>
+      <div className='standings'>
+        <div className="standings--header">Welcome to the new, improved view of Fantasy Premier League</div>
+        <div className="standings--content">
+          <div>
+            <h2>League Information</h2>
+            <div>{standings.leagueName}</div>
+            <div className="table-wrapper">
+              {this.renderTable()}
+            </div>
+          </div>
+        </div>
       </div>);
   }
 }
