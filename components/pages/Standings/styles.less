@@ -12,20 +12,37 @@
   }
 
   table {
-    max-width: 350px;
+    table-layout: fixed;
+    border-collapse: collapse;
     margin: 0 auto;
 
     td, th {
-      font-size: 0.6em;
+      font-size: 0.55em;
       line-height: 1.5em;
+      height: 30px;
+      padding: 2px;
     }
 
     th {
       text-decoration: underline;
     }
 
-    tr:hover {
+    tbody tr:hover {
+      background-color: grey;
+      color: white;
+    }
+
+    tbody tr:nth-child(even) {
       background-color: lightgrey;
+
+      &:hover {
+        background-color: grey;
+      }
+    }
+
+    thead tr {
+      background-color: seagreen;
+      color: lightcyan;
     }
   }
 
@@ -42,6 +59,11 @@
     position: relative;
     border: 1px solid darkgreen;
     color: black;
+    background-color: darkseagreen;
+
+    &:hover {
+      background-color: lightgrey;
+    }
 
     &:visited {
       text-decoration: none;
