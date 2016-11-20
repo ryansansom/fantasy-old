@@ -1,0 +1,26 @@
+@accordion-height: 50px;
+
+.accordion--toggle {
+  display: none;
+}
+
+.accordion--title {
+  line-height: @accordion-height;
+}
+
+.accordion--label {
+  height: @accordion-height;
+  display: block;
+  border-bottom: 1px solid grey;
+  user-select: none;
+  cursor: pointer;
+}
+
+input.accordion--toggle ~ .accordion--content {
+  display: none;
+}
+
+input.accordion--toggle:checked ~ .accordion--content {
+  display: block;
+  padding-top: 10px;
+}
