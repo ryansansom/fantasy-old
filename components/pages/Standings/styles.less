@@ -1,49 +1,44 @@
 @header-height: 60px;
 @header-padding: 5px;
 
+.table-format {
+  font-size: 0.55em;
+  line-height: 1.5em;
+  vertical-align: middle;
+  padding: 2px;
+}
+
+.table-header {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.header-row {
+  background-color: seagreen;
+  color: lightcyan;
+}
+
+.player-list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+
+  li {
+    height: 30px;
+
+    &:nth-child(odd) {
+      background-color: lightgrey;
+    }
+  }
+}
+
 .standings {
   * {
     text-align: center;
-    width: 100%;
   }
 
   .table-wrapper {
     padding-top: 10px;
-  }
-
-  table {
-    table-layout: fixed;
-    border-collapse: collapse;
-    margin: 0 auto;
-
-    td, th {
-      font-size: 0.55em;
-      line-height: 1.5em;
-      height: 30px;
-      padding: 2px;
-    }
-
-    th {
-      text-decoration: underline;
-    }
-
-    tbody tr:hover {
-      background-color: grey;
-      color: white;
-    }
-
-    tbody tr:nth-child(even) {
-      background-color: lightgrey;
-
-      &:hover {
-        background-color: grey;
-      }
-    }
-
-    thead tr {
-      background-color: seagreen;
-      color: lightcyan;
-    }
   }
 
   .league-name {

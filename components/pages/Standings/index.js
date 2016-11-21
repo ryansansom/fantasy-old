@@ -22,34 +22,36 @@ class Standings extends Component {
 
   renderTable() {
     const { players } = this.props.standings;
-    const abc = players
-      .sort((a, b) => (b.prevTotal + b.currentPoints) - (a.prevTotal + a.currentPoints)) // Change when projected becomes optional
+    const heading = <li key="header" className="header-row">
+      <div className="col-1-of-7 table-header table-format">Position</div>
+      <div className="col-1-of-7 table-header table-format">Player</div>
+      <div className="col-1-of-7 table-header table-format">Previous Total</div>
+      <div className="col-1-of-7 table-header table-format">Current Points</div>
+      <div className="col-1-of-7 table-header table-format">Projected Points</div>
+      <div className="col-1-of-7 table-header table-format">Current Total</div>
+      <div className="col-1-of-7 table-header table-format">Projected Total</div>
+    </li>;
+    const newList = players
+      .sort((a, b) => (b.prevTotal + b.projectedPoints) - (a.prevTotal + a.projectedPoints))
       .map((player, i) => {
-      return (<tr key={player.entry}>
-        <td>{i + 1}</td>
-        <td>{player.player_name}</td>
-        <td>{player.prevTotal}</td>
-        <td>{player.currentPoints}</td>
-        <td>{player.projectedPoints}</td>
-        <td>{player.prevTotal + player.currentPoints}</td>
-        <td>{player.prevTotal + player.projectedPoints}</td>
-      </tr>)
-    });
-
-    return (<table>
-      <thead>
-        <tr>
-          <th>Position</th>
-          <th>Player</th>
-          <th>Previous Total</th>
-          <th>Current Points</th>
-          <th>Projected Points</th>
-          <th>Current Total</th>
-          <th>Projected Total</th>
-        </tr>
-      </thead>
-      <tbody>{abc}</tbody>
-    </table>)
+        return (
+          <li key={player.entry} className="data-row">
+            <div className="col-1-of-7 table-format">{i + 1}</div>
+            <div className="col-1-of-7 table-format">{player.player_name}</div>
+            <div className="col-1-of-7 table-format">{player.prevTotal}</div>
+            <div className="col-1-of-7 table-format">{player.currentPoints}</div>
+            <div className="col-1-of-7 table-format">{player.projectedPoints}</div>
+            <div className="col-1-of-7 table-format">{player.prevTotal + player.currentPoints}</div>
+            <div className="col-1-of-7 table-format">{player.prevTotal + player.projectedPoints}</div>
+          </li>
+        )
+      });
+    return (
+      <ul className="player-list">
+        {heading}
+        {newList}
+      </ul>
+    );
   }
 
   render() {
