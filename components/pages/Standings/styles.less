@@ -24,9 +24,9 @@
   list-style: none;
 
   li {
-    height: 30px;
+    min-height: 30px;
 
-    &:nth-child(odd) {
+    &:nth-child(even) {
       background-color: lightgrey;
     }
   }
@@ -64,6 +64,11 @@
       text-decoration: none;
       color: black;
     }
+  }
+
+  .accordion--content {
+    padding: 10px;
+    font-size: 0.55em;
   }
 }
 

@@ -4,12 +4,7 @@
   display: none;
 }
 
-.accordion--title {
-  line-height: @accordion-height;
-}
-
 .accordion--label {
-  height: @accordion-height;
   display: block;
   border-bottom: 1px solid grey;
   user-select: none;
@@ -22,5 +17,5 @@ input.accordion--toggle ~ .accordion--content {
 
 input.accordion--toggle:checked ~ .accordion--content {
   display: block;
-  padding-top: 10px;
+  border-bottom: 1px solid grey;
 }

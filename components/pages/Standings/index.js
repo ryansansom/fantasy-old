@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { mockFetch } from '../../../redux/actions';
 import { mockRealAPI } from '../../mock-api';
 import { getStandings } from '../../../lib/internal-api';
+import Accordion from '../../accordion';
 
 const pageName = 'Standings';
 
@@ -31,25 +32,35 @@ class Standings extends Component {
       <div className="col-1-of-7 table-header table-format">Current Total</div>
       <div className="col-1-of-7 table-header table-format">Projected Total</div>
     </li>;
-    const newList = players
+    const playerRows = players
       .sort((a, b) => (b.prevTotal + b.projectedPoints) - (a.prevTotal + a.projectedPoints))
       .map((player, i) => {
+        const playerRow = <div>
+          <div className="col-1-of-7 table-format">{i + 1}</div>
+          <div className="col-1-of-7 table-format">{player.player_name}</div>
+          <div className="col-1-of-7 table-format">{player.prevTotal}</div>
+          <div className="col-1-of-7 table-format">{player.currentPoints}</div>
+          <div className="col-1-of-7 table-format">{player.projectedPoints}</div>
+          <div className="col-1-of-7 table-format">{player.prevTotal + player.currentPoints}</div>
+          <div className="col-1-of-7 table-format">{player.prevTotal + player.projectedPoints}</div>
+        </div>;
+
         return (
-          <li key={player.entry} className="data-row">
-            <div className="col-1-of-7 table-format">{i + 1}</div>
-            <div className="col-1-of-7 table-format">{player.player_name}</div>
-            <div className="col-1-of-7 table-format">{player.prevTotal}</div>
-            <div className="col-1-of-7 table-format">{player.currentPoints}</div>
-            <div className="col-1-of-7 table-format">{player.projectedPoints}</div>
-            <div className="col-1-of-7 table-format">{player.prevTotal + player.currentPoints}</div>
-            <div className="col-1-of-7 table-format">{player.prevTotal + player.projectedPoints}</div>
-          </li>
+          <Accordion
+            tag="li"
+            key={player.entry}
+            title={player.entry.toString()}
+            header={playerRow}>
+            <div>
+              {`Team info for ${player.player_name} coming soon...`}
+            </div>
+          </Accordion>
         )
       });
     return (
       <ul className="player-list">
         {heading}
-        {newList}
+        {playerRows}
       </ul>
     );
   }
