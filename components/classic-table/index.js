@@ -6,6 +6,15 @@ class ClassicTable extends Component {
     players: PropTypes.array.isRequired
   };
 
+  getPlayers(players, subs) {
+    return players.map(player => {
+      return <li key={player.element}>
+        <div className="col-1-of-2 player-picks-format">{player.name}</div>
+        <div className="col-1-of-2 player-picks-format">{player.points * player.multiplier}</div>
+      </li>
+    })
+  }
+
   render() {
     const { players } = this.props;
     const playerList = players
@@ -25,10 +34,17 @@ class ClassicTable extends Component {
           <Accordion
             tag="li"
             key={player.entry}
+            classes="entry-li"
             title={player.entry.toString()}
             header={playerRow}>
-            <div>
-              {`Team info for ${player.player_name} coming soon...`}
+            <div className="player-picks">
+              <div className="header-row">
+                <div className="col-1-of-2 table-header">Player</div>
+                <div className="col-1-of-2 table-header">Points</div>
+              </div>
+              <ul className="player-list">
+                {this.getPlayers(player.players.picks, player.players.subs)}
+              </ul>
             </div>
           </Accordion>
         )

@@ -23,12 +23,16 @@
   margin: 0;
   list-style: none;
 
-  li {
+  .entry-li {
     min-height: 30px;
+  }
 
-    &:nth-child(even) {
-      background-color: lightgrey;
-    }
+  li:nth-child(even) {
+    background-color: lightgrey;
+  }
+
+  li:nth-child(odd) {
+    background-color: lightgreen;
   }
 }
 
@@ -67,7 +71,7 @@
   }
 
   .accordion--content {
-    padding: 10px;
+    padding: 5px;
     font-size: 0.55em;
   }
 }
@@ -83,8 +87,15 @@
   background-color: lightgray;
   border-bottom: 1px solid darkgrey;
   z-index: 1;
+  width: 100%;
 }
 
 .standings--content {
   padding: (@header-height + @header-padding) @header-padding @header-padding;
+}
+
+.player-picks {
+  .table-header, .player-picks-format {
+    line-height: 20px;
+  }
 }
