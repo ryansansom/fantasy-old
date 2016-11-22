@@ -1,19 +1,11 @@
 import Accordion from '../accordion';
+import PlayerList from '../player-list';
 import React, { Component, PropTypes } from 'react';
 
 class ClassicTable extends Component {
   static propTypes = {
     players: PropTypes.array.isRequired
   };
-
-  getPlayers(players, subs) {
-    return players.map(player => {
-      return <li key={player.element}>
-        <div className="col-1-of-2 player-picks-format">{player.name}</div>
-        <div className="col-1-of-2 player-picks-format">{player.points * player.multiplier}</div>
-      </li>
-    })
-  }
 
   render() {
     const { players } = this.props;
@@ -37,15 +29,7 @@ class ClassicTable extends Component {
             classes="entry-li"
             title={player.entry.toString()}
             header={playerRow}>
-            <div className="player-picks">
-              <div className="header-row">
-                <div className="col-1-of-2 table-header">Player</div>
-                <div className="col-1-of-2 table-header">Points</div>
-              </div>
-              <ul className="player-list">
-                {this.getPlayers(player.players.picks, player.players.subs)}
-              </ul>
-            </div>
+            <PlayerList players={player.players} />
           </Accordion>
         )
       });
