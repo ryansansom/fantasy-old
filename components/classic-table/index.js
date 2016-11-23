@@ -8,7 +8,7 @@ if (process.env.CLIENT_RENDER) {
 
 class ClassicTable extends Component {
   static propTypes = {
-    players: PropTypes.array.isRequired,
+    entries: PropTypes.array.isRequired,
     sortFunc: PropTypes.func,
     tableConfig: PropTypes.array.isRequired
   };
@@ -23,30 +23,30 @@ class ClassicTable extends Component {
   }
 
   renderList() {
-    const { players, sortFunc, tableConfig } = this.props;
+    const { entries, sortFunc, tableConfig } = this.props;
     const len = tableConfig.length;
 
-    const playerList = players
+    const entryList = entries
       .sort(sortFunc)
-      .map((player, i) => {
-        const playerRow = <div>
-          {tableConfig.map((data, j) => <div key={j} className={`col-1-of-${len} table-format`}>{data.func(player, i)}</div>)}
+      .map((entry, i) => {
+        const entryRow = <div>
+          {tableConfig.map((data, j) => <div key={j} className={`col-1-of-${len} table-format`}>{data.func(entry, i)}</div>)}
         </div>;
 
         return (
           <Accordion
             tag="li"
-            key={player.entry}
+            key={entry.entry}
             classes="entry-li"
-            title={player.entry.toString()}
-            header={playerRow}>
-            <PlayerList players={player.players} />
+            title={entry.entry.toString()}
+            header={entryRow}>
+            <PlayerList players={entry.players} />
           </Accordion>
         )
       });
     return (
-      <ul className="player-list">
-        {playerList}
+      <ul className="table-list">
+        {entryList}
       </ul>
     );
   }

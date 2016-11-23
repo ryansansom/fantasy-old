@@ -55,7 +55,7 @@ class Standings extends Component {
                 <span>Updating...</span>
                 :
                 <ClassicTable
-                  players={standings.players}
+                  entries={standings.players || standings.entries} // Future support for renaming the API field
                   tableConfig={tableConfig}
                   sortFunc={sortFunc} />}
             </div>

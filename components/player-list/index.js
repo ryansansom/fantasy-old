@@ -23,7 +23,7 @@ class PlayerList extends Component {
           <div className="col-1-of-2 table-header">Player</div>
           <div className="col-1-of-2 table-header">Points</div>
         </div>
-        <ul className="player-list">
+        <ul className="table-list">
           {this.getPlayers(players.picks, players.subs)}
         </ul>
       </div>
