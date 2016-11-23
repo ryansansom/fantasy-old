@@ -9,10 +9,21 @@ class PlayerList extends Component {
     players: PropTypes.object.isRequired
   };
 
+  applyCaptainStatus({ is_captain, is_vice_captain, name }) {
+    let appendName = '';
+    if (is_captain) {
+      appendName = ' (C)';
+    } else if (is_vice_captain) {
+      appendName = ' (V)';
+    }
+
+    return name + appendName;
+  }
+
   getPlayers(players, subs) {
     return players.map(player => {
       return <li key={player.element}>
-        <div className="col-1-of-2 player-picks-format">{player.name}</div>
+        <div className="col-1-of-2 player-picks-format">{this.applyCaptainStatus(player)}</div>
         <div className="col-1-of-2 player-picks-format">{player.points * player.multiplier}</div>
       </li>
     })
