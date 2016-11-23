@@ -7,19 +7,20 @@ class ClassicTable extends Component {
     players: PropTypes.array.isRequired
   };
 
-  render() {
-    const { players } = this.props;
+  renderHeader() {
+    const len = this.props.tableConfig.length;
+    return <div className="header-row">{this.props.tableConfig.map((data, i) => <div key={i} className={`col-1-of-${len} table-header table-format`}>{data.header}</div>)}</div>;
+  }
+
+  renderList() {
+    const { players, tableConfig } = this.props;
+    const len = tableConfig.length;
+
     const playerList = players
       .sort((a, b) => (b.prevTotal + b.projectedPoints) - (a.prevTotal + a.projectedPoints))
       .map((player, i) => {
         const playerRow = <div>
-          <div className="col-1-of-7 table-format">{i + 1}</div>
-          <div className="col-1-of-7 table-format">{player.player_name}</div>
-          <div className="col-1-of-7 table-format">{player.prevTotal}</div>
-          <div className="col-1-of-7 table-format">{player.currentPoints}</div>
-          <div className="col-1-of-7 table-format">{player.projectedPoints}</div>
-          <div className="col-1-of-7 table-format">{player.prevTotal + player.currentPoints}</div>
-          <div className="col-1-of-7 table-format">{player.prevTotal + player.projectedPoints}</div>
+          {tableConfig.map((data, j) => <div key={j} className={`col-1-of-${len} table-format`}>{data.func(player, i)}</div>)}
         </div>;
 
         return (
@@ -33,21 +34,18 @@ class ClassicTable extends Component {
           </Accordion>
         )
       });
+    return (
+      <ul className="player-list">
+        {playerList}
+      </ul>
+    );
+  }
 
+  render() {
     return (
       <div>
-        <div className="header-row">
-          <div className="col-1-of-7 table-header table-format">Position</div>
-          <div className="col-1-of-7 table-header table-format">Player</div>
-          <div className="col-1-of-7 table-header table-format">Previous Total</div>
-          <div className="col-1-of-7 table-header table-format">Current Points</div>
-          <div className="col-1-of-7 table-header table-format">Projected Points</div>
-          <div className="col-1-of-7 table-header table-format">Current Total</div>
-          <div className="col-1-of-7 table-header table-format">Projected Total</div>
-        </div>
-        <ul className="player-list">
-          {playerList}
-        </ul>
+        { this.renderHeader() }
+        { this.renderList() }
       </div>
     );
   }

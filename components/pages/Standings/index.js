@@ -24,6 +24,17 @@ class Standings extends Component {
   render() {
     const { standings } = this.props;
     const refreshLinkUrl = this.props.params.leagueID ? '/standings/' + this.props.params.leagueID : '/standings';
+
+    const tableConfig = [
+      {header: 'Position', func: (player, i) => i + 1},
+      {header: 'Player', func: (player) => player.player_name},
+      {header: 'Previous Total', func: (player) => player.prevTotal},
+      {header: 'Current Points', func: (player) => player.currentPoints},
+      {header: 'Projected Points', func: (player) => player.projectedPoints},
+      {header: 'Current Total', func: (player) => player.prevTotal + player.currentPoints},
+      {header: 'Projected Total', func: (player) => player.prevTotal + player.projectedPoints},
+    ];
+
     return (
       <div className='standings'>
         <div className="standings--header">Welcome to the new, improved view of Fantasy Premier League</div>
@@ -39,7 +50,7 @@ class Standings extends Component {
               }}
               href={refreshLinkUrl}>Refresh</a>
             <div className="table-wrapper">
-              {this.props.updating ? <span>Updating...</span> : <ClassicTable players={standings.players} />}
+              {this.props.updating ? <span>Updating...</span> : <ClassicTable players={standings.players} tableConfig={tableConfig} />}
             </div>
           </div>
         </div>
