@@ -4,7 +4,13 @@ import React, { Component, PropTypes } from 'react';
 
 class ClassicTable extends Component {
   static propTypes = {
-    players: PropTypes.array.isRequired
+    players: PropTypes.array.isRequired,
+    sortFunc: PropTypes.func,
+    tableConfig: PropTypes.array.isRequired
+  };
+
+  static defaultProps = {
+    sortFunc: (a, b) => (b.prevTotal + b.projectedPoints) - (a.prevTotal + a.projectedPoints)
   };
 
   renderHeader() {
@@ -13,11 +19,11 @@ class ClassicTable extends Component {
   }
 
   renderList() {
-    const { players, tableConfig } = this.props;
+    const { players, sortFunc, tableConfig } = this.props;
     const len = tableConfig.length;
 
     const playerList = players
-      .sort((a, b) => (b.prevTotal + b.projectedPoints) - (a.prevTotal + a.projectedPoints))
+      .sort(sortFunc)
       .map((player, i) => {
         const playerRow = <div>
           {tableConfig.map((data, j) => <div key={j} className={`col-1-of-${len} table-format`}>{data.func(player, i)}</div>)}

@@ -25,6 +25,7 @@ class Standings extends Component {
     const { standings } = this.props;
     const refreshLinkUrl = this.props.params.leagueID ? '/standings/' + this.props.params.leagueID : '/standings';
 
+    const sortFunc = (a, b) => (b.prevTotal + b.projectedPoints) - (a.prevTotal + a.projectedPoints);
     const tableConfig = [
       {header: 'Position', func: (player, i) => i + 1},
       {header: 'Player', func: (player) => player.player_name},
@@ -50,7 +51,13 @@ class Standings extends Component {
               }}
               href={refreshLinkUrl}>Refresh</a>
             <div className="table-wrapper">
-              {this.props.updating ? <span>Updating...</span> : <ClassicTable players={standings.players} tableConfig={tableConfig} />}
+              {this.props.updating ?
+                <span>Updating...</span>
+                :
+                <ClassicTable
+                  players={standings.players}
+                  tableConfig={tableConfig}
+                  sortFunc={sortFunc} />}
             </div>
           </div>
         </div>
