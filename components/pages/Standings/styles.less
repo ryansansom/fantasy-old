@@ -1,41 +1,6 @@
 @header-height: 60px;
 @header-padding: 5px;
 
-.table-format {
-  font-size: 0.55em;
-  line-height: 1.5em;
-  vertical-align: middle;
-  padding: 2px;
-}
-
-.table-header {
-  font-weight: bold;
-  text-decoration: underline;
-}
-
-.header-row {
-  background-color: seagreen;
-  color: lightcyan;
-}
-
-.player-list {
-  padding: 0;
-  margin: 0;
-  list-style: none;
-
-  .entry-li {
-    min-height: 30px;
-  }
-
-  li:nth-child(even) {
-    background-color: lightgrey;
-  }
-
-  li:nth-child(odd) {
-    background-color: lightgreen;
-  }
-}
-
 .standings {
   * {
     text-align: center;
@@ -69,11 +34,6 @@
       color: black;
     }
   }
-
-  .accordion--content {
-    padding: 5px;
-    font-size: 0.55em;
-  }
 }
 
 .standings--header {
@@ -92,10 +52,4 @@
 
 .standings--content {
   padding: (@header-height + @header-padding) @header-padding @header-padding;
-}
-
-.player-picks {
-  .table-header, .player-picks-format {
-    line-height: 20px;
-  }
 }

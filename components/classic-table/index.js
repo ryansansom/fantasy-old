@@ -2,6 +2,10 @@ import Accordion from '../accordion';
 import PlayerList from '../player-list';
 import React, { Component, PropTypes } from 'react';
 
+if (process.env.CLIENT_RENDER) {
+  require('./styles.less')
+}
+
 class ClassicTable extends Component {
   static propTypes = {
     players: PropTypes.array.isRequired,
@@ -49,7 +53,7 @@ class ClassicTable extends Component {
 
   render() {
     return (
-      <div>
+      <div className="classic-standings">
         { this.renderHeader() }
         { this.renderList() }
       </div>
