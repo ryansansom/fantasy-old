@@ -1,5 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 
+if (process.env.CLIENT_RENDER) {
+  require('./styles.less')
+}
+
 class PlayerList extends Component {
   static propTypes = {
     players: PropTypes.object.isRequired
