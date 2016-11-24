@@ -6,41 +6,37 @@ if (process.env.CLIENT_RENDER) {
 
 class PlayerList extends Component {
   static propTypes = {
+    listConfig: PropTypes.array.isRequired,
     players: PropTypes.object.isRequired
   };
 
-  applyCaptainStatus({ is_captain, is_vice_captain, name }) {
-    let appendName = '';
-    if (is_captain) {
-      appendName = ' (C)';
-    } else if (is_vice_captain) {
-      appendName = ' (V)';
-    }
-
-    return name + appendName;
+  renderHeader() {
+    const { listConfig } = this.props;
+    const len = listConfig.length;
+    return <div className="header-row">{listConfig.map(({header}, i) => <div key={i} className={`col-1-of-${len} table-header`}>{header}</div>)}</div>;
   }
 
-  getPlayers(players, subs) {
-    return players.map(player => {
-      return <li key={player.element}>
-        <div className="col-1-of-2 player-picks-format">{this.applyCaptainStatus(player)}</div>
-        <div className="col-1-of-2 player-picks-format">{player.points * player.multiplier}</div>
-      </li>
-    })
+  renderList() {
+    const { players, listConfig } = this.props;
+    const len = listConfig.length;
+
+    const playerList = players.picks
+      .map((player, i) => {
+        return <li key={player.element}>
+          {listConfig.map((data, j) => <div key={j} className={`col-1-of-${len} player-picks-format`}>{data.func(player, i)}</div>)}
+        </li>;
+      });
+
+    return <ul className="table-list">
+      {playerList}
+    </ul>;
   }
 
   render() {
-    const { players } = this.props;
-
     return (
       <div className="player-picks">
-        <div className="header-row">
-          <div className="col-1-of-2 table-header">Player</div>
-          <div className="col-1-of-2 table-header">Points</div>
-        </div>
-        <ul className="table-list">
-          {this.getPlayers(players.picks, players.subs)}
-        </ul>
+        {this.renderHeader()}
+        {this.renderList()}
       </div>
     );
   }

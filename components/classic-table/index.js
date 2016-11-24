@@ -19,12 +19,38 @@ class ClassicTable extends Component {
 
   renderHeader() {
     const len = this.props.tableConfig.length;
-    return <div className="header-row">{this.props.tableConfig.map((data, i) => <div key={i} className={`col-1-of-${len} table-header table-format`}>{data.header}</div>)}</div>;
+    return <div className="header-row">{this.props.tableConfig.map(({header}, i) => <div key={i} className={`col-1-of-${len} table-header table-format`}>{header}</div>)}</div>;
   }
 
   renderList() {
     const { entries, sortFunc, tableConfig } = this.props;
     const len = tableConfig.length;
+
+    const playerListConfig = [
+      {header: 'Position', func: (player) => {
+        switch (player.element_type) {
+          case 1:
+            return 'GK';
+          case 2:
+            return 'DEF';
+          case 3:
+            return 'MID';
+          case 4:
+            return 'FWD';
+        }
+      }},
+      {header: 'Player', func: (player) => {
+        let appendName = '';
+        if (player.is_captain) {
+          appendName = ' (C)';
+        } else if (player.is_vice_captain) {
+          appendName = ' (V)';
+        }
+
+        return player.name + appendName;
+      }},
+      {header: 'Points', func: (player) => player.points * player.multiplier}
+    ];
 
     const entryList = entries
       .sort(sortFunc)
@@ -40,7 +66,7 @@ class ClassicTable extends Component {
             classes="entry-li"
             title={entry.entry.toString()}
             header={entryRow}>
-            <PlayerList players={entry.players} />
+            <PlayerList players={entry.players} listConfig={playerListConfig} />
           </Accordion>
         )
       });
