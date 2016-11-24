@@ -49,7 +49,14 @@ class ClassicTable extends Component {
 
         return player.name + appendName;
       }},
-      {header: 'Points', func: (player) => player.points * player.multiplier}
+      {header: 'Points', func: (player) => player.points * player.multiplier},
+      {header: 'Bonus Points', func: (player) => {
+        if (player.game_points_finalised) {
+          return player.actual_bonus > 0 ? player.actual_bonus + ' (incl.)' : 0;
+        } else {
+          return player.provisional_bonus;
+        }
+      }}
     ];
 
     const entryList = entries
