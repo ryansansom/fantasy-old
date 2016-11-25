@@ -18,13 +18,14 @@ class ClassicTable extends Component {
   };
 
   renderHeader() {
-    const len = this.props.tableConfig.length;
-    return <div className="header-row">{this.props.tableConfig.map(({header}, i) => <div key={i} className={`col-1-of-${len} table-header table-format`}>{header}</div>)}</div>;
+    const { tableConfig } = this.props;
+    const len = tableConfig.reduce((prev, curr) => prev + (curr.colSpan ? curr.colSpan : 1), 0);
+    return <div className="header-row">{tableConfig.map(({header, colSpan}, i) => <div key={i} className={`col-${colSpan || 1}-of-${len} table-header table-format`}>{header}</div>)}</div>;
   }
 
   renderList() {
     const { entries, sortFunc, tableConfig } = this.props;
-    const len = tableConfig.length;
+    const len = tableConfig.reduce((prev, curr) => prev + (curr.colSpan ? curr.colSpan : 1), 0);
 
     const playerListConfig = [
       {header: 'Position', func: (player) => {
@@ -39,7 +40,9 @@ class ClassicTable extends Component {
             return 'FWD';
         }
       }},
-      {header: 'Player', func: (player) => {
+      {header: 'Player',
+        colSpan: 2,
+        func: (player) => {
         let appendName = '';
         if (player.is_captain) {
           appendName = ' (C)';
@@ -63,7 +66,7 @@ class ClassicTable extends Component {
       .sort(sortFunc)
       .map((entry, i) => {
         const entryRow = <div>
-          {tableConfig.map((data, j) => <div key={j} className={`col-1-of-${len} table-format`}>{data.func(entry, i)}</div>)}
+          {tableConfig.map(({func, colSpan}, j) => <div key={j} className={`col-${colSpan || 1}-of-${len} table-format`}>{func(entry, i)}</div>)}
         </div>;
 
         return (

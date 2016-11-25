@@ -12,18 +12,18 @@ class PlayerList extends Component {
 
   renderHeader() {
     const { listConfig } = this.props;
-    const len = listConfig.length;
-    return <div className="header-row">{listConfig.map(({header}, i) => <div key={i} className={`col-1-of-${len} table-header`}>{header}</div>)}</div>;
+    const len = listConfig.reduce((prev, curr) => prev + (curr.colSpan ? curr.colSpan : 1), 0);
+    return <div className="header-row">{listConfig.map(({header, colSpan}, i) => <div key={i} className={`col-${colSpan || 1}-of-${len} table-header`}>{header}</div>)}</div>;
   }
 
   renderList() {
     const { players, listConfig } = this.props;
-    const len = listConfig.length;
+    const len = listConfig.reduce((prev, curr) => prev + (curr.colSpan ? curr.colSpan : 1), 0);
 
     const playerList = players.picks
       .map((player, i) => {
         return <li key={player.element}>
-          {listConfig.map((data, j) => <div key={j} className={`col-1-of-${len} player-picks-format`}>{data.func(player, i)}</div>)}
+          {listConfig.map(({func, colSpan}, j) => <div key={j} className={`col-${colSpan || 1}-of-${len} player-picks-format`}>{func(player, i)}</div>)}
         </li>;
       });
 
