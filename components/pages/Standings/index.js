@@ -4,6 +4,7 @@ import { mockFetch } from '../../../redux/actions';
 import { mockRealAPI } from '../../mock-api';
 import { getStandings } from '../../../lib/internal-api';
 import ClassicTable from '../../classic-table';
+import * as classicTable from '../../../lib/table-config/classic-table';
 
 const pageName = 'Standings';
 
@@ -27,13 +28,13 @@ class Standings extends Component {
 
     const sortFunc = (a, b) => (b.prevTotal + b.projectedPoints) - (a.prevTotal + a.projectedPoints);
     const tableConfig = [
-      {header: 'Position', func: (player, i) => i + 1},
-      {header: 'Player', func: (player) => player.player_name},
-      {header: 'Previous Total', func: (player) => player.prevTotal},
-      {header: 'Current Points', func: (player) => player.currentPoints},
-      {header: 'Projected Points', func: (player) => player.projectedPoints},
-      {header: 'Current Total', func: (player) => player.prevTotal + player.currentPoints},
-      {header: 'Projected Total', func: (player) => player.prevTotal + player.projectedPoints},
+      classicTable.position,
+      classicTable.playerName,
+      classicTable.prevTotal,
+      classicTable.currPoints,
+      classicTable.projPoints,
+      classicTable.currTotal,
+      classicTable.projTotal
     ];
 
     return (

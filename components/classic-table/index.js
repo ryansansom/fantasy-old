@@ -1,6 +1,8 @@
 import Accordion from '../accordion';
 import PlayerList from '../player-list';
 import React, { Component, PropTypes } from 'react';
+import * as listConfig from '../../lib/table-config/player-list';
+import { getLength } from '../../lib/table-config/helpers';
 
 if (process.env.CLIENT_RENDER) {
   require('./styles.less')
@@ -19,47 +21,21 @@ class ClassicTable extends Component {
 
   renderHeader() {
     const { tableConfig } = this.props;
-    const len = tableConfig.reduce((prev, curr) => prev + (curr.colSpan ? curr.colSpan : 1), 0);
-    return <div className="header-row">{tableConfig.map(({header, colSpan}, i) => <div key={i} className={`col-${colSpan || 1}-of-${len} table-header table-format`}>{header}</div>)}</div>;
+    const len = getLength(tableConfig);
+    return <div className="header-row">
+      {tableConfig.map(({header, colSpan}, i) => <div key={i} className={`col-${colSpan || 1}-of-${len} table-header table-format`}>{header}</div>)}
+    </div>;
   }
 
   renderList() {
     const { entries, sortFunc, tableConfig } = this.props;
-    const len = tableConfig.reduce((prev, curr) => prev + (curr.colSpan ? curr.colSpan : 1), 0);
+    const len = getLength(tableConfig);
 
     const playerListConfig = [
-      {header: 'Position', func: (player) => {
-        switch (player.element_type) {
-          case 1:
-            return 'GK';
-          case 2:
-            return 'DEF';
-          case 3:
-            return 'MID';
-          case 4:
-            return 'FWD';
-        }
-      }},
-      {header: 'Player',
-        colSpan: 2,
-        func: (player) => {
-        let appendName = '';
-        if (player.is_captain) {
-          appendName = ' (C)';
-        } else if (player.is_vice_captain) {
-          appendName = ' (V)';
-        }
-
-        return player.name + appendName;
-      }},
-      {header: 'Points', func: (player) => player.points * player.multiplier},
-      {header: 'Bonus Points', func: (player) => {
-        if (player.game_points_finalised) {
-          return player.actual_bonus > 0 ? player.actual_bonus + ' (incl.)' : 0;
-        } else {
-          return player.provisional_bonus;
-        }
-      }}
+      listConfig.position,
+      listConfig.playerName,
+      listConfig.playerPoints,
+      listConfig.bonusPoints
     ];
 
     const entryList = entries

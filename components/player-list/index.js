@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import { getLength } from '../../lib/table-config/helpers';
 
 if (process.env.CLIENT_RENDER) {
   require('./styles.less')
@@ -12,13 +13,15 @@ class PlayerList extends Component {
 
   renderHeader() {
     const { listConfig } = this.props;
-    const len = listConfig.reduce((prev, curr) => prev + (curr.colSpan ? curr.colSpan : 1), 0);
-    return <div className="header-row">{listConfig.map(({header, colSpan}, i) => <div key={i} className={`col-${colSpan || 1}-of-${len} table-header`}>{header}</div>)}</div>;
+    const len = getLength(listConfig);
+    return <div className="header-row">
+      {listConfig.map(({header, colSpan}, i) => <div key={i} className={`col-${colSpan || 1}-of-${len} table-header`}>{header}</div>)}
+    </div>;
   }
 
   renderList(players) {
     const { listConfig } = this.props;
-    const len = listConfig.reduce((prev, curr) => prev + (curr.colSpan ? curr.colSpan : 1), 0);
+    const len = getLength(listConfig);
 
     const playerList = players
       .map((player, i) => {
