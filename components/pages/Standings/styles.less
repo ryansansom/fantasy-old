@@ -4,46 +4,12 @@
 .standings {
   * {
     text-align: center;
-    width: 100%;
   }
 
   .table-wrapper {
     padding-top: 10px;
-  }
-
-  table {
-    table-layout: fixed;
-    border-collapse: collapse;
+    max-width: 600px;
     margin: 0 auto;
-
-    td, th {
-      font-size: 0.55em;
-      line-height: 1.5em;
-      height: 30px;
-      padding: 2px;
-    }
-
-    th {
-      text-decoration: underline;
-    }
-
-    tbody tr:hover {
-      background-color: grey;
-      color: white;
-    }
-
-    tbody tr:nth-child(even) {
-      background-color: lightgrey;
-
-      &:hover {
-        background-color: grey;
-      }
-    }
-
-    thead tr {
-      background-color: seagreen;
-      color: lightcyan;
-    }
   }
 
   .league-name {
@@ -83,6 +49,7 @@
   background-color: lightgray;
   border-bottom: 1px solid darkgrey;
   z-index: 1;
+  width: 100%;
 }
 
 .standings--content {

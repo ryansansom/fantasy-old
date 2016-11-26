@@ -1,0 +1,19 @@
+// Grid generator
+.columns(@columns-to-span, @columns-total) {
+  display: inline-block;
+  width: (100% * @columns-to-span / @columns-total);
+}
+
+.columnGenerator (@index, @index2) when (@index <= @index2) {
+  .col-@{index}-of-@{index2} {
+    .columns(@index, @index2);
+  }
+  .columnGenerator(@index + 1, @index2);
+}
+
+.generateGrid (@max-grid) when (@max-grid <= 24) {
+  .columnGenerator(1, @max-grid);
+  .generateGrid(@max-grid + 1);
+}
+
+.generateGrid(1);

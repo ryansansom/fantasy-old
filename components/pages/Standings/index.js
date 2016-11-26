@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { mockFetch } from '../../../redux/actions';
 import { mockRealAPI } from '../../mock-api';
 import { getStandings } from '../../../lib/internal-api';
+import ClassicTable from '../../classic-table';
 
 const pageName = 'Standings';
 
@@ -20,41 +21,21 @@ class Standings extends Component {
     if (this.props.page !== pageName) this.props.mockFetch(this.props.params.leagueID ? getStandings(this.props.params.leagueID) : mockRealAPI(), pageName, true)
   }
 
-  renderTable() {
-    const { players } = this.props.standings;
-    const abc = players
-      .sort((a, b) => (b.prevTotal + b.currentPoints) - (a.prevTotal + a.currentPoints)) // Change when projected becomes optional
-      .map((player, i) => {
-      return (<tr key={player.entry}>
-        <td>{i + 1}</td>
-        <td>{player.player_name}</td>
-        <td>{player.prevTotal}</td>
-        <td>{player.currentPoints}</td>
-        <td>{player.projectedPoints}</td>
-        <td>{player.prevTotal + player.currentPoints}</td>
-        <td>{player.prevTotal + player.projectedPoints}</td>
-      </tr>)
-    });
-
-    return (<table>
-      <thead>
-        <tr>
-          <th>Position</th>
-          <th>Player</th>
-          <th>Previous Total</th>
-          <th>Current Points</th>
-          <th>Projected Points</th>
-          <th>Current Total</th>
-          <th>Projected Total</th>
-        </tr>
-      </thead>
-      <tbody>{abc}</tbody>
-    </table>)
-  }
-
   render() {
     const { standings } = this.props;
     const refreshLinkUrl = this.props.params.leagueID ? '/standings/' + this.props.params.leagueID : '/standings';
+
+    const sortFunc = (a, b) => (b.prevTotal + b.projectedPoints) - (a.prevTotal + a.projectedPoints);
+    const tableConfig = [
+      {header: 'Position', func: (player, i) => i + 1},
+      {header: 'Player', func: (player) => player.player_name},
+      {header: 'Previous Total', func: (player) => player.prevTotal},
+      {header: 'Current Points', func: (player) => player.currentPoints},
+      {header: 'Projected Points', func: (player) => player.projectedPoints},
+      {header: 'Current Total', func: (player) => player.prevTotal + player.currentPoints},
+      {header: 'Projected Total', func: (player) => player.prevTotal + player.projectedPoints},
+    ];
+
     return (
       <div className='standings'>
         <div className="standings--header">Welcome to the new, improved view of Fantasy Premier League</div>
@@ -70,7 +51,13 @@ class Standings extends Component {
               }}
               href={refreshLinkUrl}>Refresh</a>
             <div className="table-wrapper">
-              {this.props.updating ? <span>Updating...</span> : this.renderTable()}
+              {this.props.updating ?
+                <span>Updating...</span>
+                :
+                <ClassicTable
+                  entries={standings.players || standings.entries} // Future support for renaming the API field
+                  tableConfig={tableConfig}
+                  sortFunc={sortFunc} />}
             </div>
           </div>
         </div>
