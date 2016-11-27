@@ -63,7 +63,7 @@ class ClassicTable extends Component {
             classes="entry-li"
             title={entry.entry.toString()}
             header={entryRow}>
-            <PlayerList players={entry.players} />
+            <PlayerList accordionKey={entry.entry + "--configure"} players={entry.players} />
           </Accordion>
         )
       });
@@ -96,6 +96,7 @@ class ClassicTable extends Component {
     return (
       <div className="classic-standings">
         <ColumnFilters
+          accordionKey={"classic-table"}
           config={config}
           listConfig={this.state.tableConfig}
           toggle={::this.onFilterChange} />

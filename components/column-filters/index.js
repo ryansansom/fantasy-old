@@ -1,6 +1,5 @@
-import React, {
-  PropTypes,
-} from 'react';
+import Accordion from '../accordion';
+import React, { PropTypes } from 'react';
 
 if (process.env.CLIENT_RENDER) {
   require('./styles.less')
@@ -21,14 +20,19 @@ const ColumnFilters = (props) => {
       </span>
     </label>
   });
+
   return (
-    <div className="column-filters">
+    <Accordion
+      classes="column-filters"
+      header={<div className="configure-columns--toggle">Configure columns</div>}
+      title={props.accordionKey} >
       {columnContent}
-    </div>
+    </Accordion>
   );
 };
 
 ColumnFilters.propTypes = {
+  accordionKey: PropTypes.string.isRequired,
   config: PropTypes.object.isRequired,
   listConfig: PropTypes.array.isRequired,
   toggle: PropTypes.func.isRequired,

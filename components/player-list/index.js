@@ -76,6 +76,7 @@ class PlayerList extends Component {
     return (
       <div className="player-picks">
         <ColumnFilters
+          accordionKey={this.props.accordionKey}
           config={config}
           listConfig={this.state.listConfig}
           toggle={::this.onFilterChange} />
