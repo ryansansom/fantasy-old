@@ -1,5 +1,49 @@
+.configure--wrapper {
+  height: 100%;
+  width: 100%;
+  z-index: 10;
+  opacity: 0.5;
+  background-color: black;
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+@modal-height: 60%;
+
 .configure--modal {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: (100% - @modal-height) / 2;
+  height: @modal-height;
+  width: 100%;
+  z-index: 15;
+  padding: 20px;
+
+  .column-filters {
+    .accordion--content {
+      border-top: 1px solid grey;
+    }
+  }
+
   .modal--header {
+    margin: 10px 0;
+    font-size: 14px;
     text-decoration: underline;
+  }
+
+  .modal--wrapper {
+    max-width: 400px;
+    margin: 0 auto;
+    overflow: scroll;
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 15px;
+    height: 100%;
+    padding: 20px;
   }
 }
