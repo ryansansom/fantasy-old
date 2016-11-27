@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
+import ColumnFilters from '../column-filters';
 import { getLength } from '../../lib/table-config/helpers';
-import * as listConfig from '../../lib/table-config/player-list';
+import * as config from '../../lib/table-config/player-list';
 
 if (process.env.CLIENT_RENDER) {
   require('./styles.less')
@@ -43,43 +44,33 @@ class PlayerList extends Component {
     </ul>;
   }
 
-  onChange(e) {
-    const columnIndex = this.state.listConfig.findIndex(cfg => cfg.header === listConfig[e.target.value].header);
+  onFilterChange(e) {
+    const { listConfig } = this.state;
+    const columnIndex = listConfig.findIndex(cfg => cfg.header === config[e.target.value].header);
     if (columnIndex > -1) {
       e.target.checked = true;
-      this.state.listConfig.splice(columnIndex, 1);
+      listConfig.splice(columnIndex, 1);
       this.setState({
-        listConfig: this.state.listConfig
+        listConfig
       });
     } else {
       e.target.checked = false;
-      this.state.listConfig.push(listConfig[e.target.value]);
+      listConfig.push(config[e.target.value]);
       this.setState({
-        listConfig: this.state.listConfig
+        listConfig
       });
     }
-  }
-
-  renderFilters() {
-    const columnContent = Object.keys(listConfig).map(key => {
-      const columnConfig = listConfig[key];
-      return <label key={key}>
-        {columnConfig.header}
-        <input type="checkbox" onChange={::this.onChange} value={key} checked={!!this.state.listConfig.find(cfg => cfg.header === columnConfig.header)} />
-      </label>
-    });
-    return (
-      <div>
-        {columnContent}
-      </div>
-    );
   }
 
   render() {
     const { players: { picks, subs } } = this.props;
     return (
       <div className="player-picks">
-        {this.renderFilters()}
+        <ColumnFilters
+          config={config}
+          listConfig={this.state.listConfig}
+          toggle={::this.onFilterChange} />
+
         <h3 className="list-header">Players</h3>
         {this.renderHeader()}
         {this.renderList(picks)}
