@@ -1,4 +1,5 @@
 import Accordion from '../accordion';
+import ColumnFilters from '../column-filters';
 import { getLength } from '../../lib/table-config/helpers';
 import PlayerList from '../player-list';
 import React, { Component, PropTypes } from 'react';
@@ -28,8 +29,15 @@ class ClassicTable extends Component {
     ]
   };
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      tableConfig: props.tableConfig
+    };
+  }
+
   renderHeader() {
-    const { tableConfig } = this.props;
+    const { tableConfig } = this.state;
     const len = getLength(tableConfig);
     return <div className="header-row">
       {tableConfig.map(({header, colSpan}, i) => <div key={i} className={`col-${colSpan || 1}-of-${len} table-header table-format`}>{header}</div>)}
@@ -37,7 +45,8 @@ class ClassicTable extends Component {
   }
 
   renderList() {
-    const { entries, sortFunc, tableConfig } = this.props;
+    const { tableConfig } = this.state;
+    const { entries, sortFunc } = this.props;
     const len = getLength(tableConfig);
 
     const entryList = entries
@@ -65,9 +74,31 @@ class ClassicTable extends Component {
     );
   }
 
+  onFilterChange(e) {
+    const { tableConfig } = this.state;
+    const columnIndex = tableConfig.findIndex(cfg => cfg.header === config[e.target.value].header);
+    if (columnIndex > -1) {
+      e.target.checked = true;
+      tableConfig.splice(columnIndex, 1);
+      this.setState({
+        tableConfig
+      });
+    } else {
+      e.target.checked = false;
+      tableConfig.push(config[e.target.value]);
+      this.setState({
+        tableConfig
+      });
+    }
+  }
+
   render() {
     return (
       <div className="classic-standings">
+        <ColumnFilters
+          config={config}
+          listConfig={this.state.tableConfig}
+          toggle={::this.onFilterChange} />
         { this.renderHeader() }
         { this.renderList() }
       </div>
