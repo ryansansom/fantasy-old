@@ -35,7 +35,7 @@ class Standings extends Component {
             <h2>League Information</h2>
             <div className="league-name">{standings.leagueName}</div>
             <a
-              className="refresh-results"
+              className="refresh-results button"
               onClick={e => {
                 e.preventDefault();
                 return this.props.mockFetch(this.props.params.leagueID ? getStandings(this.props.params.leagueID) : mockRealAPI(), pageName, true);

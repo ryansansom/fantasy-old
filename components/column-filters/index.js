@@ -24,7 +24,7 @@ const ColumnFilters = (props) => {
   return (
     <Accordion
       classes="column-filters"
-      header={<div className="configure-columns--toggle">Configure columns</div>}
+      header={<div className="configure-columns--toggle button">Configure columns</div>}
       title={props.accordionKey} >
       {columnContent}
     </Accordion>
