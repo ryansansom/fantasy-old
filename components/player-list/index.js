@@ -9,8 +9,17 @@ if (process.env.CLIENT_RENDER) {
 
 class PlayerList extends Component {
   static propTypes = {
-    listConfig: PropTypes.array.isRequired,
+    listConfig: PropTypes.array,
     players: PropTypes.object.isRequired
+  };
+
+  static defaultProps = {
+    listConfig: [
+      config.position,
+      config.playerName,
+      config.playerPoints,
+      config.bonusPoints
+    ]
   };
 
   constructor(props) {

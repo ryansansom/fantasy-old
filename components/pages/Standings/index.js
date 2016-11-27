@@ -4,7 +4,6 @@ import { mockFetch } from '../../../redux/actions';
 import { mockRealAPI } from '../../mock-api';
 import { getStandings } from '../../../lib/internal-api';
 import ClassicTable from '../../classic-table';
-import * as classicTable from '../../../lib/table-config/classic-table';
 
 const pageName = 'Standings';
 
@@ -27,15 +26,6 @@ class Standings extends Component {
     const refreshLinkUrl = this.props.params.leagueID ? '/standings/' + this.props.params.leagueID : '/standings';
 
     const sortFunc = (a, b) => (b.prevTotal + b.projectedPoints) - (a.prevTotal + a.projectedPoints);
-    const tableConfig = [
-      classicTable.position,
-      classicTable.playerName,
-      classicTable.prevTotal,
-      classicTable.currPoints,
-      classicTable.projPoints,
-      classicTable.currTotal,
-      classicTable.projTotal
-    ];
 
     return (
       <div className='standings'>
@@ -57,7 +47,6 @@ class Standings extends Component {
                 :
                 <ClassicTable
                   entries={standings.players || standings.entries} // Future support for renaming the API field
-                  tableConfig={tableConfig}
                   sortFunc={sortFunc} />}
             </div>
           </div>
