@@ -21,20 +21,24 @@ class Standings extends Component {
     if (this.props.page !== pageName) this.props.mockFetch(this.props.params.leagueID ? getStandings(this.props.params.leagueID) : mockRealAPI(), pageName, true)
   }
 
+  constructor() {
+    super();
+    this.state = {
+      modalOpen: false
+    }
+  }
+
+  closeModal() {
+    this.setState({
+      modalOpen: false
+    });
+  }
+
   render() {
     const { standings } = this.props;
     const refreshLinkUrl = this.props.params.leagueID ? '/standings/' + this.props.params.leagueID : '/standings';
 
     const sortFunc = (a, b) => (b.prevTotal + b.projectedPoints) - (a.prevTotal + a.projectedPoints);
-    const tableConfig = [
-      {header: 'Position', func: (player, i) => i + 1},
-      {header: 'Player', func: (player) => player.player_name},
-      {header: 'Previous Total', func: (player) => player.prevTotal},
-      {header: 'Current Points', func: (player) => player.currentPoints},
-      {header: 'Projected Points', func: (player) => player.projectedPoints},
-      {header: 'Current Total', func: (player) => player.prevTotal + player.currentPoints},
-      {header: 'Projected Total', func: (player) => player.prevTotal + player.projectedPoints},
-    ];
 
     return (
       <div className='standings'>
@@ -43,20 +47,34 @@ class Standings extends Component {
           <div>
             <h2>League Information</h2>
             <div className="league-name">{standings.leagueName}</div>
-            <a
-              className="refresh-results"
-              onClick={e => {
-                e.preventDefault();
-                return this.props.mockFetch(this.props.params.leagueID ? getStandings(this.props.params.leagueID) : mockRealAPI(), pageName, true);
-              }}
-              href={refreshLinkUrl}>Refresh</a>
+            <div className="col-1-of-2">
+              <a
+                className="refresh-results table-button button"
+                onClick={e => {
+                  e.preventDefault();
+                  return this.props.mockFetch(this.props.params.leagueID ? getStandings(this.props.params.leagueID) : mockRealAPI(), pageName, true);
+                }}
+                href={refreshLinkUrl}>
+                Refresh
+              </a>
+            </div>
+            <div className="col-1-of-2">
+              <a
+                className="table-button button"
+                onClick={() => {
+                  this.setState({modalOpen: true});
+                }}>
+                Configure Columns
+              </a>
+            </div>
             <div className="table-wrapper">
               {this.props.updating ?
                 <span>Updating...</span>
                 :
                 <ClassicTable
                   entries={standings.players || standings.entries} // Future support for renaming the API field
-                  tableConfig={tableConfig}
+                  modalOpen={this.state.modalOpen}
+                  closeModal={::this.closeModal}
                   sortFunc={sortFunc} />}
             </div>
           </div>

@@ -39,7 +39,6 @@ module.exports = {
       filename: 'common.js'
     }),
     new webpack.optimize.OccurrenceOrderPlugin(true),
-    // Uglify on prod. Need to add.
     // new webpack.optimize.UglifyJsPlugin({minimize: true}),
     new ExtractTextPlugin('[name].css', {
       allChunks: true

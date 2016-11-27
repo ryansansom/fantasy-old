@@ -8,7 +8,6 @@
 
   .table-wrapper {
     padding-top: 10px;
-    max-width: 600px;
     margin: 0 auto;
   }
 
@@ -16,25 +15,11 @@
     text-decoration: underline;
   }
 
-  .refresh-results {
+  .table-button {
     margin: 10px auto 0;
-    text-decoration: none;
-    padding: 5px;
-    width: 100px;
-    display: block;
-    position: relative;
-    border: 1px solid darkgreen;
-    color: black;
-    background-color: darkseagreen;
-
-    &:hover {
-      background-color: lightgrey;
-    }
-
-    &:visited {
-      text-decoration: none;
-      color: black;
-    }
+    width: 150px;
+    font-size: 12px;
+    padding: 10px;
   }
 }
 
@@ -54,4 +39,6 @@
 
 .standings--content {
   padding: (@header-height + @header-padding) @header-padding @header-padding;
+  max-width: 600px;
+  margin: 0 auto;
 }
