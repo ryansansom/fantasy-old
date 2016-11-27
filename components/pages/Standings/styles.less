@@ -8,7 +8,6 @@
 
   .table-wrapper {
     padding-top: 10px;
-    max-width: 600px;
     margin: 0 auto;
   }
 
@@ -16,9 +15,11 @@
     text-decoration: underline;
   }
 
-  .refresh-results {
+  .table-button {
     margin: 10px auto 0;
-    width: 100px;
+    width: 150px;
+    font-size: 12px;
+    padding: 10px;
   }
 }
 
@@ -38,4 +39,41 @@
 
 .standings--content {
   padding: (@header-height + @header-padding) @header-padding @header-padding;
+  max-width: 600px;
+  margin: 0 auto;
 }
+
+.configure--wrapper {
+  height: 100%;
+  width: 100%;
+  z-index: 10;
+  opacity: 0.5;
+  background-color: black;
+  display: block;
+  position: fixed;
+  top: 0;
+}
+
+@modal-height: 60%;
+
+.configure--modal {
+  position: fixed;
+  top: (100% - @modal-height) / 2;
+  height: @modal-height;
+  width: 100%;
+  z-index: 15;
+  padding: 20px;
+
+  .modal--wrapper {
+    max-width: 400px;
+    margin: 0 auto;
+    overflow: hidden;
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 15px;
+    height: 100%;
+    padding: 20px;
+  }
+}
+
+
