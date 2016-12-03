@@ -11,6 +11,16 @@ if (process.env.CLIENT_RENDER) {
   require('./styles.less')
 }
 
+function checkConfigChange(oldConfig, newConfig) {
+  if (oldConfig.length !== newConfig.length) return true;
+
+  for (let i = 0, len = oldConfig.length; i < len; i++) {
+    if (oldConfig[i].header !== newConfig[i].header) return true;
+  }
+
+  return false;
+}
+
 class Standings extends Component {
   static fetchData(dispatch, { leagueID }) {
     return mockFetch(leagueID ? getStandings(leagueID) : mockRealAPI(), pageName, true)(dispatch);
@@ -29,8 +39,11 @@ class Standings extends Component {
   }
 
   closeModal(body) {
-    // Compare new config with old and post if changed. ==> this.props.columns vs. body
-    postColumnCookie(body.newConfig).then(() => true);
+    // Compare new config with old and post if changed.
+    const tableColChange = checkConfigChange(this.props.columns.tableCols, body.newConfig.tableCols);
+    const playerColChange = checkConfigChange(this.props.columns.playerCols, body.newConfig.playerCols);
+    if (tableColChange || playerColChange) postColumnCookie(body.newConfig).then(() => true);
+    
     this.setState({
       modalOpen: false
     });

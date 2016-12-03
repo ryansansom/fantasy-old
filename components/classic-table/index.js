@@ -28,22 +28,7 @@ class ClassicTable extends Component {
   };
 
   static defaultProps = {
-    sortFunc: (a, b) => (b.prevTotal + b.projectedPoints) - (a.prevTotal + a.projectedPoints),
-    tableConfig: [
-      classicTableConfig.position,
-      classicTableConfig.playerName,
-      classicTableConfig.prevTotal,
-      classicTableConfig.currPoints,
-      classicTableConfig.projPoints,
-      classicTableConfig.currTotal,
-      classicTableConfig.projTotal
-    ],
-    listConfig: [
-      playerListConfig.position,
-      playerListConfig.playerName,
-      playerListConfig.playerPoints,
-      playerListConfig.bonusPoints
-    ]
+    sortFunc: (a, b) => (b.prevTotal + b.projectedPoints) - (a.prevTotal + a.projectedPoints)
   };
 
   constructor(props) {
