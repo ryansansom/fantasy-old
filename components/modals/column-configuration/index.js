@@ -8,13 +8,15 @@ if (process.env.CLIENT_RENDER) {
 }
 
 const ColumnModal = (props) => {
+  const closeModal = () => {
+    props.closeModal({
+      newConfig: {tableCols: props.tableConfig, playerCols: props.listConfig}
+    });
+  };
+
   return (
     <div>
-      <div className="configure--wrapper" onClick={() => {
-        props.closeModal({
-          newConfig: {tableCols: props.tableConfig, playerCols: props.listConfig}
-        });
-      }} />
+      <div className="configure--wrapper" onClick={closeModal} />
       <div className="configure--modal">
         <div className="modal--wrapper">
           <h3 className="modal--header">Classic Table Column Configuration</h3>
@@ -31,12 +33,7 @@ const ColumnModal = (props) => {
             config={playerListConfig}
             listConfig={props.listConfig}
             toggle={props.onListConfigChange} />
-          <a
-            onClick={() => {
-              props.closeModal({
-                newConfig: {tableCols: props.tableConfig, playerCols: props.listConfig}
-              });
-            }}>
+          <a onClick={closeModal}>
             Close
           </a>
         </div>

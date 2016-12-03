@@ -29,6 +29,7 @@ class Standings extends Component {
   }
 
   closeModal(body) {
+    // Compare new config with old and post if changed. ==> this.props.columns vs. body
     postColumnCookie(body.newConfig).then(() => true);
     this.setState({
       modalOpen: false
