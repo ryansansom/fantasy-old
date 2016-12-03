@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { mockFetch } from '../../../redux/actions';
 import { mockRealAPI } from '../../mock-api';
-import { getStandings } from '../../../lib/internal-api';
+import { getStandings, postColumnCookie } from '../../../lib/internal-api';
 import ClassicTable from '../../classic-table';
 
 const pageName = 'Standings';
@@ -28,7 +28,8 @@ class Standings extends Component {
     }
   }
 
-  closeModal() {
+  closeModal(body) {
+    postColumnCookie(body.newConfig).then(() => true);
     this.setState({
       modalOpen: false
     });
@@ -75,7 +76,10 @@ class Standings extends Component {
                   entries={standings.players || standings.entries} // Future support for renaming the API field
                   modalOpen={this.state.modalOpen}
                   closeModal={::this.closeModal}
-                  sortFunc={sortFunc} />}
+                  tableConfig={this.props.columns.tableCols}
+                  listConfig={this.props.columns.playerCols}
+                  sortFunc={sortFunc} />
+              }
             </div>
           </div>
         </div>
@@ -84,8 +88,8 @@ class Standings extends Component {
   }
 }
 
-function mapStateToProps({ standings, updating, page }) {
-  return { standings, updating, page }
+function mapStateToProps({ standings, updating, page, columns }) {
+  return { standings, updating, page, columns }
 }
 
 export default connect(mapStateToProps, { mockFetch })(Standings)

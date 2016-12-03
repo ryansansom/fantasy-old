@@ -10,21 +10,35 @@ if (process.env.CLIENT_RENDER) {
 const ColumnModal = (props) => {
   return (
     <div>
-      <div className="configure--wrapper" onClick={props.closeModal} />
+      <div className="configure--wrapper" onClick={() => {
+        props.closeModal({
+          newConfig: {tableCols: props.tableConfig, playerCols: props.listConfig}
+        });
+      }} />
       <div className="configure--modal">
         <div className="modal--wrapper">
           <h3 className="modal--header">Classic Table Column Configuration</h3>
+          <p className="modal--content">Changes are applied and saved automatically</p>
           <ColumnFilters
             accordionKey="classic-table"
             config={classicTableConfig}
             listConfig={props.tableConfig}
             toggle={props.onTableConfigChange} />
           <h3 className="modal--header">Player List Column Configuration</h3>
+          <p className="modal--content">Changes are applied and saved automatically</p>
           <ColumnFilters
             accordionKey="player-list"
             config={playerListConfig}
             listConfig={props.listConfig}
             toggle={props.onListConfigChange} />
+          <a
+            onClick={() => {
+              props.closeModal({
+                newConfig: {tableCols: props.tableConfig, playerCols: props.listConfig}
+              });
+            }}>
+            Close
+          </a>
         </div>
       </div>
     </div>
