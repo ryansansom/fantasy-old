@@ -15,6 +15,10 @@ export function decrement() {
   return { type: DECREMENT }
 }
 
+export function updateCols(cols) {
+  return { type: COLUMNS, value: cols }
+}
+
 export function modalState(modalName, type = 'OPEN', action) {
   return (dispatch) => {
     if (type === 'CLOSE') {
@@ -26,7 +30,7 @@ export function modalState(modalName, type = 'OPEN', action) {
     if (action) {
       action
         .then(cols => {
-          dispatch({ type: COLUMNS, value: cols });
+          // dispatch({ type: COLUMNS, value: cols });
         });
     }
   };
