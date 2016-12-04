@@ -41,7 +41,6 @@ function counterApp(state = initialState, action) {
         modalOpen: ''
       });
     case COLUMNS:
-      console.log('RS2016', action.value);
       return Object.assign({}, state, {
         columns: action.value
       });

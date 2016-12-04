@@ -16,7 +16,6 @@ export function decrement() {
 }
 
 export function modalState(modalName, type = 'OPEN', action) {
-  console.log('RS2016', 'action', action);
   return (dispatch) => {
     if (type === 'CLOSE') {
       dispatch({ type: CLOSE_MODAL });
@@ -27,8 +26,7 @@ export function modalState(modalName, type = 'OPEN', action) {
     if (action) {
       action
         .then(cols => {
-          console.log('RS2016', 'disp cols', cols);
-          dispatch({ type: COLUMNS, value: cols })
+          dispatch({ type: COLUMNS, value: cols });
         });
     }
   };

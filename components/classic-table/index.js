@@ -44,7 +44,6 @@ class ClassicTable extends Component {
 
   constructor(props) {
     super(props);
-    console.log('RS2016', 'constructor', props.columns);
     this.state = {
       listConfig: buildConfigFromProps(playerListConfig, props.columns.playerCols),
       tableConfig: buildConfigFromProps(classicTableConfig, props.columns.tableCols)
@@ -53,7 +52,6 @@ class ClassicTable extends Component {
 
   closeModal(body) {
     // Compare new config with old and post if changed.
-    console.log('RS2016', this.props.columns.tableCols, body.newConfig.tableCols);
     const tableColChange = checkConfigChange(this.props.columns.tableCols, body.newConfig.tableCols);
     const playerColChange = checkConfigChange(this.props.columns.playerCols, body.newConfig.playerCols);
     let action;
@@ -152,8 +150,8 @@ class ClassicTable extends Component {
   }
 }
 
-function mapStateToProps({ columns, modalOpen }) {
-  return { columns, modalOpen }
+function mapStateToProps({ columns, oldColumns, modalOpen }) {
+  return { columns, oldColumns, modalOpen }
 }
 
 export default connect(mapStateToProps, { modalState })(ClassicTable);
