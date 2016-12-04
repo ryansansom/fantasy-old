@@ -51,13 +51,13 @@ class ClassicTable extends Component {
   }
 
   closeModal(body) {
-    // Compare new config with old and post if changed.
-    const tableColChange = checkConfigChange(this.props.columns.tableCols, body.newConfig.tableCols);
-    const playerColChange = checkConfigChange(this.props.columns.playerCols, body.newConfig.playerCols);
-    let action;
-    if (tableColChange || playerColChange) action = postColumnCookie(body.newConfig).then(() => body.newConfig);
+    // Compare new config with old and post if changed. - NOT WORKING, PROPS SEEM TO UPDATE MID STATE CHANGE
+    // const tableColChange = checkConfigChange(this.props.columns.tableCols, body.newConfig.tableCols);
+    // const playerColChange = checkConfigChange(this.props.columns.playerCols, body.newConfig.playerCols);
+    // let action;
+    // if (tableColChange || playerColChange) action = postColumnCookie(body.newConfig).then(() => body.newConfig);
 
-    this.props.modalState('', 'CLOSE', action);
+    this.props.modalState('', 'CLOSE', postColumnCookie(body.newConfig).then(() => body.newConfig));
   }
 
   renderHeader() {
@@ -150,8 +150,8 @@ class ClassicTable extends Component {
   }
 }
 
-function mapStateToProps({ columns, oldColumns, modalOpen }) {
-  return { columns, oldColumns, modalOpen }
+function mapStateToProps({ columns, modalOpen }) {
+  return { columns, modalOpen }
 }
 
 export default connect(mapStateToProps, { modalState })(ClassicTable);
