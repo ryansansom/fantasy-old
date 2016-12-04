@@ -29,9 +29,7 @@ export function modalState(modalName, type = 'OPEN', action) {
 
     if (action) {
       action
-        .then(cols => {
-          // dispatch({ type: COLUMNS, value: cols });
-        });
+        .then(() => true);
     }
   };
 }

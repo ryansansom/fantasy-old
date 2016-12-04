@@ -56,7 +56,7 @@ class ClassicTable extends Component {
     // let action;
     // if (tableColChange || playerColChange) action = postColumnCookie(body.newConfig).then(() => body.newConfig);
 
-    this.props.modalState('', 'CLOSE', postColumnCookie(body.newConfig).then(() => body.newConfig));
+    this.props.modalState('', 'CLOSE', postColumnCookie(body.newConfig));
   }
 
   renderHeader() {
