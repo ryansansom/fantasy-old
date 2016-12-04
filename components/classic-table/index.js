@@ -10,6 +10,13 @@ if (process.env.CLIENT_RENDER) {
   require('./styles.less')
 }
 
+function buildConfigFromProps(config, arr) {
+  return arr.map(cfg => {
+    const matchKey = Object.keys(config).find(cfgKey => config[cfgKey].header === cfg.header);
+    return config[matchKey];
+  });
+}
+
 class ClassicTable extends Component {
   static propTypes = {
     closeModal: PropTypes.func.isRequired,
@@ -21,29 +28,14 @@ class ClassicTable extends Component {
   };
 
   static defaultProps = {
-    sortFunc: (a, b) => (b.prevTotal + b.projectedPoints) - (a.prevTotal + a.projectedPoints),
-    tableConfig: [
-      classicTableConfig.position,
-      classicTableConfig.playerName,
-      classicTableConfig.prevTotal,
-      classicTableConfig.currPoints,
-      classicTableConfig.projPoints,
-      classicTableConfig.currTotal,
-      classicTableConfig.projTotal
-    ],
-    listConfig: [
-      playerListConfig.position,
-      playerListConfig.playerName,
-      playerListConfig.playerPoints,
-      playerListConfig.bonusPoints
-    ]
+    sortFunc: (a, b) => (b.prevTotal + b.projectedPoints) - (a.prevTotal + a.projectedPoints)
   };
 
   constructor(props) {
     super(props);
     this.state = {
-      listConfig: props.listConfig,
-      tableConfig: props.tableConfig
+      listConfig: buildConfigFromProps(playerListConfig, props.listConfig),
+      tableConfig: buildConfigFromProps(classicTableConfig, props.tableConfig)
     };
   }
 
