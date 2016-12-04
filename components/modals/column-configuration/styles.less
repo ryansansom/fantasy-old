@@ -39,12 +39,13 @@
   .modal--wrapper {
     max-width: 400px;
     margin: 0 auto;
-    overflow: scroll;
+    overflow-y: auto;
     background-color: white;
     border: 1px solid black;
     border-radius: 15px;
     height: 100%;
     padding: 20px;
+    position: relative;
   }
 
   .modal--content {
@@ -54,8 +55,8 @@
 
   a {
     position: absolute;
-    right: 20px;
-    top: 20px;
+    right: 0;
+    top: 0;
     margin: 10px;
     padding: 4px;
     font-size: 10px;
