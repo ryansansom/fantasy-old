@@ -1,4 +1,4 @@
-const allowedCookieKeys = ['tableCols', 'playerCols'];
+import { columnCookieFilter } from '../../helpers/cookies';
 
 export default (req, res) => {
   const columnCookie = columnCookieFilter(req.cookies.columns);
@@ -10,23 +10,3 @@ export default (req, res) => {
 
   return res.json({test: true});
 };
-
-function columnCookieFilter(cookie = {}) {
-  let parsedCookie = {};
-  try {
-    if (typeof cookie !== 'object') {
-      parsedCookie = JSON.parse(cookie);
-    } else {
-      parsedCookie = cookie;
-    }
-  } catch (e) {
-    console.error('RS2016', 'Invalid cookie value'); // eslint-disable-line no-console
-  }
-
-  let newCookie = {};
-  Object.keys(parsedCookie).forEach(key => {
-    if (allowedCookieKeys.find(allowedKey => allowedKey === key)) newCookie[key] = parsedCookie[key];
-  });
-
-  return newCookie;
-}
