@@ -43,7 +43,7 @@ class Standings extends Component {
     const tableColChange = checkConfigChange(this.props.columns.tableCols, body.newConfig.tableCols);
     const playerColChange = checkConfigChange(this.props.columns.playerCols, body.newConfig.playerCols);
     if (tableColChange || playerColChange) postColumnCookie(body.newConfig).then(() => true);
-    
+
     this.setState({
       modalOpen: false
     });
