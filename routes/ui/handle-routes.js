@@ -24,7 +24,7 @@ export default (req, res) => {
       res.redirect(302, redirectLocation.pathname + redirectLocation.search)
     } else if (renderProps) {
       const { components } = renderProps;
-      let store = createStore(counterApp, {columns: columnCookieFilter(req.cookies.columns)}, applyMiddleware(thunkMiddleware));
+      let store = createStore(counterApp, {columns: columnCookieFilter(req.cookies.columns), modalOpen: ''}, applyMiddleware(thunkMiddleware));
       const options = { leagueID: renderProps.params.leagueID };
       components[components.length - 1].fetchData(store.dispatch, options)
         .then(() => {

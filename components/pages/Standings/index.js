@@ -1,24 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { mockFetch } from '../../../redux/actions';
+import { mockFetch, modalState } from '../../../redux/actions';
 import { mockRealAPI } from '../../mock-api';
-import { getStandings, postColumnCookie } from '../../../lib/internal-api';
+import { getStandings } from '../../../lib/internal-api';
 import ClassicTable from '../../classic-table';
 
 const pageName = 'Standings';
 
 if (process.env.CLIENT_RENDER) {
   require('./styles.less')
-}
-
-function checkConfigChange(oldConfig, newConfig) {
-  if (oldConfig.length !== newConfig.length) return true;
-
-  for (let i = 0, len = oldConfig.length; i < len; i++) {
-    if (oldConfig[i].header !== newConfig[i].header) return true;
-  }
-
-  return false;
 }
 
 class Standings extends Component {
@@ -29,24 +19,6 @@ class Standings extends Component {
   componentDidMount() {
     document.title = pageName;
     if (this.props.page !== pageName) this.props.mockFetch(this.props.params.leagueID ? getStandings(this.props.params.leagueID) : mockRealAPI(), pageName, true)
-  }
-
-  constructor() {
-    super();
-    this.state = {
-      modalOpen: false
-    }
-  }
-
-  closeModal(body) {
-    // Compare new config with old and post if changed.
-    const tableColChange = checkConfigChange(this.props.columns.tableCols, body.newConfig.tableCols);
-    const playerColChange = checkConfigChange(this.props.columns.playerCols, body.newConfig.playerCols);
-    if (tableColChange || playerColChange) postColumnCookie(body.newConfig).then(() => true);
-
-    this.setState({
-      modalOpen: false
-    });
   }
 
   render() {
@@ -77,7 +49,7 @@ class Standings extends Component {
               <a
                 className="configure-button table-button button"
                 onClick={() => {
-                  this.setState({modalOpen: true});
+                  this.props.modalState('columns');
                 }}>
                 Configure Columns
               </a>
@@ -88,10 +60,6 @@ class Standings extends Component {
                 :
                 <ClassicTable
                   entries={standings.players || standings.entries} // Future support for renaming the API field
-                  modalOpen={this.state.modalOpen}
-                  closeModal={::this.closeModal}
-                  tableConfig={this.props.columns.tableCols}
-                  listConfig={this.props.columns.playerCols}
                   sortFunc={sortFunc} />
               }
             </div>
@@ -102,8 +70,8 @@ class Standings extends Component {
   }
 }
 
-function mapStateToProps({ standings, updating, page, columns }) {
-  return { standings, updating, page, columns }
+function mapStateToProps({ standings, updating, page }) {
+  return { standings, updating, page }
 }
 
-export default connect(mapStateToProps, { mockFetch })(Standings)
+export default connect(mapStateToProps, { mockFetch, modalState })(Standings)

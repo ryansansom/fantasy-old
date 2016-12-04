@@ -1,4 +1,7 @@
 import Accordion from '../accordion';
+import { connect } from 'react-redux';
+import { modalState } from '../../redux/actions';
+import { postColumnCookie } from '../../lib/internal-api';
 import { getLength } from '../../lib/table-config/helpers';
 import PlayerList from '../player-list';
 import React, { Component, PropTypes } from 'react';
@@ -17,14 +20,22 @@ function buildConfigFromProps(config, arr) {
   });
 }
 
+function checkConfigChange(oldConfig, newConfig) {
+  if (oldConfig.length !== newConfig.length) return true;
+
+  for (let i = 0, len = oldConfig.length; i < len; i++) {
+    if (oldConfig[i].header !== newConfig[i].header) return true;
+  }
+
+  return false;
+}
+
 class ClassicTable extends Component {
   static propTypes = {
-    closeModal: PropTypes.func.isRequired,
+    columns: PropTypes.object.isRequired, // Could do shape...
     entries: PropTypes.array.isRequired,
-    modalOpen: PropTypes.bool.isRequired,
-    sortFunc: PropTypes.func,
-    tableConfig: PropTypes.array,
-    listConfig: PropTypes.array
+    modalOpen: PropTypes.string.isRequired,
+    sortFunc: PropTypes.func
   };
 
   static defaultProps = {
@@ -33,10 +44,22 @@ class ClassicTable extends Component {
 
   constructor(props) {
     super(props);
+    console.log('RS2016', 'constructor', props.columns);
     this.state = {
-      listConfig: buildConfigFromProps(playerListConfig, props.listConfig),
-      tableConfig: buildConfigFromProps(classicTableConfig, props.tableConfig)
+      listConfig: buildConfigFromProps(playerListConfig, props.columns.playerCols),
+      tableConfig: buildConfigFromProps(classicTableConfig, props.columns.tableCols)
     };
+  }
+
+  closeModal(body) {
+    // Compare new config with old and post if changed.
+    console.log('RS2016', this.props.columns.tableCols, body.newConfig.tableCols);
+    const tableColChange = checkConfigChange(this.props.columns.tableCols, body.newConfig.tableCols);
+    const playerColChange = checkConfigChange(this.props.columns.playerCols, body.newConfig.playerCols);
+    let action;
+    if (tableColChange || playerColChange) action = postColumnCookie(body.newConfig).then(() => body.newConfig);
+
+    this.props.modalState('', 'CLOSE', action);
   }
 
   renderHeader() {
@@ -119,7 +142,7 @@ class ClassicTable extends Component {
         { this.renderHeader() }
         { this.renderList() }
         {this.props.modalOpen ? <ColumnModal
-          closeModal={this.props.closeModal}
+          closeModal={::this.closeModal}
           onTableConfigChange={::this.onTableConfigChange}
           onListConfigChange={::this.onListConfigChange}
           listConfig={this.state.listConfig}
@@ -129,4 +152,8 @@ class ClassicTable extends Component {
   }
 }
 
-export default ClassicTable;
+function mapStateToProps({ columns, modalOpen }) {
+  return { columns, modalOpen }
+}
+
+export default connect(mapStateToProps, { modalState })(ClassicTable);

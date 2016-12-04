@@ -3,6 +3,9 @@ export const DECREMENT = 'decrement';
 export const NEWCOUNT = 'newcount';
 export const UPDATING = 'updating';
 export const REAL_DATA = 'realData';
+export const OPEN_MODAL = 'openModal';
+export const CLOSE_MODAL = 'closeModal';
+export const COLUMNS = 'columns';
 
 export function increment() {
   return { type: INCREMENT }
@@ -10,6 +13,25 @@ export function increment() {
 
 export function decrement() {
   return { type: DECREMENT }
+}
+
+export function modalState(modalName, type = 'OPEN', action) {
+  console.log('RS2016', 'action', action);
+  return (dispatch) => {
+    if (type === 'CLOSE') {
+      dispatch({ type: CLOSE_MODAL });
+    } else {
+      dispatch({ type: OPEN_MODAL, value: modalName });
+    }
+
+    if (action) {
+      action
+        .then(cols => {
+          console.log('RS2016', 'disp cols', cols);
+          dispatch({ type: COLUMNS, value: cols })
+        });
+    }
+  };
 }
 
 export function mockFetch(method, page, real = false) {
