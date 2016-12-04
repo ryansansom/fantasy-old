@@ -9,7 +9,7 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import counterApp from '../../redux/reducers';
-import { columnCookieFilter } from '../../helpers/cookies';
+import { getInitialState } from '../../redux/initial-state';
 
 const layoutLoc = path.join(__dirname, '../../views/layout.pug');
 const masterLayout = fs.readFileSync(layoutLoc, 'utf8');
@@ -24,7 +24,7 @@ export default (req, res) => {
       res.redirect(302, redirectLocation.pathname + redirectLocation.search)
     } else if (renderProps) {
       const { components } = renderProps;
-      let store = createStore(counterApp, {columns: columnCookieFilter(req.cookies.columns)}, applyMiddleware(thunkMiddleware));
+      let store = createStore(counterApp, getInitialState(req), applyMiddleware(thunkMiddleware));
       const options = { leagueID: renderProps.params.leagueID };
       components[components.length - 1].fetchData(store.dispatch, options)
         .then(() => {

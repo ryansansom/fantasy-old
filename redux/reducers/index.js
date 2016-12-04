@@ -1,4 +1,4 @@
-import { INCREMENT, DECREMENT, NEWCOUNT, UPDATING, REAL_DATA } from '../actions';
+import { INCREMENT, DECREMENT, NEWCOUNT, UPDATING, REAL_DATA, OPEN_MODAL, CLOSE_MODAL, COLUMNS } from '../actions';
 
 const initialState = {
   count: 0,
@@ -31,6 +31,18 @@ function counterApp(state = initialState, action) {
       return Object.assign({}, state, {
         updating: false,
         standings: action.value
+      });
+    case OPEN_MODAL:
+      return Object.assign({}, state, {
+        modalOpen: action.value
+      });
+    case CLOSE_MODAL:
+      return Object.assign({}, state, {
+        modalOpen: ''
+      });
+    case COLUMNS:
+      return Object.assign({}, state, {
+        columns: action.value
       });
     default:
       return state
