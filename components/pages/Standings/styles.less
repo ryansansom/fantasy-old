@@ -23,6 +23,21 @@
   }
 }
 
+// no-js styles applicable whilst there is no support for column configuration in non-js
+.no-js {
+  .standings {
+    .refresh-results--wrapper {
+      &.col-1-of-2 {
+        width: 100%;
+      }
+    }
+    
+    .configure-button--wrapper {
+      display: none;
+    }
+  }
+}
+
 .standings--header {
   padding: @header-padding;
   height: @header-height;

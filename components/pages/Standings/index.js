@@ -62,7 +62,7 @@ class Standings extends Component {
           <div>
             <h2>League Information</h2>
             <div className="league-name">{standings.leagueName}</div>
-            <div className="col-1-of-2">
+            <div className="refresh-results--wrapper col-1-of-2">
               <a
                 className="refresh-results table-button button"
                 onClick={e => {
@@ -73,9 +73,9 @@ class Standings extends Component {
                 Refresh
               </a>
             </div>
-            <div className="col-1-of-2">
+            <div className="configure-button--wrapper col-1-of-2">
               <a
-                className="table-button button"
+                className="configure-button table-button button"
                 onClick={() => {
                   this.setState({modalOpen: true});
                 }}>
