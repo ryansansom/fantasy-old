@@ -27,7 +27,7 @@ class About extends React.Component {
       :
       <div className='about'>
         <span>Go to...</span>
-        <Link to='/'>Home</Link>
+        <Link to='/first'>Home</Link>
         <span>{`I have ${this.props.count} items in my count`}</span>
         <button onClick={() => this.props.mockFetch(mockAPI(20), pageName)}>Refresh</button>
       </div>)

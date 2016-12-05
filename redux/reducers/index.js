@@ -1,4 +1,4 @@
-import { INCREMENT, DECREMENT, NEWCOUNT, UPDATING, REAL_DATA, OPEN_MODAL, CLOSE_MODAL, COLUMNS } from '../actions';
+import { INCREMENT, DECREMENT, NEWCOUNT, UPDATING, REAL_DATA, OPEN_MODAL, CLOSE_MODAL, COLUMNS, PAGE } from '../actions';
 
 const initialState = {
   count: 0,
@@ -25,6 +25,10 @@ function counterApp(state = initialState, action) {
     case UPDATING:
       return Object.assign({}, state, {
         updating: true,
+        page: action.page
+      });
+    case PAGE:
+      return Object.assign({}, state, {
         page: action.page
       });
     case REAL_DATA:

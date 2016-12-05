@@ -6,6 +6,7 @@ export const REAL_DATA = 'realData';
 export const OPEN_MODAL = 'openModal';
 export const CLOSE_MODAL = 'closeModal';
 export const COLUMNS = 'columns';
+export const PAGE = 'page';
 
 export function increment() {
   return { type: INCREMENT }
@@ -17,6 +18,10 @@ export function decrement() {
 
 export function updateCols(cols) {
   return { type: COLUMNS, value: cols }
+}
+
+export function updatePage(page) {
+  return { type: PAGE, page }
 }
 
 export function modalState(modalName, type = 'OPEN', action) {
