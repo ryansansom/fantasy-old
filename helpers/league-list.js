@@ -1,4 +1,5 @@
-export function leagueListCookie(req, res, data) {
+export function leagueListCookie(req, data) {
+  // Read info from cookie, if error, set as blank rather than throw.
   let parsedCookie;
   try {
     parsedCookie = JSON.parse(req.cookies['league_list']);
@@ -7,11 +8,12 @@ export function leagueListCookie(req, res, data) {
   }
 
   if (data) {
-    // Check for duplicates, with replacements
-    const existIndex = parsedCookie.findIndex(league => league.leagueID === data.leagueId);
+    // Check for duplicates, and remove if matched one that already exists
+    const existIndex = parsedCookie.findIndex(league => league.leagueId === data.leagueId);
     if (existIndex > -1) parsedCookie.splice(existIndex, 1);
 
-    parsedCookie.unshift({leagueID: data.leagueId, leagueName: data.leagueName});
+    // Add the league to the list
+    parsedCookie.unshift({leagueId: data.leagueId, leagueName: data.leagueName});
   }
 
   return parsedCookie;

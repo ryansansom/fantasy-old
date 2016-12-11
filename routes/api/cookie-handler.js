@@ -1,4 +1,5 @@
 import { columnCookieFilter } from '../../helpers/cookies';
+import { cookieOptions } from '../../constants/cookie-settings';
 
 export default (req, res) => {
   const columnCookie = columnCookieFilter(req.cookies.columns);
@@ -6,7 +7,7 @@ export default (req, res) => {
 
   const newCookie = Object.assign({}, columnCookie, columnBody);
 
-  res.cookie('columns', JSON.stringify(newCookie), { maxAge: 365 * 24 * 60 * 60 * 1000, httpOnly: true });
+  res.cookie('columns', JSON.stringify(newCookie), cookieOptions);
 
   return res.status(204).end();
 };

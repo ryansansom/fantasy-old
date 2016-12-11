@@ -12,6 +12,7 @@ import counterApp from '../../redux/reducers';
 import { getInitialState } from '../../redux/initial-state';
 import { REAL_DATA } from '../../redux/actions';
 import { leagueListCookie } from '../../helpers/league-list';
+import { cookieOptions } from '../../constants/cookie-settings';
 
 const layoutLoc = path.join(__dirname, '../../views/layout.pug');
 const masterLayout = fs.readFileSync(layoutLoc, 'utf8');
@@ -34,7 +35,7 @@ export default (req, res) => {
       components[components.length - 1].fetchData(store.dispatch, options)
         .then(data => {
           // handle league list cookie - need a better method for this
-          res.cookie('league_list', JSON.stringify(leagueListCookie(req, res, data.type === REAL_DATA && data.value)), { maxAge: 365 * 24 * 60 * 60 * 1000, httpOnly: true });
+          res.cookie('league_list', JSON.stringify(leagueListCookie(req, data.type === REAL_DATA && data.value)), cookieOptions);
 
           // rest...
           const state = store.getState();
