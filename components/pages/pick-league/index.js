@@ -11,14 +11,16 @@ if (process.env.CLIENT_RENDER) {
 }
 
 class PickLeague extends React.Component {
-  static fetchData(dispatch) {
+  static fetchData(dispatch, { leaguesList }) {
     // Eventually fetch the data needed to generate league list
-    return leagueList(getLeagueList())(dispatch);
+    return leagueList(Promise.resolve(leaguesList), pageName)(dispatch);
   }
 
   componentDidMount() {
     document.title = pageName;
-    if (this.props.page !== pageName) this.props.updatePage(pageName);
+    if (this.props.page !== pageName) {
+      this.props.leagueList(getLeagueList(), pageName);
+    }
   }
 
   render() {
@@ -33,8 +35,8 @@ class PickLeague extends React.Component {
   }
 }
 
-function mapStateToProps({ updating, page }) {
-  return { updating, page }
+function mapStateToProps({ updating, leaguesList, page }) {
+  return { updating, leaguesList, page }
 }
 
-export default connect(mapStateToProps, { updatePage })(PickLeague)
+export default connect(mapStateToProps, { leagueList })(PickLeague)

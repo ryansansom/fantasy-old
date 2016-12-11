@@ -50,6 +50,7 @@ function counterApp(state = initialState, action) {
       });
     case LEAGUES:
       return Object.assign({}, state, {
+        updating: false,
         leaguesList: action.value
       });
     default:

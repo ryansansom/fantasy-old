@@ -53,8 +53,9 @@ export function mockFetch(method, page, real = false) {
   }
 }
 
-export function leagueList(method) {
+export function leagueList(method, page) {
   return (dispatch) => {
+    dispatch({ type: PAGE, page });
     return method
       .then(res => dispatch({
         type: LEAGUES,

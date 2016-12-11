@@ -10,6 +10,7 @@ import { createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import counterApp from '../../redux/reducers';
 import { getInitialState } from '../../redux/initial-state';
+import { REAL_DATA } from '../../redux/actions';
 import { leagueListCookie } from '../../helpers/league-list';
 
 const layoutLoc = path.join(__dirname, '../../views/layout.pug');
@@ -26,11 +27,14 @@ export default (req, res) => {
     } else if (renderProps) {
       const { components } = renderProps;
       let store = createStore(counterApp, getInitialState(req), applyMiddleware(thunkMiddleware));
-      const options = { leagueID: renderProps.params.leagueID };
+      const options = {
+        leagueID: renderProps.params.leagueID,
+        leaguesList: leagueListCookie(req)
+      };
       components[components.length - 1].fetchData(store.dispatch, options)
         .then(data => {
           // handle league list cookie - need a better method for this
-          res.cookie('league_list', JSON.stringify(leagueListCookie(req, res, data.value)), { maxAge: 365 * 24 * 60 * 60 * 1000, httpOnly: true });
+          res.cookie('league_list', JSON.stringify(leagueListCookie(req, res, data.type === REAL_DATA && data.value)), { maxAge: 365 * 24 * 60 * 60 * 1000, httpOnly: true });
 
           // rest...
           const state = store.getState();
