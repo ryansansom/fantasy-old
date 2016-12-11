@@ -10,6 +10,7 @@ import { createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import counterApp from '../../redux/reducers';
 import { getInitialState } from '../../redux/initial-state';
+import { leagueListCookie } from '../../helpers/league-list';
 
 const layoutLoc = path.join(__dirname, '../../views/layout.pug');
 const masterLayout = fs.readFileSync(layoutLoc, 'utf8');
@@ -27,7 +28,11 @@ export default (req, res) => {
       let store = createStore(counterApp, getInitialState(req), applyMiddleware(thunkMiddleware));
       const options = { leagueID: renderProps.params.leagueID };
       components[components.length - 1].fetchData(store.dispatch, options)
-        .then(() => {
+        .then(data => {
+          // handle league list cookie - need a better method for this
+          res.cookie('league_list', JSON.stringify(leagueListCookie(req, res, data.value)), { maxAge: 365 * 24 * 60 * 60 * 1000, httpOnly: true });
+
+          // rest...
           const state = store.getState();
           templateLocals.title = state.page; // Page title on server rendered page only
           templateLocals.reduxState = JSON.stringify(state);

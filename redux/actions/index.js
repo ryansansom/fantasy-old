@@ -7,6 +7,7 @@ export const OPEN_MODAL = 'openModal';
 export const CLOSE_MODAL = 'closeModal';
 export const COLUMNS = 'columns';
 export const PAGE = 'page';
+export const LEAGUES = 'leagueList';
 
 export function increment() {
   return { type: INCREMENT }
@@ -43,8 +44,20 @@ export function mockFetch(method, page, real = false) {
   return (dispatch) => {
     dispatch({ type: UPDATING, page });
     return method
+      .then(res => {
+        return dispatch({
+          type: real ? REAL_DATA : NEWCOUNT,
+          value: res
+        })
+      });
+  }
+}
+
+export function leagueList(method) {
+  return (dispatch) => {
+    return method
       .then(res => dispatch({
-        type: real ? REAL_DATA : NEWCOUNT,
+        type: LEAGUES,
         value: res
       }));
   }
