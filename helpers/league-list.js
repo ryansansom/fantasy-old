@@ -8,12 +8,14 @@ export function leagueListCookie(req, data) {
   }
 
   if (data) {
+    const { leagueId, leagueName } = data;
+
     // Check for duplicates, and remove if matched one that already exists
-    const existIndex = parsedCookie.findIndex(league => league.leagueId === data.leagueId);
+    const existIndex = parsedCookie.findIndex(league => league.leagueId === leagueId);
     if (existIndex > -1) parsedCookie.splice(existIndex, 1);
 
     // Add the league to the list
-    parsedCookie.unshift({leagueId: data.leagueId, leagueName: data.leagueName});
+    parsedCookie.unshift({ leagueId, leagueName });
   }
 
   return parsedCookie;
