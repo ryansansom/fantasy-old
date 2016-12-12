@@ -29,6 +29,7 @@ function counterApp(state = initialState, action) {
       });
     case PAGE:
       return Object.assign({}, state, {
+        updating: true,
         page: action.page
       });
     case REAL_DATA:

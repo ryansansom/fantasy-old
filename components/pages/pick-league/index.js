@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { leagueList } from '../../../redux/actions';
@@ -10,7 +10,7 @@ if (process.env.CLIENT_RENDER) {
   require('./styles.less')
 }
 
-class PickLeague extends React.Component {
+class PickLeague extends Component {
   static fetchData(dispatch, { leaguesList }) {
     return leagueList(Promise.resolve(leaguesList), pageName)(dispatch);
   }
