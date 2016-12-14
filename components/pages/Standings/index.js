@@ -5,6 +5,7 @@ import { mockFetch, modalState } from '../../../redux/actions';
 import { mockRealAPI } from '../../mock-api';
 import { getStandings } from '../../../lib/internal-api';
 import ClassicTable from '../../classic-table';
+import StandardLayout from '../../layouts/standard';
 
 const pageName = 'Standings';
 
@@ -33,43 +34,40 @@ class Standings extends Component {
         { !standings ?
           <span className="no-standings">Loading...</span>
           :
-          <div>
-            <div className="standings--header">Welcome to the new, improved view of Fantasy Premier League</div>
-            <div className="standings--content">
-              <Link to="/">{'< Back to Home'}</Link>
-              <h2 className="league-header">League Information</h2>
-              <div className="league-name">{standings.leagueName}</div>
-              <div className="refresh-results--wrapper col-1-of-2">
-                <a
-                  className="refresh-results table-button button"
-                  onClick={e => {
-                    e.preventDefault();
-                    return this.props.mockFetch(this.props.params.leagueID ? getStandings(this.props.params.leagueID) : mockRealAPI(), pageName, true);
-                  }}
-                  href={refreshLinkUrl}>
-                  Refresh
-                </a>
-              </div>
-              <div className="configure-button--wrapper col-1-of-2">
-                <a
-                  className="configure-button table-button button"
-                  onClick={() => {
-                    this.props.modalState('columns');
-                  }}>
-                  Configure Columns
-                </a>
-              </div>
-              <div className="table-wrapper">
-                {this.props.updating ?
-                 <span>Updating...</span>
-                  :
-                 <ClassicTable
-                   entries={standings.players || standings.entries} // Future support for renaming the API field
-                   sortFunc={sortFunc} />
-                }
-              </div>
+          <StandardLayout title="Welcome to the new, improved view of Fantasy Premier League">
+            <Link to="/">{'< Back to Home'}</Link>
+            <h2 className="league-header">League Information</h2>
+            <div className="league-name">{standings.leagueName}</div>
+            <div className="refresh-results--wrapper col-1-of-2">
+              <a
+                className="refresh-results table-button button"
+                onClick={e => {
+                  e.preventDefault();
+                  return this.props.mockFetch(this.props.params.leagueID ? getStandings(this.props.params.leagueID) : mockRealAPI(), pageName, true);
+                }}
+                href={refreshLinkUrl}>
+                Refresh
+              </a>
             </div>
-          </div>
+            <div className="configure-button--wrapper col-1-of-2">
+              <a
+                className="configure-button table-button button"
+                onClick={() => {
+                  this.props.modalState('columns');
+                }}>
+                Configure Columns
+              </a>
+            </div>
+            <div className="table-wrapper">
+              {this.props.updating ?
+               <span>Updating...</span>
+                :
+               <ClassicTable
+                 entries={standings.players || standings.entries} // Future support for renaming the API field
+                 sortFunc={sortFunc} />
+              }
+            </div>
+          </StandardLayout>
         }
       </div>
     );

@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { leagueList } from '../../../redux/actions';
 import { getLeagueList } from '../../../lib/internal-api';
+import StandardLayout from '../../layouts/standard';
 
 const pageName = 'PickLeague';
 
@@ -22,11 +23,13 @@ class PickLeague extends Component {
 
   render() {
     return this.props.updating ?
-      <span>Updating</span>
+      <span>Updating</span> // Put inside page wrapper
       :
       <div className='pick-league'>
-        <Link to='/standings'>STANDINGS</Link>
-        <span>{`I am the pick league page`}</span>
+        <StandardLayout title="Welcome to the new, improved view of Fantasy Premier League">
+          <Link to='/standings'>STANDINGS</Link>
+          <span>{`I am the pick league page`}</span>
+        </StandardLayout>
       </div>;
   }
 }

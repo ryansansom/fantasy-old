@@ -1,0 +1,22 @@
+@header-height: 60px;
+@header-padding: 5px;
+
+.standard-layout--header {
+  padding: @header-padding;
+  height: @header-height;
+  line-height: @header-height / 2 - @header-padding;
+  font-weight: bold;
+  text-align: center;
+  vertical-align: middle;
+  position: fixed;
+  background-color: lightgray;
+  border-bottom: 1px solid darkgrey;
+  z-index: 1;
+  width: 100%;
+}
+
+.standard-layout--content {
+  padding: (@header-height + @header-padding) @header-padding @header-padding;
+  max-width: 600px;
+  margin: 0 auto;
+}
