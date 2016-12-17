@@ -35,9 +35,13 @@ class Standings extends Component {
           <span className="no-standings">Loading...</span>
           :
           <StandardLayout title="Welcome to the new, improved view of Fantasy Premier League">
-            <Link to="/">{'< Back to Home'}</Link>
             <h2 className="league-header">League Information</h2>
-            <div className="league-name">{standings.leagueName}</div>
+            <div className="league-name">
+              <span>{standings.leagueName}</span>
+              <span> (</span>
+              <Link to="/">{'change...'}</Link>
+              <span>)</span>
+            </div>
             <div className="refresh-results--wrapper col-1-of-2">
               <a
                 className="refresh-results table-button button"

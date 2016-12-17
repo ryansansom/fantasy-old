@@ -22,23 +22,25 @@ class PickLeague extends Component {
   }
 
   renderLeaguesList() {
-    const mainList = this.props.leaguesList.map(league => {
-      return (
-        <li key={league.leagueId}>
-          <Link to={"/standings/" + league.leagueId}>{league.leagueName}</Link>
-        </li>
-      );
-    });
+    const newList = this.props.leaguesList;
+    if (process.env.NODE_ENV !== 'production') newList.push({
+      leagueId: '',
+      leagueName: 'Sample League Data',
 
-    if (process.env.NODE_ENV !== 'production') mainList.push(
-      <li key='dummy'>
-        <Link to={"/standings/"}>Sample League Data</Link>
-      </li>
-    );
+    });
 
     return (
       <ul className="classic-leagues--list">
-        {mainList}
+        {newList.map(league => {
+          return (
+            <li key={league.leagueId} className="league-list-item">
+              <Link to={"/standings/" + league.leagueId}>
+                <span className="league-name col-9-of-10">{league.leagueName}</span>
+                <span className="link--right col-1-of-10">{'>'}</span>
+              </Link>
+            </li>
+          );
+        })}
       </ul>
     );
   }
@@ -51,11 +53,16 @@ class PickLeague extends Component {
         <StandardLayout title="Welcome to the new, improved view of Fantasy Premier League">
           <h1>League Lists</h1>
 
-          <h2>Classic Leagues</h2>
-          {this.props.leaguesList && this.renderLeaguesList()}
+          <div className='classic-leagues--wrapper'>
+            <h2>Classic Leagues</h2>
+            <p>Pick a league to view the standings:</p>
+            {this.props.leaguesList && this.renderLeaguesList()}
+          </div>
 
-          <h2>Head-to-head Leagues</h2>
-          <p>... Coming soon!</p>
+          <div className="classic-leagues--wrapper">
+            <h2>Head-to-head Leagues</h2>
+            <p>... Coming soon!</p>
+          </div>
         </StandardLayout>
       </div>;
   }

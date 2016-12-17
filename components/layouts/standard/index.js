@@ -8,8 +8,10 @@ const StandardLayout = (props) => {
   return (
     <div>
       <div className="standard-layout--header">{props.title}</div>
-      <div className="standard-layout--content">
-        {props.children}
+      <div className="standard-layout--content-wrapper">
+        <div className="standard-layout--content">
+          {props.children}
+        </div>
       </div>
     </div>
   );

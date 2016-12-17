@@ -13,7 +13,7 @@ export function mockRealAPI() {
     // A slow mock async action of a real API response using setTimeout
     setTimeout(function () {
       resolve(data_131116);
-    }, 2000);
+    }, 500);
   });
 }
 
