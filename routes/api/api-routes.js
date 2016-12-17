@@ -9,6 +9,8 @@ import getTotalPoints from '../../lib/get-total-points';
 import getNewTotal from '../../lib/get-new-total';
 import getWeek from '../../lib/get-week';
 import { Router } from 'express';
+import { leagueListCookie } from '../../helpers/league-list';
+import { cookieOptions } from '../../constants/cookie-settings';
 const router = Router();
 
 router.get('/leagues', errHandler(async(req, res, next) => { // eslint-disable-line no-unused-vars
@@ -23,6 +25,9 @@ router.get('/week', errHandler(async(req, res, next) =>  { // eslint-disable-lin
 
 router.get('/new-classic-league-standings/:leagueID', errHandler(async(req, res, next) => { // eslint-disable-line no-unused-vars
   const detailedStandings = await getDetailedStandings(req.params.leagueID, req.query.week);
+
+  const cookie = leagueListCookie(req, detailedStandings);
+  res.cookie('league_list', JSON.stringify(cookie), cookieOptions);
   return res.send(detailedStandings);
 }));
 

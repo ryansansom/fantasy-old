@@ -1,4 +1,4 @@
-import { INCREMENT, DECREMENT, NEWCOUNT, UPDATING, REAL_DATA, OPEN_MODAL, CLOSE_MODAL, COLUMNS } from '../actions';
+import { INCREMENT, DECREMENT, NEWCOUNT, UPDATING, REAL_DATA, OPEN_MODAL, CLOSE_MODAL, COLUMNS, PAGE, LEAGUES } from '../actions';
 
 const initialState = {
   count: 0,
@@ -27,6 +27,11 @@ function counterApp(state = initialState, action) {
         updating: true,
         page: action.page
       });
+    case PAGE:
+      return Object.assign({}, state, {
+        updating: true,
+        page: action.page
+      });
     case REAL_DATA:
       return Object.assign({}, state, {
         updating: false,
@@ -43,6 +48,11 @@ function counterApp(state = initialState, action) {
     case COLUMNS:
       return Object.assign({}, state, {
         columns: action.value
+      });
+    case LEAGUES:
+      return Object.assign({}, state, {
+        updating: false,
+        leaguesList: action.value
       });
     default:
       return state

@@ -1,4 +1,6 @@
-const cookiesToRefresh = [{key: 'columns', options: { maxAge: 365 * 24 * 60 * 60 * 1000, httpOnly: true }}];
+import { cookieOptions as options } from '../constants/cookie-settings';
+
+const cookiesToRefresh = [{key: 'columns', options}];
 
 export default (req, res, next) => {
   const reqCookies = req.cookies || {};

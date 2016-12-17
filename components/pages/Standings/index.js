@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { mockFetch, modalState } from '../../../redux/actions';
 import { mockRealAPI } from '../../mock-api';
 import { getStandings } from '../../../lib/internal-api';
 import ClassicTable from '../../classic-table';
+import StandardLayout from '../../layouts/standard';
 
 const pageName = 'Standings';
 
@@ -29,11 +31,17 @@ class Standings extends Component {
 
     return (
       <div className='standings'>
-        <div className="standings--header">Welcome to the new, improved view of Fantasy Premier League</div>
-        <div className="standings--content">
-          <div>
-            <h2>League Information</h2>
-            <div className="league-name">{standings.leagueName}</div>
+        { !standings ?
+          <span className="no-standings">Loading...</span>
+          :
+          <StandardLayout title="Welcome to the new, improved view of Fantasy Premier League">
+            <h2 className="league-header">League Information</h2>
+            <div className="league-name">
+              <span>{standings.leagueName}</span>
+              <span> (</span>
+              <Link to="/">{'change...'}</Link>
+              <span>)</span>
+            </div>
             <div className="refresh-results--wrapper col-1-of-2">
               <a
                 className="refresh-results table-button button"
@@ -56,15 +64,15 @@ class Standings extends Component {
             </div>
             <div className="table-wrapper">
               {this.props.updating ?
-                <span>Updating...</span>
+               <span>Updating...</span>
                 :
-                <ClassicTable
-                  entries={standings.players || standings.entries} // Future support for renaming the API field
-                  sortFunc={sortFunc} />
+               <ClassicTable
+                 entries={standings.players || standings.entries} // Future support for renaming the API field
+                 sortFunc={sortFunc} />
               }
             </div>
-          </div>
-        </div>
+          </StandardLayout>
+        }
       </div>
     );
   }

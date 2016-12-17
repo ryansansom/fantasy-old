@@ -10,6 +10,8 @@ import { createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import counterApp from '../../redux/reducers';
 import { getInitialState } from '../../redux/initial-state';
+import propogateCookies from '../helpers/propogate-cookies';
+import getOptions from '../helpers/options-creator';
 
 const layoutLoc = path.join(__dirname, '../../views/layout.pug');
 const masterLayout = fs.readFileSync(layoutLoc, 'utf8');
@@ -25,9 +27,15 @@ export default (req, res) => {
     } else if (renderProps) {
       const { components } = renderProps;
       let store = createStore(counterApp, getInitialState(req), applyMiddleware(thunkMiddleware));
-      const options = { leagueID: renderProps.params.leagueID };
+
+      // generate options to pass to fetchData functions
+      const options = getOptions(req, renderProps);
       components[components.length - 1].fetchData(store.dispatch, options)
-        .then(() => {
+        .then(data => {
+          // Use cookie and data from api to set new cookies
+          propogateCookies(req, res, data);
+
+          // Populate pug template
           const state = store.getState();
           templateLocals.title = state.page; // Page title on server rendered page only
           templateLocals.reduxState = JSON.stringify(state);
