@@ -32,7 +32,7 @@ class Standings extends Component {
     return (
       <div className='standings'>
         { !standings ?
-          <span className="no-standings">Loading...</span>
+          <span className="loading">Loading...</span>
           :
           <StandardLayout title="Welcome to the new, improved view of Fantasy Premier League">
             <h2 className="league-header">League Information</h2>

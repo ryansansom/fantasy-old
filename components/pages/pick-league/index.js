@@ -22,11 +22,10 @@ class PickLeague extends Component {
   }
 
   renderLeaguesList() {
-    const newList = this.props.leaguesList;
-    if (process.env.NODE_ENV !== 'production') newList.push({
+    const newList = JSON.parse(JSON.stringify(this.props.leaguesList));
+    newList.push({
       leagueId: '',
-      leagueName: 'Sample League Data',
-
+      leagueName: 'Sample League Data'
     });
 
     return (
@@ -47,7 +46,7 @@ class PickLeague extends Component {
 
   render() {
     return this.props.updating ?
-      <span>Updating</span> // Put inside page wrapper
+      <span className="loading">Loading...</span> // Put inside page wrapper
       :
       <div className='pick-league'>
         <StandardLayout title="Welcome to the new, improved view of Fantasy Premier League">
