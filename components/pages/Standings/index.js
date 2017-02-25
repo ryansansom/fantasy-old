@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
-import { mockFetch, modalState } from '../../../redux/actions';
+import { fetchStandings, modalState } from '../../../redux/actions';
 import { mockRealAPI } from '../../mock-api';
 import { getStandings } from '../../../lib/internal-api';
 import ClassicTable from '../../classic-table';
@@ -13,25 +13,37 @@ if (process.env.CLIENT_RENDER) {
   require('./styles.less')
 }
 
+function standingsData(leagueID) {
+  return leagueID
+    ? getStandings(leagueID)
+    : mockRealAPI();
+}
+
 class Standings extends Component {
   static fetchData(dispatch, { leagueID }) {
-    return mockFetch(leagueID ? getStandings(leagueID) : mockRealAPI(), pageName, true)(dispatch);
+    return fetchStandings(standingsData(leagueID), pageName, true)(dispatch);
   }
 
   componentDidMount() {
     document.title = pageName;
-    if (this.props.page !== pageName) this.props.mockFetch(this.props.params.leagueID ? getStandings(this.props.params.leagueID) : mockRealAPI(), pageName, true)
+    if (this.props.page !== pageName) this.props.fetchStandings(standingsData(this.props.params.leagueID), pageName, true)
   }
 
   render() {
-    const { standings } = this.props;
+    const { fetchError, standings } = this.props;
     const refreshLinkUrl = this.props.params.leagueID ? '/standings/' + this.props.params.leagueID : '/standings';
 
     const sortFunc = (a, b) => (b.prevTotal + b.projectedPoints) - (a.prevTotal + a.projectedPoints);
 
     return (
       <div className='standings'>
-        { !standings ?
+        { fetchError &&
+          <div className="loading">
+            <span className="fetch-error">Sorry, there seems to be an error fetching data at this time</span>
+            <Link to="/">{'Go Back'}</Link>
+          </div>
+        }
+        { !fetchError && (!standings ?
           <span className="loading">Loading...</span>
           :
           <StandardLayout title="Welcome to the new, improved view of Fantasy Premier League">
@@ -47,7 +59,7 @@ class Standings extends Component {
                 className="refresh-results table-button button"
                 onClick={e => {
                   e.preventDefault();
-                  return this.props.mockFetch(this.props.params.leagueID ? getStandings(this.props.params.leagueID) : mockRealAPI(), pageName, true);
+                  return this.props.fetchStandings(this.props.params.leagueID ? getStandings(this.props.params.leagueID) : mockRealAPI(), pageName, true);
                 }}
                 href={refreshLinkUrl}>
                 Refresh
@@ -72,14 +84,14 @@ class Standings extends Component {
               }
             </div>
           </StandardLayout>
-        }
+        )}
       </div>
     );
   }
 }
 
-function mapStateToProps({ standings, updating, page }) {
-  return { standings, updating, page }
+function mapStateToProps({ fetchError, standings, updating, page }) {
+  return { fetchError, standings, updating, page }
 }
 
-export default connect(mapStateToProps, { mockFetch, modalState })(Standings)
+export default connect(mapStateToProps, { fetchStandings, modalState })(Standings)

@@ -8,16 +8,16 @@ import routes from './routes';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
-import counterApp from '../../redux/reducers';
+import rootReducer from '../../redux/reducers';
 import { getInitialState } from '../../redux/initial-state';
-import propogateCookies from '../helpers/propogate-cookies';
+import propagateCookies from '../helpers/propogate-cookies';
 import getOptions from '../helpers/options-creator';
 
 const layoutLoc = path.join(__dirname, '../../views/layout.pug');
 const masterLayout = fs.readFileSync(layoutLoc, 'utf8');
 const layoutFunc = compile(masterLayout, {filename: layoutLoc});
 
-export default (req, res) => {
+export default (req, res, next) => {
   let templateLocals = {};
   match({routes, location: req.url }, (error, redirectLocation, renderProps) => {
     if (error) {
@@ -26,14 +26,14 @@ export default (req, res) => {
       res.redirect(302, redirectLocation.pathname + redirectLocation.search)
     } else if (renderProps) {
       const { components } = renderProps;
-      let store = createStore(counterApp, getInitialState(req), applyMiddleware(thunkMiddleware));
+      const store = createStore(rootReducer, getInitialState(req), applyMiddleware(thunkMiddleware));
 
       // generate options to pass to fetchData functions
       const options = getOptions(req, renderProps);
       components[components.length - 1].fetchData(store.dispatch, options)
         .then(data => {
           // Use cookie and data from api to set new cookies
-          propogateCookies(req, res, data);
+          propagateCookies(req, res, data);
 
           // Populate pug template
           const state = store.getState();
@@ -46,7 +46,8 @@ export default (req, res) => {
             </Provider>);
 
           res.status(200).send(layoutFunc(templateLocals));
-        });
+        })
+        .catch(next);
     } else {
       templateLocals.title = 'Page not found';
       res.status(404).send('Page not found')

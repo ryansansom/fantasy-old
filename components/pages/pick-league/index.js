@@ -45,30 +45,39 @@ class PickLeague extends Component {
   }
 
   render() {
-    return this.props.updating ?
-      <span className="loading">Loading...</span> // Put inside page wrapper
-      :
+    return (
       <div className='pick-league'>
-        <StandardLayout title="Welcome to the new, improved view of Fantasy Premier League">
-          <h1>League Lists</h1>
-
-          <div className='classic-leagues--wrapper'>
-            <h2>Classic Leagues</h2>
-            <p>Pick a league to view the standings:</p>
-            {this.props.leaguesList && this.renderLeaguesList()}
+        { this.props.fetchError &&
+          <div className="loading">
+            <span className="fetch-error">Sorry, there seems to be an error fetching data at this time. Please try again later.</span>
           </div>
+        }
+        { !this.props.fetchError && (!this.props.updating ?
+          <StandardLayout title="Welcome to the new, improved view of Fantasy Premier League">
+            <h1>League Lists</h1>
 
-          <div className="classic-leagues--wrapper">
-            <h2>Head-to-head Leagues</h2>
-            <p>... Coming soon!</p>
-          </div>
-        </StandardLayout>
-      </div>;
+            <div className='classic-leagues--wrapper'>
+              <h2>Classic Leagues</h2>
+              <p>Pick a league to view the standings:</p>
+              {this.props.leaguesList && this.renderLeaguesList()}
+            </div>
+
+            <div className="classic-leagues--wrapper">
+              <h2>Head-to-head Leagues</h2>
+              <p>... Coming soon!</p>
+            </div>
+          </StandardLayout>
+        :
+          <span className="loading">Loading...</span>
+        )
+        }
+      </div>
+    )
   }
 }
 
-function mapStateToProps({ updating, leaguesList, page }) {
-  return { updating, leaguesList, page }
+function mapStateToProps({ fetchError, updating, leaguesList, page }) {
+  return { fetchError, updating, leaguesList, page }
 }
 
 export default connect(mapStateToProps, { leagueList })(PickLeague)

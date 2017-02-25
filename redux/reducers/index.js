@@ -1,36 +1,36 @@
-import { INCREMENT, DECREMENT, NEWCOUNT, UPDATING, REAL_DATA, OPEN_MODAL, CLOSE_MODAL, COLUMNS, PAGE, LEAGUES } from '../actions';
+import {
+  UPDATING,
+  REAL_DATA,
+  OPEN_MODAL,
+  CLOSE_MODAL,
+  FETCH_ERROR,
+  COLUMNS,
+  PAGE,
+  LEAGUES
+} from '../actions';
 
 const initialState = {
-  count: 0,
+  fetchError: false,
   updating: false
 };
 
-function counterApp(state = initialState, action) {
+function rootReducer(state = initialState, action) {
   switch (action.type) {
-    case INCREMENT:
-      return Object.assign({}, state, {
-        count: state.count + 1,
-        updating: false
-      });
-    case DECREMENT:
-      return Object.assign({}, state, {
-        count: state.count - 1,
-        updating: false
-      });
-    case NEWCOUNT:
-      return Object.assign({}, state, {
-        count: action.value,
-        updating: false
-      });
     case UPDATING:
       return Object.assign({}, state, {
         updating: true,
+        fetchError: false,
         page: action.page
       });
     case PAGE:
       return Object.assign({}, state, {
         updating: true,
+        fetchError: false,
         page: action.page
+      });
+    case FETCH_ERROR:
+      return Object.assign({}, state, {
+        fetchError: true
       });
     case REAL_DATA:
       return Object.assign({}, state, {
@@ -59,4 +59,4 @@ function counterApp(state = initialState, action) {
   }
 }
 
-export default counterApp;
+export default rootReducer;
