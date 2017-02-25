@@ -1,28 +1,14 @@
-export const INCREMENT = 'increment';
-export const DECREMENT = 'decrement';
-export const NEWCOUNT = 'newcount';
 export const UPDATING = 'updating';
 export const REAL_DATA = 'realData';
 export const OPEN_MODAL = 'openModal';
 export const CLOSE_MODAL = 'closeModal';
+export const FETCH_ERROR = 'fetchError';
 export const COLUMNS = 'columns';
 export const PAGE = 'page';
 export const LEAGUES = 'leagueList';
 
-export function increment() {
-  return { type: INCREMENT }
-}
-
-export function decrement() {
-  return { type: DECREMENT }
-}
-
 export function updateCols(cols) {
   return { type: COLUMNS, value: cols }
-}
-
-export function updatePage(page) {
-  return { type: PAGE, page }
 }
 
 export function modalState(modalName, type = 'OPEN', action) {
@@ -35,21 +21,23 @@ export function modalState(modalName, type = 'OPEN', action) {
 
     if (action) {
       action
-        .then(() => true);
+        .then(() => true)
+        .catch(err => err);
     }
   };
 }
 
-export function mockFetch(method, page, real = false) {
+export function fetchStandings(method, page) {
   return (dispatch) => {
     dispatch({ type: UPDATING, page });
     return method
       .then(res => {
         return dispatch({
-          type: real ? REAL_DATA : NEWCOUNT,
+          type: REAL_DATA,
           value: res
         })
-      });
+      })
+      .catch(() => dispatch({ type: FETCH_ERROR }));
   }
 }
 
@@ -60,6 +48,7 @@ export function leagueList(method, page) {
       .then(res => dispatch({
         type: LEAGUES,
         value: res
-      }));
+      }))
+      .catch(() => dispatch({ type: FETCH_ERROR }));
   }
 }
