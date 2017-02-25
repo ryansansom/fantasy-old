@@ -3,10 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "engines": {
-    "node": "7.2.1"
+    "node": "7.6.0"
   },
   "scripts": {
-    "build": "webpack --progress --colors && cp site/assets/scripts/modernizr.js site/public/modernizr.js",
+    "build": "webpack --progress --colors && cp site/assets/scripts/* site/public/*",
     "full-start": "rm -rf site/public/wp/* && npm run build && npm start",
     "start": "node index"
   },
