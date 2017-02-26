@@ -8,9 +8,7 @@ import getTeamPoints from '../../lib/get-team-points';
 import getTotalPoints from '../../lib/get-total-points';
 import getNewTotal from '../../lib/get-new-total';
 import getWeek from '../../lib/get-week';
-import updateCreds from '../../lib/update-creds';
-import fs from 'fs';
-import path from 'path';
+import updateCredentials from '../../lib/update-creds';
 import { Router } from 'express';
 import { leagueListCookie } from '../../helpers/league-list';
 import { cookieOptions } from '../../constants/cookie-settings';
@@ -64,18 +62,11 @@ router.get('/new-total-points/:teamID/:week', errHandler(async(req, res, next) =
   return res.send(totalPoints);
 }));
 
-// This route is purely for testing that credentials can be updated when hosted - TODO: remove
-router.get('/current-credentials', errHandler(async(req, res, next) => { // eslint-disable-line no-unused-vars
-  const abc = fs.readFileSync(path.resolve(__dirname, '../..', 'lib/helpers/test-creds.js'), 'utf8');
-
-  res.send((abc.split("'") || [])[1]);
-}));
-
 router.post('/refresh-credentials', errHandler(async(req, res, next) => { // eslint-disable-line no-unused-vars
   const { username, password, authCode } = req.body;
-  const abc = await updateCreds(username, password, authCode);
+  const newToken = await updateCredentials(username, password, authCode);
 
-  res.send(abc);
+  res.send(newToken);
 }));
 
 export default router;
