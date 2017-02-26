@@ -1,8 +1,6 @@
 import {
   UPDATING,
   REAL_DATA,
-  OPEN_MODAL,
-  CLOSE_MODAL,
   FETCH_ERROR,
   COLUMNS,
   PAGE,
@@ -36,14 +34,6 @@ function rootReducer(state = initialState, action) {
       return Object.assign({}, state, {
         updating: false,
         standings: action.value
-      });
-    case OPEN_MODAL:
-      return Object.assign({}, state, {
-        modalOpen: action.value
-      });
-    case CLOSE_MODAL:
-      return Object.assign({}, state, {
-        modalOpen: ''
       });
     case COLUMNS:
       return Object.assign({}, state, {
