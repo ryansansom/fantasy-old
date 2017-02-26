@@ -62,11 +62,29 @@ router.get('/new-total-points/:teamID/:week', errHandler(async(req, res, next) =
   return res.send(totalPoints);
 }));
 
-router.post('/refresh-credentials', errHandler(async(req, res, next) => { // eslint-disable-line no-unused-vars
+router.post('/refresh-credentials', (req, res) => {
   const { username, password, authCode } = req.body;
-  const newToken = await updateCredentials(username, password, authCode);
-
-  res.send(newToken);
-}));
+  updateCredentials(username, password, authCode)
+    .then(() => {
+      res.format({
+        html() {
+          return res.redirect('/');
+        },
+        json() {
+          res.send({});
+        }
+      });
+    })
+    .catch(err => {
+      res.format({
+        html() {
+          return res.redirect('/refresh-credentials');
+        },
+        json() {
+          res.send(err);
+        }
+      });
+    });
+});
 
 export default router;
