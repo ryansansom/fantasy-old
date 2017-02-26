@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
-import { fetchStandings, modalState } from '../../../redux/actions';
+import { fetchStandings } from '../../../redux/actions';
+import { postColumnCookie } from '../../../lib/internal-api';
 import { mockRealAPI } from '../../mock-api';
 import { getStandings } from '../../../lib/internal-api';
 import ClassicTable from '../../classic-table';
@@ -24,9 +25,26 @@ class Standings extends Component {
     return fetchStandings(standingsData(leagueID), pageName, true)(dispatch);
   }
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      modalOpen: ''
+    }
+  }
+
   componentDidMount() {
     document.title = pageName;
     if (this.props.page !== pageName) this.props.fetchStandings(standingsData(this.props.params.leagueID), pageName, true)
+  }
+
+  closeModal(newConfig) {
+    // TODO: Compare new config with old and post only if changed
+    postColumnCookie(newConfig);
+
+    return this.setState({
+      modalOpen: ''
+    });
   }
 
   render() {
@@ -66,13 +84,15 @@ class Standings extends Component {
               </a>
             </div>
             <div className="configure-button--wrapper col-1-of-2">
-              <a
+              <div
                 className="configure-button table-button button"
                 onClick={() => {
-                  this.props.modalState('columns');
+                  this.setState({
+                    modalOpen: 'COLUMNS'
+                  });
                 }}>
                 Configure Columns
-              </a>
+              </div>
             </div>
             <div className="table-wrapper">
               {this.props.updating ?
@@ -80,7 +100,9 @@ class Standings extends Component {
                 :
                <ClassicTable
                  entries={standings.players || standings.entries} // Future support for renaming the API field
-                 sortFunc={sortFunc} />
+                 sortFunc={sortFunc}
+                 modalOpen={this.state.modalOpen}
+                 closeModal={::this.closeModal} />
               }
             </div>
           </StandardLayout>
@@ -94,4 +116,4 @@ function mapStateToProps({ fetchError, standings, updating, page }) {
   return { fetchError, standings, updating, page }
 }
 
-export default connect(mapStateToProps, { fetchStandings, modalState })(Standings)
+export default connect(mapStateToProps, { fetchStandings })(Standings)

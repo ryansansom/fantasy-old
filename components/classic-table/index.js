@@ -1,7 +1,6 @@
 import Accordion from '../accordion';
 import { connect } from 'react-redux';
-import { modalState, updateCols } from '../../redux/actions';
-import { postColumnCookie } from '../../lib/internal-api';
+import { updateCols } from '../../redux/actions';
 import { getLength } from '../../lib/table-config/helpers';
 import PlayerList from '../player-list';
 import React, { Component, PropTypes } from 'react';
@@ -21,16 +20,6 @@ function buildConfigFromProps(config, arr) {
   });
 }
 
-// function checkConfigChange(oldConfig, newConfig) {
-//   if (oldConfig.length !== newConfig.length) return true;
-//
-//   for (let i = 0, len = oldConfig.length; i < len; i++) {
-//     if (oldConfig[i].header !== newConfig[i].header) return true;
-//   }
-//
-//   return false;
-// }
-
 class ClassicTable extends Component {
   static propTypes = {
     columns: PropTypes.object.isRequired, // Could do shape...
@@ -45,22 +34,12 @@ class ClassicTable extends Component {
 
   constructor(props) {
     super(props);
-    this.props.columns.playerCols = buildConfigFromProps(playerListConfig, props.columns.playerCols);
-    this.props.columns.tableCols = buildConfigFromProps(classicTableConfig, props.columns.tableCols);
-  }
-
-  closeModal(body) {
-    // Compare new config with old and post if changed. - NOT WORKING, PROPS SEEM TO UPDATE MID STATE CHANGE
-    // const tableColChange = checkConfigChange(this.props.columns.tableCols, body.newConfig.tableCols);
-    // const playerColChange = checkConfigChange(this.props.columns.playerCols, body.newConfig.playerCols);
-    // let action;
-    // if (tableColChange || playerColChange) action = postColumnCookie(body.newConfig).then(() => body.newConfig);
-
-    this.props.modalState('', 'CLOSE', postColumnCookie(body.newConfig));
+    this.playerCols = buildConfigFromProps(playerListConfig, props.columns.playerCols);
+    this.tableCols = buildConfigFromProps(classicTableConfig, props.columns.tableCols);
   }
 
   renderHeader() {
-    const { tableCols } = this.props.columns;
+    const { tableCols } = this;
     const len = getLength(tableCols);
     return <div className="header-row">
       {tableCols.map(({header, colSpan}, i) => <div key={i} className={`col-${colSpan || 1}-of-${len} table-header table-format`}>{header}</div>)}
@@ -68,7 +47,8 @@ class ClassicTable extends Component {
   }
 
   renderList() {
-    const { entries, sortFunc, columns: { tableCols } } = this.props;
+    const { entries, sortFunc } = this.props;
+    const { tableCols } = this;
     const len = getLength(tableCols);
 
     const entryList = entries
@@ -85,7 +65,7 @@ class ClassicTable extends Component {
             classes="entry-li"
             title={entry.entry.toString()}
             header={entryRow}>
-            <PlayerList accordionKey={entry.entry + "--configure"} listConfig={this.props.columns.playerCols} players={entry.players} />
+            <PlayerList accordionKey={entry.entry + "--configure"} listConfig={this.playerCols} players={entry.players} />
           </Accordion>
         )
       });
@@ -97,7 +77,7 @@ class ClassicTable extends Component {
   }
 
   onTableConfigChange(e) {
-    const { playerCols, tableCols } = this.props.columns;
+    const { playerCols, tableCols } = this;
     const columnIndex = tableCols.findIndex(cfg => cfg.header === classicTableConfig[e.target.value].header);
     if (columnIndex > -1) {
       e.target.checked = true;
@@ -111,7 +91,7 @@ class ClassicTable extends Component {
   }
 
   onListConfigChange(e) {
-    const { playerCols, tableCols } = this.props.columns;
+    const { playerCols, tableCols } = this;
     const columnIndex = playerCols.findIndex(cfg => cfg.header === playerListConfig[e.target.value].header);
     if (columnIndex > -1) {
       e.target.checked = true;
@@ -129,19 +109,21 @@ class ClassicTable extends Component {
       <div className="classic-standings">
         { this.renderHeader() }
         { this.renderList() }
-        {this.props.modalOpen ? <ColumnModal
-          closeModal={::this.closeModal}
-          onTableConfigChange={::this.onTableConfigChange}
-          onListConfigChange={::this.onListConfigChange}
-          listConfig={this.props.columns.playerCols}
-          tableConfig={this.props.columns.tableCols} /> : null}
+        { this.props.modalOpen &&
+          <ColumnModal
+            closeModal={this.props.closeModal}
+            onTableConfigChange={::this.onTableConfigChange}
+            onListConfigChange={::this.onListConfigChange}
+            listConfig={this.playerCols}
+            tableConfig={this.tableCols} />
+        }
       </div>
     );
   }
 }
 
-function mapStateToProps({ columns, modalOpen }) {
-  return { columns, modalOpen }
+function mapStateToProps({ columns }) {
+  return { columns }
 }
 
-export default connect(mapStateToProps, { modalState, updateCols })(ClassicTable);
+export default connect(mapStateToProps, { updateCols })(ClassicTable);

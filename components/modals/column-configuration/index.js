@@ -10,7 +10,8 @@ if (process.env.CLIENT_RENDER) {
 const ColumnModal = (props) => {
   const closeModal = () => {
     props.closeModal({
-      newConfig: {tableCols: props.tableConfig, playerCols: props.listConfig}
+      tableCols: props.tableConfig,
+      playerCols: props.listConfig
     });
   };
 
