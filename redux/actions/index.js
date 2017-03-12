@@ -9,6 +9,13 @@ export function updateCols(cols) {
   return { type: COLUMNS, value: cols }
 }
 
+export function updatePage(page) {
+  return (dispatch) => {
+    dispatch({ type: PAGE, page });
+    return Promise.resolve();
+  }
+}
+
 export function fetchStandings(method, page) {
   return (dispatch) => {
     dispatch({ type: UPDATING, page });
