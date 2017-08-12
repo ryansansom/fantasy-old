@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "engines": {
-    "node": "7.6.0"
+    "node": "8.1.4"
   },
   "scripts": {
     "build": "webpack --progress --colors && cp site/assets/scripts/modernizr.js site/public/modernizr.js",
