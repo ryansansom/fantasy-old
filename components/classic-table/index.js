@@ -61,7 +61,7 @@ class ClassicTable extends Component {
         return (
           <Accordion
             tag="li"
-            key={entry.entry}
+            key={/*entry.entry*/i}
             classes="entry-li"
             title={entry.entry.toString()}
             header={entryRow}>
