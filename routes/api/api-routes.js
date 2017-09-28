@@ -28,7 +28,7 @@ router.get('/week', errHandler(async(req, res, next) =>  { // eslint-disable-lin
 router.get('/new-classic-league-standings/:leagueID', errHandler(async(req, res, next) => { // eslint-disable-line no-unused-vars
   const detailedStandings = await getDetailedStandings(req.params.leagueID, req.query.week);
 
-  const cookie = leagueListCookie(req, detailedStandings);
+  const cookie = leagueListCookie(req, detailedStandings, 'classic');
   res.cookie('league_list', JSON.stringify(cookie), cookieOptions);
   return res.send(detailedStandings);
 }));
@@ -36,7 +36,7 @@ router.get('/new-classic-league-standings/:leagueID', errHandler(async(req, res,
 router.get('/new-h2h-league-standings/:leagueID', errHandler(async(req, res, next) => { // eslint-disable-line no-unused-vars
   const detailedStandings = await getH2HStandings(req.params.leagueID, req.query.week);
 
-  const cookie = leagueListCookie(req, detailedStandings);
+  const cookie = leagueListCookie(req, detailedStandings, 'h2h');
   res.cookie('league_list', JSON.stringify(cookie), cookieOptions);
   return res.send(detailedStandings);
 }));

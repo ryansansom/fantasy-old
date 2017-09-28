@@ -16,14 +16,18 @@ class PickLeague extends Component {
     return leagueList(Promise.resolve(leaguesList), pageName)(dispatch);
   }
 
+  static defaultProps = {
+    leaguesList: {}
+  };
+
   componentDidMount() {
     document.title = pageName;
     if (this.props.page !== pageName) this.props.leagueList(getLeagueList(), pageName);
   }
 
-  renderLeaguesList() {
-    const newList = JSON.parse(JSON.stringify(this.props.leaguesList));
-    newList.push({
+  renderLeaguesList(leagues, routePrefix, sampleData = false) {
+    const newList = JSON.parse(JSON.stringify(leagues));
+    sampleData && newList.push({
       leagueId: '',
       leagueName: 'Sample League Data'
     });
@@ -33,7 +37,7 @@ class PickLeague extends Component {
         {newList.map(league => {
           return (
             <li key={league.leagueId} className="league-list-item">
-              <Link to={"/standings/" + league.leagueId}>
+              <Link to={"/" + routePrefix + "/" + league.leagueId}>
                 <span className="league-name col-9-of-10">{league.leagueName}</span>
                 <span className="link--right col-1-of-10">{'>'}</span>
               </Link>
@@ -59,12 +63,13 @@ class PickLeague extends Component {
             <div className='classic-leagues--wrapper'>
               <h2>Classic Leagues</h2>
               <p>Pick a league to view the standings:</p>
-              {this.props.leaguesList && this.renderLeaguesList()}
+              {this.props.leaguesList.classic && this.renderLeaguesList(this.props.leaguesList.classic, 'standings', true)}
             </div>
 
             <div className="classic-leagues--wrapper">
               <h2>Head-to-head Leagues</h2>
-              <p>... Coming soon!</p>
+              <p>Pick a league to view the standings:</p>
+              {this.props.leaguesList.h2h && this.renderLeaguesList(this.props.leaguesList.h2h, 'h2h')}
             </div>
           </StandardLayout>
         :
