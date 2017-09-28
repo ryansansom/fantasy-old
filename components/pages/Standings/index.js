@@ -2,9 +2,8 @@ import React, { Component } from 'react';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { fetchStandings } from '../../../redux/actions';
-import { postColumnCookie } from '../../../lib/internal-api';
 import { mockRealAPI } from '../../mock-api';
-import { getStandings } from '../../../lib/internal-api';
+import { getStandings, postColumnCookie } from '../../../lib/internal-api';
 import ClassicTable from '../../classic-table';
 import StandardLayout from '../../layouts/standard';
 

@@ -26,7 +26,7 @@ class PickLeague extends Component {
   }
 
   renderLeaguesList(leagues, routePrefix, sampleData = false) {
-    const newList = JSON.parse(JSON.stringify(leagues));
+    const newList = { ...leagues };
     sampleData && newList.push({
       leagueId: '',
       leagueName: 'Sample League Data'
@@ -37,7 +37,7 @@ class PickLeague extends Component {
         {newList.map(league => {
           return (
             <li key={league.leagueId} className="league-list-item">
-              <Link to={"/" + routePrefix + "/" + league.leagueId}>
+              <Link to={`/${routePrefix}/${league.leagueId}`}>
                 <span className="league-name col-9-of-10">{league.leagueName}</span>
                 <span className="link--right col-1-of-10">{'>'}</span>
               </Link>
