@@ -8,6 +8,7 @@
   "scripts": {
     "build": "webpack --progress --colors && cp site/assets/scripts/modernizr.js site/public/modernizr.js",
     "full-start": "rm -rf site/public/wp/* && npm run build && npm start",
+    "full-start-offline": "rm -rf site/public/wp/* && npm run build && OFFLINE_MODE=1 npm start",
     "start": "node index"
   },
   "dependencies": {
