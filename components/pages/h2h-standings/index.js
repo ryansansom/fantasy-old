@@ -2,26 +2,19 @@ import React, { Component } from 'react';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { fetchStandings } from '../../../redux/actions';
-import { mockRealAPI } from '../../mock-api';
-import { getStandings, postColumnCookie } from '../../../lib/internal-api';
+import { getH2HStandings, postColumnCookie } from '../../../lib/internal-api';
 import ClassicTable from '../../classic-table';
 import StandardLayout from '../../layouts/standard';
 
-const pageName = 'Standings';
+const pageName = 'Head to Head Standings';
 
 if (process.env.CLIENT_RENDER) {
   require('./styles.less')
 }
 
-function standingsData(leagueID) {
-  return leagueID
-    ? getStandings(leagueID)
-    : mockRealAPI();
-}
-
-class Standings extends Component {
+class H2HStandings extends Component {
   static fetchData(dispatch, { leagueID }) {
-    return fetchStandings(standingsData(leagueID), pageName, true)(dispatch);
+    return fetchStandings(getH2HStandings(leagueID), pageName)(dispatch);
   }
 
   constructor(props) {
@@ -34,17 +27,17 @@ class Standings extends Component {
 
   componentDidMount() {
     document.title = pageName;
-    if (this.props.page !== pageName) this.props.fetchStandings(standingsData(this.props.params.leagueID), pageName, true)
+    if (this.props.page !== pageName) this.props.fetchStandings(getH2HStandings(this.props.params.leagueID), pageName, true)
   }
 
-  closeModal(newConfig) {
+  closeModal = (newConfig) => {
     // TODO: Compare new config with old and post only if changed
     postColumnCookie(newConfig);
 
     return this.setState({
       modalOpen: ''
     });
-  }
+  };
 
   render() {
     const { fetchError, standings } = this.props;
@@ -76,7 +69,7 @@ class Standings extends Component {
                 className="refresh-results table-button button"
                 onClick={e => {
                   e.preventDefault();
-                  return this.props.fetchStandings(this.props.params.leagueID ? getStandings(this.props.params.leagueID) : mockRealAPI(), pageName, true);
+                  return this.props.fetchStandings(getH2HStandings(this.props.params.leagueID), pageName);
                 }}
                 href={refreshLinkUrl}>
                 Refresh
@@ -101,7 +94,7 @@ class Standings extends Component {
                  entries={standings.players || standings.entries} // Future support for renaming the API field
                  sortFunc={sortFunc}
                  modalOpen={this.state.modalOpen}
-                 closeModal={::this.closeModal} />
+                 closeModal={this.closeModal} />
               }
             </div>
           </StandardLayout>
@@ -115,4 +108,4 @@ function mapStateToProps({ fetchError, standings, updating, page }) {
   return { fetchError, standings, updating, page }
 }
 
-export default connect(mapStateToProps, { fetchStandings })(Standings)
+export default connect(mapStateToProps, { fetchStandings })(H2HStandings)
