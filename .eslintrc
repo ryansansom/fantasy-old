@@ -9,6 +9,7 @@
   "rules": {
     "max-len": 0,
     "no-console": 2,
+    "no-param-reassign": [2, { "props": false }],
     "react/jsx-filename-extension": [2, { "extensions": [".js"] }],
     "react/jsx-wrap-multilines": [2, {
       "declaration": "parens-new-line",
