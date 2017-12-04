@@ -16,6 +16,7 @@ export default class Accordion extends Component {
   };
 
   static defaultProps = {
+    classes: '',
     tag: 'div',
   };
 
