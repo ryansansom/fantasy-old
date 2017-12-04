@@ -45,34 +45,31 @@ class PickLeague extends Component {
   render() {
     return (
       <div className="pick-league">
-        { this.props.fetchError &&
-          (
+        { this.props.fetchError && (
           <div className="loading">
             <span className="fetch-error">Sorry, there seems to be an error fetching data at this time. Please try again later.</span>
           </div>
-)
-        }
-        { !this.props.fetchError && (!this.props.updating ?
-          (
-            <StandardLayout title="Welcome to the new, improved view of Fantasy Premier League">
-              <h1>League Lists</h1>
+        )}
+        { !this.props.fetchError && (
+          !this.props.updating
+            ? (
+              <StandardLayout title="Welcome to the new, improved view of Fantasy Premier League">
+                <h1>League Lists</h1>
 
-              <div className="classic-leagues--wrapper">
-                <h2>Classic Leagues</h2>
-                <p>Pick a league to view the standings:</p>
-                {this.props.leaguesList && this.renderLeaguesList()}
-              </div>
+                <div className="classic-leagues--wrapper">
+                  <h2>Classic Leagues</h2>
+                  <p>Pick a league to view the standings:</p>
+                  {this.props.leaguesList && this.renderLeaguesList()}
+                </div>
 
-              <div className="classic-leagues--wrapper">
-                <h2>Head-to-head Leagues</h2>
-                <p>... Coming soon!</p>
-              </div>
-            </StandardLayout>
-)
-        :
-            <span className="loading">Loading...</span>
-        )
-        }
+                <div className="classic-leagues--wrapper">
+                  <h2>Head-to-head Leagues</h2>
+                  <p>... Coming soon!</p>
+                </div>
+              </StandardLayout>
+          )
+          : <span className="loading">Loading...</span>
+        )}
       </div>
     );
   }

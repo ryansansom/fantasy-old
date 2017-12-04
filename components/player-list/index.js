@@ -53,21 +53,25 @@ class PlayerList extends Component {
     const { players: { picks, subs } } = this.props;
     return (
       <div className="player-picks">
-        {picks.length > 0 ? (
-          <div>
-            <h3 className="list-header">Players</h3>
-            {this.renderHeader()}
-            {this.renderList(picks)}
-          </div>
-) : null}
+        {picks.length > 0
+          ? (
+            <div>
+              <h3 className="list-header">Players</h3>
+              {this.renderHeader()}
+              {this.renderList(picks)}
+            </div>
+          )
+          : null}
 
-        {subs && subs.length > 0 ? (
-          <div>
-            <h3 className="list-header">Subs</h3>
-            {this.renderHeader()}
-            {this.renderList(subs)}
-          </div>
-) : null}
+        {subs && subs.length > 0
+          ? (
+            <div>
+              <h3 className="list-header">Subs</h3>
+              {this.renderHeader()}
+              {this.renderList(subs)}
+            </div>
+          )
+          : null}
       </div>
     );
   }

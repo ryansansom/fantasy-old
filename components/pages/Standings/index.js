@@ -55,66 +55,64 @@ class Standings extends Component {
 
     return (
       <div className="standings">
-        { fetchError &&
-          (
+        { fetchError && (
           <div className="loading">
             <span className="fetch-error">Sorry, there seems to be an error fetching data at this time</span>
             <Link to="/">Go Back</Link>
           </div>
-)
+          )
         }
-        { !fetchError && (!standings ?
-          <span className="loading">Loading...</span>
-          :
-          (
-            <StandardLayout title="Welcome to the new, improved view of Fantasy Premier League">
-              <h2 className="league-header">League Information</h2>
-              <div className="league-name">
-                <span>{standings.leagueName}</span>
-                <span> (</span>
-                <Link to="/">change...</Link>
-                <span>)</span>
-              </div>
-              <div className="refresh-results--wrapper col-1-of-2">
-                <a
-                  className="refresh-results table-button button"
-                  onClick={(e) => {
-                  e.preventDefault();
-                  return this.props.fetchStandings(this.props.params.leagueID ? getStandings(this.props.params.leagueID) : mockRealAPI(), pageName, true);
-                }}
-                  href={refreshLinkUrl}
-                >
-                Refresh
-                </a>
-              </div>
-              <div className="configure-button--wrapper col-1-of-2">
-                <div
-                  className="configure-button table-button button"
-                  onClick={() => {
-                  this.setState({
-                    modalOpen: 'COLUMNS',
-                  });
-                }}
-                >
-                Configure Columns
+        { !fetchError && (
+          !standings
+            ? <span className="loading">Loading...</span>
+            : (
+              <StandardLayout title="Welcome to the new, improved view of Fantasy Premier League">
+                <h2 className="league-header">League Information</h2>
+                <div className="league-name">
+                  <span>{standings.leagueName}</span>
+                  <span> (</span>
+                  <Link to="/">change...</Link>
+                  <span>)</span>
                 </div>
-              </div>
-              <div className="table-wrapper">
-                {this.props.updating ?
-                  <span>Updating...</span>
-                :
-                (
-                  <ClassicTable
-                    entries={standings.players || standings.entries} // Future support for renaming the API field
-                    sortFunc={sortFunc}
-                    modalOpen={this.state.modalOpen}
-                    closeModal={::this.closeModal}
-                  />
-)
-              }
-              </div>
-            </StandardLayout>
-)
+                <div className="refresh-results--wrapper col-1-of-2">
+                  <a
+                    className="refresh-results table-button button"
+                    onClick={(e) => {
+                    e.preventDefault();
+                    return this.props.fetchStandings(this.props.params.leagueID ? getStandings(this.props.params.leagueID) : mockRealAPI(), pageName, true);
+                  }}
+                    href={refreshLinkUrl}
+                  >
+                  Refresh
+                  </a>
+                </div>
+                <div className="configure-button--wrapper col-1-of-2">
+                  <div
+                    className="configure-button table-button button"
+                    onClick={() => {
+                    this.setState({
+                      modalOpen: 'COLUMNS',
+                    });
+                  }}
+                  >
+                  Configure Columns
+                  </div>
+                </div>
+                <div className="table-wrapper">
+                  {this.props.updating
+                    ? <span>Updating...</span>
+                    : (
+                      <ClassicTable
+                        entries={standings.players || standings.entries} // Future support for renaming the API field
+                        sortFunc={sortFunc}
+                        modalOpen={this.state.modalOpen}
+                        closeModal={::this.closeModal}
+                      />
+                    )
+                  }
+                </div>
+              </StandardLayout>
+            )
         )}
       </div>
     );
