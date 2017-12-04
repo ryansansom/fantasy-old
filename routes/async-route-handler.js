@@ -5,5 +5,5 @@ export default function (fn) {
     if (routePromise.catch) {
       routePromise.catch(err => next(err));
     }
-  }
+  };
 }

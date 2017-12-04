@@ -6,7 +6,7 @@ import { updatePage } from '../../../redux/actions';
 const pageName = 'Refresh Auth Token';
 
 if (process.env.CLIENT_RENDER) {
-  require('./styles.less')
+  require('./styles.less');
 }
 
 class PickLeague extends Component {
@@ -21,7 +21,7 @@ class PickLeague extends Component {
 
   render() {
     return (
-      <div className='refresh-credentials'>
+      <div className="refresh-credentials">
         <form action="/api/refresh-credentials" method="post">
           <label>Username: </label>
           <input type="text" name="username" />
@@ -35,12 +35,12 @@ class PickLeague extends Component {
           <Link to="/">Back to home</Link>
         </div>
       </div>
-    )
+    );
   }
 }
 
 function mapStateToProps({ updating, page }) {
-  return { updating, page }
+  return { updating, page };
 }
 
-export default connect(mapStateToProps, { updatePage })(PickLeague)
+export default connect(mapStateToProps, { updatePage })(PickLeague);

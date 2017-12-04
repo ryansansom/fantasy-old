@@ -2,8 +2,8 @@ export function leagueListCookie(req, data) {
   // Read info from cookie, if error, set as blank rather than throw.
   let parsedCookie;
   try {
-    parsedCookie = JSON.parse(req.cookies['league_list']);
-  } catch(e) {
+    parsedCookie = JSON.parse(req.cookies.league_list);
+  } catch (e) {
     parsedCookie = [];
   }
 

@@ -4,6 +4,7 @@ import cookieHandler from './api/cookie-handler';
 import leaguesList from './api/leagues-handler';
 import cookieRefresh from '../middleware/cookie-refresh';
 import apiRoute from './api/api-routes';
+
 const router = Router();
 
 // Middlewares

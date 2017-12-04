@@ -11,7 +11,7 @@ import StandardLayout from '../../layouts/standard';
 const pageName = 'Standings';
 
 if (process.env.CLIENT_RENDER) {
-  require('./styles.less')
+  require('./styles.less');
 }
 
 function standingsData(leagueID) {
@@ -29,13 +29,13 @@ class Standings extends Component {
     super(props);
 
     this.state = {
-      modalOpen: ''
-    }
+      modalOpen: '',
+    };
   }
 
   componentDidMount() {
     document.title = pageName;
-    if (this.props.page !== pageName) this.props.fetchStandings(standingsData(this.props.params.leagueID), pageName, true)
+    if (this.props.page !== pageName) this.props.fetchStandings(standingsData(this.props.params.leagueID), pageName, true);
   }
 
   closeModal(newConfig) {
@@ -43,22 +43,22 @@ class Standings extends Component {
     postColumnCookie(newConfig);
 
     return this.setState({
-      modalOpen: ''
+      modalOpen: '',
     });
   }
 
   render() {
     const { fetchError, standings } = this.props;
-    const refreshLinkUrl = this.props.params.leagueID ? '/standings/' + this.props.params.leagueID : '/standings';
+    const refreshLinkUrl = this.props.params.leagueID ? `/standings/${this.props.params.leagueID}` : '/standings';
 
     const sortFunc = (a, b) => (b.prevTotal + b.projectedPoints) - (a.prevTotal + a.projectedPoints);
 
     return (
-      <div className='standings'>
+      <div className="standings">
         { fetchError &&
           <div className="loading">
             <span className="fetch-error">Sorry, there seems to be an error fetching data at this time</span>
-            <Link to="/">{'Go Back'}</Link>
+            <Link to="/">Go Back</Link>
           </div>
         }
         { !fetchError && (!standings ?
@@ -69,17 +69,18 @@ class Standings extends Component {
             <div className="league-name">
               <span>{standings.leagueName}</span>
               <span> (</span>
-              <Link to="/">{'change...'}</Link>
+              <Link to="/">change...</Link>
               <span>)</span>
             </div>
             <div className="refresh-results--wrapper col-1-of-2">
               <a
                 className="refresh-results table-button button"
-                onClick={e => {
+                onClick={(e) => {
                   e.preventDefault();
                   return this.props.fetchStandings(this.props.params.leagueID ? getStandings(this.props.params.leagueID) : mockRealAPI(), pageName, true);
                 }}
-                href={refreshLinkUrl}>
+                href={refreshLinkUrl}
+              >
                 Refresh
               </a>
             </div>
@@ -88,21 +89,23 @@ class Standings extends Component {
                 className="configure-button table-button button"
                 onClick={() => {
                   this.setState({
-                    modalOpen: 'COLUMNS'
+                    modalOpen: 'COLUMNS',
                   });
-                }}>
+                }}
+              >
                 Configure Columns
               </div>
             </div>
             <div className="table-wrapper">
               {this.props.updating ?
-               <span>Updating...</span>
+                <span>Updating...</span>
                 :
-               <ClassicTable
-                 entries={standings.players || standings.entries} // Future support for renaming the API field
-                 sortFunc={sortFunc}
-                 modalOpen={this.state.modalOpen}
-                 closeModal={::this.closeModal} />
+                <ClassicTable
+                  entries={standings.players || standings.entries} // Future support for renaming the API field
+                  sortFunc={sortFunc}
+                  modalOpen={this.state.modalOpen}
+                  closeModal={::this.closeModal}
+                />
               }
             </div>
           </StandardLayout>
@@ -112,8 +115,12 @@ class Standings extends Component {
   }
 }
 
-function mapStateToProps({ fetchError, standings, updating, page }) {
-  return { fetchError, standings, updating, page }
+function mapStateToProps({
+  fetchError, standings, updating, page,
+}) {
+  return {
+    fetchError, standings, updating, page,
+  };
 }
 
-export default connect(mapStateToProps, { fetchStandings })(Standings)
+export default connect(mapStateToProps, { fetchStandings })(Standings);

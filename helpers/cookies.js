@@ -17,7 +17,7 @@ export function columnCookieFilter(cookie) {
 
   const newCookie = {};
   // TODO: Should be reduce...
-  Object.keys(parsedCookie).forEach(key => {
+  Object.keys(parsedCookie).forEach((key) => {
     if (allowedCookieKeys.find(allowedKey => allowedKey === key)) newCookie[key] = parsedCookie[key];
   });
 

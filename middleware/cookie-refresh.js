@@ -1,10 +1,10 @@
 import { cookieOptions as options } from '../constants/cookie-settings';
 
-const cookiesToRefresh = [{key: 'columns', options}];
+const cookiesToRefresh = [{ key: 'columns', options }];
 
 export default (req, res, next) => {
   const reqCookies = req.cookies || {};
-  cookiesToRefresh.forEach(cookie => {
+  cookiesToRefresh.forEach((cookie) => {
     const cookieValue = reqCookies[cookie.key];
 
     if (cookieValue) {

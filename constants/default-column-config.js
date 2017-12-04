@@ -5,7 +5,7 @@ export const playerCols = [
   playerListConfig.position,
   playerListConfig.playerName,
   playerListConfig.playerPoints,
-  playerListConfig.bonusPoints
+  playerListConfig.bonusPoints,
 ];
 
 export const tableCols = [
@@ -15,5 +15,5 @@ export const tableCols = [
   classicTableConfig.currPoints,
   classicTableConfig.projPoints,
   classicTableConfig.currTotal,
-  classicTableConfig.projTotal
+  classicTableConfig.projTotal,
 ];

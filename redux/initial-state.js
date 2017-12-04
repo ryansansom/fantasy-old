@@ -4,6 +4,6 @@ export function getInitialState(req) {
   return {
     columns: columnCookieFilter(req.cookies.columns),
     fetchError: false,
-    updating: false
+    updating: false,
   };
 }

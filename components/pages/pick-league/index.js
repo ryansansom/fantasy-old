@@ -8,7 +8,7 @@ import StandardLayout from '../../layouts/standard';
 const pageName = 'PickLeague';
 
 if (process.env.CLIENT_RENDER) {
-  require('./styles.less')
+  require('./styles.less');
 }
 
 class PickLeague extends Component {
@@ -25,28 +25,26 @@ class PickLeague extends Component {
     const newList = JSON.parse(JSON.stringify(this.props.leaguesList));
     newList.push({
       leagueId: '',
-      leagueName: 'Sample League Data'
+      leagueName: 'Sample League Data',
     });
 
     return (
       <ul className="classic-leagues--list">
-        {newList.map(league => {
-          return (
-            <li key={league.leagueId} className="league-list-item">
-              <Link to={"/standings/" + league.leagueId}>
-                <span className="league-name col-9-of-10">{league.leagueName}</span>
-                <span className="link--right col-1-of-10">{'>'}</span>
-              </Link>
-            </li>
-          );
-        })}
+        {newList.map(league => (
+          <li key={league.leagueId} className="league-list-item">
+            <Link to={`/standings/${league.leagueId}`}>
+              <span className="league-name col-9-of-10">{league.leagueName}</span>
+              <span className="link--right col-1-of-10">></span>
+            </Link>
+          </li>
+          ))}
       </ul>
     );
   }
 
   render() {
     return (
-      <div className='pick-league'>
+      <div className="pick-league">
         { this.props.fetchError &&
           <div className="loading">
             <span className="fetch-error">Sorry, there seems to be an error fetching data at this time. Please try again later.</span>
@@ -56,7 +54,7 @@ class PickLeague extends Component {
           <StandardLayout title="Welcome to the new, improved view of Fantasy Premier League">
             <h1>League Lists</h1>
 
-            <div className='classic-leagues--wrapper'>
+            <div className="classic-leagues--wrapper">
               <h2>Classic Leagues</h2>
               <p>Pick a league to view the standings:</p>
               {this.props.leaguesList && this.renderLeaguesList()}
@@ -72,12 +70,16 @@ class PickLeague extends Component {
         )
         }
       </div>
-    )
+    );
   }
 }
 
-function mapStateToProps({ fetchError, updating, leaguesList, page }) {
-  return { fetchError, updating, leaguesList, page }
+function mapStateToProps({
+  fetchError, updating, leaguesList, page,
+}) {
+  return {
+    fetchError, updating, leaguesList, page,
+  };
 }
 
-export default connect(mapStateToProps, { leagueList })(PickLeague)
+export default connect(mapStateToProps, { leagueList })(PickLeague);
