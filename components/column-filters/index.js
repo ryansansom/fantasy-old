@@ -1,5 +1,6 @@
+import React from 'react';
+import PropTypes from 'prop-types';
 import Accordion from '../accordion';
-import React, { PropTypes } from 'react';
 
 if (process.env.CLIENT_RENDER) {
   require('./styles.less');

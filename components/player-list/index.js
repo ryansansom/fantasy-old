@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { getLength } from '../../lib/table-config/helpers';
 import * as config from '../../lib/table-config/player-list';
 

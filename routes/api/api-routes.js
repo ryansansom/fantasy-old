@@ -1,3 +1,4 @@
+import { Router } from 'express';
 import errHandler from '../async-route-handler';
 import getLeagues from '../../lib/get-leagues';
 import getPlayers from '../../lib/get-players';
@@ -9,7 +10,6 @@ import getTotalPoints from '../../lib/get-total-points';
 import getNewTotal from '../../lib/get-new-total';
 import getWeek from '../../lib/get-week';
 import updateCredentials from '../../lib/update-creds';
-import { Router } from 'express';
 import { leagueListCookie } from '../../helpers/league-list';
 import { cookieOptions } from '../../constants/cookie-settings';
 

@@ -1,9 +1,10 @@
-import Accordion from '../accordion';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import Accordion from '../accordion';
 import { updateCols } from '../../redux/actions';
 import { getLength } from '../../lib/table-config/helpers';
 import PlayerList from '../player-list';
-import React, { Component, PropTypes } from 'react';
 import * as classicTableConfig from '../../lib/table-config/classic-table';
 import * as playerListConfig from '../../lib/table-config/player-list';
 import ColumnModal from '../modals/column-configuration';

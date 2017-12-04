@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import * as classicTableConfig from '../../../lib/table-config/classic-table';
 import * as playerListConfig from '../../../lib/table-config/player-list';
 import ColumnFilters from '../../column-filters';

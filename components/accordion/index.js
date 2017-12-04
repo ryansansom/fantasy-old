@@ -1,5 +1,6 @@
 import classnames from 'classnames';
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 if (process.env.CLIENT_RENDER) {
   require('./styles.less');
