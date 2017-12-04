@@ -8,6 +8,8 @@
   "scripts": {
     "build": "webpack --progress --colors && cp site/assets/scripts/modernizr.js site/public/modernizr.js",
     "full-start": "rm -rf site/public/wp/* && npm run build && npm start",
+    "lint": "eslint --cache .",
+    "fix": "eslint --fix .",
     "start": "node index"
   },
   "dependencies": {
@@ -34,6 +36,7 @@
     "less-loader": "^2.2.2",
     "morgan": "^1.7.0",
     "path": "^0.12.7",
+    "prop-types": "^15.6.0",
     "pug": "^2.0.0-beta11",
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
@@ -46,9 +49,12 @@
     "webpack": "^1.14.0"
   },
   "devDependencies": {
-    "babel-eslint": "^7.0.0",
-    "eslint": "^3.12.2",
-    "eslint-plugin-react": "^6.8.0",
+    "babel-eslint": "^8.0.1",
+    "eslint": "^4.8.0",
+    "eslint-config-airbnb": "^16.0.0",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-jsx-a11y": "^6.0.2",
+    "eslint-plugin-react": "^7.4.0",
     "nodemon": "^1.10.2"
   }
 }
