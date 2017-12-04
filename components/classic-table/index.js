@@ -9,12 +9,12 @@ import * as playerListConfig from '../../lib/table-config/player-list';
 import ColumnModal from '../modals/column-configuration';
 
 if (process.env.CLIENT_RENDER) {
-  require('./styles.less')
+  require('./styles.less');
 }
 
 function buildConfigFromProps(config, arr) {
   if (arr[0] && arr[0].func) return arr;
-  return arr.map(cfg => {
+  return arr.map((cfg) => {
     const matchKey = Object.keys(config).find(cfgKey => config[cfgKey].header === cfg.header);
     return config[matchKey];
   });
@@ -25,11 +25,11 @@ class ClassicTable extends Component {
     columns: PropTypes.object.isRequired, // Could do shape...
     entries: PropTypes.array.isRequired,
     modalOpen: PropTypes.string.isRequired,
-    sortFunc: PropTypes.func
+    sortFunc: PropTypes.func,
   };
 
   static defaultProps = {
-    sortFunc: (a, b) => (b.prevTotal + b.projectedPoints) - (a.prevTotal + a.projectedPoints)
+    sortFunc: (a, b) => (b.prevTotal + b.projectedPoints) - (a.prevTotal + a.projectedPoints),
   };
 
   constructor(props) {
@@ -41,9 +41,11 @@ class ClassicTable extends Component {
   renderHeader() {
     const { tableCols } = this;
     const len = getLength(tableCols);
-    return <div className="header-row">
-      {tableCols.map(({header, colSpan}, i) => <div key={i} className={`col-${colSpan || 1}-of-${len} table-header table-format`}>{header}</div>)}
-    </div>;
+    return (
+      <div className="header-row">
+        {tableCols.map(({ header, colSpan }, i) => <div key={i} className={`col-${colSpan || 1}-of-${len} table-header table-format`}>{header}</div>)}
+      </div>
+    );
   }
 
   renderList() {
@@ -54,9 +56,11 @@ class ClassicTable extends Component {
     const entryList = entries
       .sort(sortFunc)
       .map((entry, i) => {
-        const entryRow = <div>
-          {tableCols.map(({func, colSpan}, j) => <div key={j} className={`col-${colSpan || 1}-of-${len} table-format`}>{func(entry, i)}</div>)}
-        </div>;
+        const entryRow = (
+          <div>
+            {tableCols.map(({ func, colSpan }, j) => <div key={j} className={`col-${colSpan || 1}-of-${len} table-format`}>{func(entry, i)}</div>)}
+          </div>
+        );
 
         return (
           <Accordion
@@ -64,10 +68,11 @@ class ClassicTable extends Component {
             key={entry.entry}
             classes="entry-li"
             title={entry.entry.toString()}
-            header={entryRow}>
-            <PlayerList accordionKey={entry.entry + "--configure"} listConfig={this.playerCols} players={entry.players} />
+            header={entryRow}
+          >
+            <PlayerList accordionKey={`${entry.entry}--configure`} listConfig={this.playerCols} players={entry.players} />
           </Accordion>
-        )
+        );
       });
     return (
       <ul className="table-list">
@@ -82,11 +87,11 @@ class ClassicTable extends Component {
     if (columnIndex > -1) {
       e.target.checked = true;
       tableCols.splice(columnIndex, 1);
-      this.props.updateCols({tableCols, playerCols});
+      this.props.updateCols({ tableCols, playerCols });
     } else {
       e.target.checked = false;
       tableCols.push(classicTableConfig[e.target.value]);
-      this.props.updateCols({tableCols, playerCols});
+      this.props.updateCols({ tableCols, playerCols });
     }
   }
 
@@ -96,11 +101,11 @@ class ClassicTable extends Component {
     if (columnIndex > -1) {
       e.target.checked = true;
       playerCols.splice(columnIndex, 1);
-      this.props.updateCols({tableCols, playerCols});
+      this.props.updateCols({ tableCols, playerCols });
     } else {
       e.target.checked = false;
       playerCols.push(playerListConfig[e.target.value]);
-      this.props.updateCols({tableCols, playerCols});
+      this.props.updateCols({ tableCols, playerCols });
     }
   }
 
@@ -109,13 +114,15 @@ class ClassicTable extends Component {
       <div className="classic-standings">
         { this.renderHeader() }
         { this.renderList() }
-        { this.props.modalOpen &&
+        { this.props.modalOpen && (
           <ColumnModal
             closeModal={this.props.closeModal}
             onTableConfigChange={::this.onTableConfigChange}
             onListConfigChange={::this.onListConfigChange}
             listConfig={this.playerCols}
-            tableConfig={this.tableCols} />
+            tableConfig={this.tableCols}
+          />
+          )
         }
       </div>
     );
@@ -123,7 +130,7 @@ class ClassicTable extends Component {
 }
 
 function mapStateToProps({ columns }) {
-  return { columns }
+  return { columns };
 }
 
 export default connect(mapStateToProps, { updateCols })(ClassicTable);

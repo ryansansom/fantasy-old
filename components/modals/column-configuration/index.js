@@ -4,14 +4,14 @@ import * as playerListConfig from '../../../lib/table-config/player-list';
 import ColumnFilters from '../../column-filters';
 
 if (process.env.CLIENT_RENDER) {
-  require('./styles.less')
+  require('./styles.less');
 }
 
 const ColumnModal = (props) => {
   const closeModal = () => {
     props.closeModal({
       tableCols: props.tableConfig,
-      playerCols: props.listConfig
+      playerCols: props.listConfig,
     });
   };
 
@@ -26,14 +26,16 @@ const ColumnModal = (props) => {
             accordionKey="classic-table"
             config={classicTableConfig}
             listConfig={props.tableConfig}
-            toggle={props.onTableConfigChange} />
+            toggle={props.onTableConfigChange}
+          />
           <h3 className="modal--header">Player List Column Configuration</h3>
           <p className="modal--content">Changes are applied and saved automatically</p>
           <ColumnFilters
             accordionKey="player-list"
             config={playerListConfig}
             listConfig={props.listConfig}
-            toggle={props.onListConfigChange} />
+            toggle={props.onListConfigChange}
+          />
           <a onClick={closeModal}>
             Close
           </a>
@@ -47,7 +49,7 @@ ColumnModal.propTypes = {
   listConfig: PropTypes.array.isRequired,
   onTableConfigChange: PropTypes.func.isRequired,
   onListConfigChange: PropTypes.func.isRequired,
-  tableConfig: PropTypes.array.isRequired
+  tableConfig: PropTypes.array.isRequired,
 };
 
 export default ColumnModal;

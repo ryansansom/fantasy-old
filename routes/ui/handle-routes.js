@@ -15,15 +15,15 @@ import getOptions from '../helpers/options-creator';
 
 const layoutLoc = path.join(__dirname, '../../views/layout.pug');
 const masterLayout = fs.readFileSync(layoutLoc, 'utf8');
-const layoutFunc = compile(masterLayout, {filename: layoutLoc});
+const layoutFunc = compile(masterLayout, { filename: layoutLoc });
 
 export default (req, res, next) => {
-  let templateLocals = {};
-  match({routes, location: req.url }, (error, redirectLocation, renderProps) => {
+  const templateLocals = {};
+  match({ routes, location: req.url }, (error, redirectLocation, renderProps) => {
     if (error) {
-      res.status(500).send(error.message)
+      res.status(500).send(error.message);
     } else if (redirectLocation) {
-      res.redirect(302, redirectLocation.pathname + redirectLocation.search)
+      res.redirect(302, redirectLocation.pathname + redirectLocation.search);
     } else if (renderProps) {
       const { components } = renderProps;
       const store = createStore(rootReducer, getInitialState(req), applyMiddleware(thunkMiddleware));
@@ -31,7 +31,7 @@ export default (req, res, next) => {
       // generate options to pass to fetchData functions
       const options = getOptions(req, renderProps);
       components[components.length - 1].fetchData(store.dispatch, options)
-        .then(data => {
+        .then((data) => {
           // Use cookie and data from api to set new cookies
           propagateCookies(req, res, data);
 
@@ -40,17 +40,16 @@ export default (req, res, next) => {
           templateLocals.title = state.page; // Page title on server rendered page only
           templateLocals.reduxState = JSON.stringify(state);
           templateLocals.apiUrl = process.env.NODE_ENV === 'production' ? 'https://ryan-fantasy.herokuapp.com' : 'http://localhost:5000';
-          templateLocals.content = renderToString(
-            <Provider store={store}>
-              <RouterContext {...renderProps} />
-            </Provider>);
+          templateLocals.content = renderToString(<Provider store={store}>
+            <RouterContext {...renderProps} />
+                                                  </Provider>);
 
           res.status(200).send(layoutFunc(templateLocals));
         })
         .catch(next);
     } else {
       templateLocals.title = 'Page not found';
-      res.status(404).send('Page not found')
+      res.status(404).send('Page not found');
     }
-  })
-}
+  });
+};

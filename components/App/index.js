@@ -8,6 +8,6 @@ if (process.env.CLIENT_RENDER) {
 
 export default class App extends React.Component {
   render() {
-   return (this.props.children)
+    return (this.props.children);
   }
 }

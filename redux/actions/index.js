@@ -6,28 +6,26 @@ export const PAGE = 'page';
 export const LEAGUES = 'leagueList';
 
 export function updateCols(cols) {
-  return { type: COLUMNS, value: cols }
+  return { type: COLUMNS, value: cols };
 }
 
 export function updatePage(page) {
   return (dispatch) => {
     dispatch({ type: PAGE, page });
     return Promise.resolve();
-  }
+  };
 }
 
 export function fetchStandings(method, page) {
   return (dispatch) => {
     dispatch({ type: UPDATING, page });
     return method
-      .then(res => {
-        return dispatch({
-          type: REAL_DATA,
-          value: res
-        })
-      })
+      .then(res => dispatch({
+        type: REAL_DATA,
+        value: res,
+      }))
       .catch(() => dispatch({ type: FETCH_ERROR }));
-  }
+  };
 }
 
 export function leagueList(method, page) {
@@ -36,8 +34,8 @@ export function leagueList(method, page) {
     return method
       .then(res => dispatch({
         type: LEAGUES,
-        value: res
+        value: res,
       }))
       .catch(() => dispatch({ type: FETCH_ERROR }));
-  }
+  };
 }

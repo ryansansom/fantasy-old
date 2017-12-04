@@ -7,11 +7,10 @@ import { createStore, applyMiddleware } from 'redux';
 import counterApp from '../../redux/reducers';
 import thunkMiddleware from 'redux-thunk';
 
-let content = document.getElementById('content');
-let reduxState = JSON.parse(document.documentElement.getAttribute('redux-state'));
-let store = createStore(counterApp, reduxState, applyMiddleware(thunkMiddleware));
+const content = document.getElementById('content');
+const reduxState = JSON.parse(document.documentElement.getAttribute('redux-state'));
+const store = createStore(counterApp, reduxState, applyMiddleware(thunkMiddleware));
 
-ReactDOM.render(
-  <Provider store={store}>
-    <Router history={browserHistory} routes={routes} />
-  </Provider>, content);
+ReactDOM.render(<Provider store={store}>
+  <Router history={browserHistory} routes={routes} />
+                </Provider>, content);

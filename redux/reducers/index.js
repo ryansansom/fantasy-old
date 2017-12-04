@@ -4,12 +4,12 @@ import {
   FETCH_ERROR,
   COLUMNS,
   PAGE,
-  LEAGUES
+  LEAGUES,
 } from '../actions';
 
 const initialState = {
   fetchError: false,
-  updating: false
+  updating: false,
 };
 
 function rootReducer(state = initialState, action) {
@@ -18,34 +18,34 @@ function rootReducer(state = initialState, action) {
       return Object.assign({}, state, {
         updating: true,
         fetchError: false,
-        page: action.page
+        page: action.page,
       });
     case PAGE:
       return Object.assign({}, state, {
         updating: true,
         fetchError: false,
-        page: action.page
+        page: action.page,
       });
     case FETCH_ERROR:
       return Object.assign({}, state, {
-        fetchError: true
+        fetchError: true,
       });
     case REAL_DATA:
       return Object.assign({}, state, {
         updating: false,
-        standings: action.value
+        standings: action.value,
       });
     case COLUMNS:
       return Object.assign({}, state, {
-        columns: action.value
+        columns: action.value,
       });
     case LEAGUES:
       return Object.assign({}, state, {
         updating: false,
-        leaguesList: action.value
+        leaguesList: action.value,
       });
     default:
-      return state
+      return state;
   }
 }
 

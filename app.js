@@ -3,7 +3,7 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import routes from './routes';
-import {notFound, devError, prodError} from './routes/error-handler';
+import { notFound, devError, prodError } from './routes/error-handler';
 
 const app = express();
 

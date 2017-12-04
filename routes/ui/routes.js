@@ -7,9 +7,9 @@ import Standings from '../../components/pages/Standings';
 
 export default (
   <Route path="/" component={App}>
-    <IndexRoute component={PickLeague}/>
-    <Route path="/standings" component={Standings}/>
-    <Route path="/standings/:leagueID" component={Standings}/>
-    <Route path="/refresh-credentials" component={RefreshCredentials}/>
+    <IndexRoute component={PickLeague} />
+    <Route path="/standings" component={Standings} />
+    <Route path="/standings/:leagueID" component={Standings} />
+    <Route path="/refresh-credentials" component={RefreshCredentials} />
   </Route>
-)
+);

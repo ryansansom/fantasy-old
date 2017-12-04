@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import React, { Component, PropTypes } from 'react';
 
 if (process.env.CLIENT_RENDER) {
-  require('./styles.less')
+  require('./styles.less');
 }
 
 export default class Accordion extends Component {
@@ -15,13 +15,13 @@ export default class Accordion extends Component {
   };
 
   static defaultProps = {
-    tag: 'div'
+    tag: 'div',
   };
 
   renderHeader(id) {
     return (
-      <label className='accordion--label' htmlFor={id}>
-        <div className='accordion--title'>
+      <label className="accordion--label" htmlFor={id}>
+        <div className="accordion--title">
           {this.props.header}
         </div>
       </label>
@@ -30,7 +30,7 @@ export default class Accordion extends Component {
 
   renderAccordionContent() {
     return (
-      <div className='accordion--content'>
+      <div className="accordion--content">
         {this.props.children}
       </div>
     );
@@ -42,9 +42,10 @@ export default class Accordion extends Component {
     return (
       <Tag className={classnames('accordion', this.props.classes)}>
         <input
-          className='accordion--toggle'
+          className="accordion--toggle"
           id={id}
-          type='checkbox' />
+          type="checkbox"
+        />
         {this.renderHeader(id)}
         {this.renderAccordionContent()}
       </Tag>
