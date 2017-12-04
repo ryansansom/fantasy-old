@@ -41,9 +41,11 @@ class ClassicTable extends Component {
   renderHeader() {
     const { tableCols } = this;
     const len = getLength(tableCols);
-    return (<div className="header-row">
-      {tableCols.map(({ header, colSpan }, i) => <div key={i} className={`col-${colSpan || 1}-of-${len} table-header table-format`}>{header}</div>)}
-            </div>);
+    return (
+      <div className="header-row">
+        {tableCols.map(({ header, colSpan }, i) => <div key={i} className={`col-${colSpan || 1}-of-${len} table-header table-format`}>{header}</div>)}
+      </div>
+    );
   }
 
   renderList() {
@@ -54,9 +56,11 @@ class ClassicTable extends Component {
     const entryList = entries
       .sort(sortFunc)
       .map((entry, i) => {
-        const entryRow = (<div>
-          {tableCols.map(({ func, colSpan }, j) => <div key={j} className={`col-${colSpan || 1}-of-${len} table-format`}>{func(entry, i)}</div>)}
-                          </div>);
+        const entryRow = (
+          <div>
+            {tableCols.map(({ func, colSpan }, j) => <div key={j} className={`col-${colSpan || 1}-of-${len} table-format`}>{func(entry, i)}</div>)}
+          </div>
+        );
 
         return (
           <Accordion
@@ -110,7 +114,7 @@ class ClassicTable extends Component {
       <div className="classic-standings">
         { this.renderHeader() }
         { this.renderList() }
-        { this.props.modalOpen &&
+        { this.props.modalOpen && (
           <ColumnModal
             closeModal={this.props.closeModal}
             onTableConfigChange={::this.onTableConfigChange}
@@ -118,6 +122,7 @@ class ClassicTable extends Component {
             listConfig={this.playerCols}
             tableConfig={this.tableCols}
           />
+          )
         }
       </div>
     );

@@ -8,18 +8,20 @@ if (process.env.CLIENT_RENDER) {
 const ColumnFilters = (props) => {
   const columnContent = Object.keys(props.config).map((key) => {
     const columnConfig = props.config[key];
-    return (<label className="filter" key={key}>
-      <input
-        type="checkbox"
-        className="checkbox"
-        onChange={props.toggle}
-        value={key}
-        checked={!!props.listConfig.find(cfg => cfg.header === columnConfig.header)}
-      />
-      <span>
-        {columnConfig.header}
-      </span>
-            </label>);
+    return (
+      <label className="filter" key={key}>
+        <input
+          type="checkbox"
+          className="checkbox"
+          onChange={props.toggle}
+          value={key}
+          checked={!!props.listConfig.find(cfg => cfg.header === columnConfig.header)}
+        />
+        <span>
+          {columnConfig.header}
+        </span>
+      </label>
+    );
   });
 
   return (
