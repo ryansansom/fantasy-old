@@ -47,10 +47,11 @@ const ColumnModal = (props) => {
 };
 
 ColumnModal.propTypes = {
-  listConfig: PropTypes.array.isRequired,
+  closeModal: PropTypes.func.isRequired,
+  listConfig: PropTypes.arrayOf(PropTypes.object).isRequired,
   onTableConfigChange: PropTypes.func.isRequired,
   onListConfigChange: PropTypes.func.isRequired,
-  tableConfig: PropTypes.array.isRequired,
+  tableConfig: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default ColumnModal;

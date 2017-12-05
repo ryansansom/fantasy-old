@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { leagueList } from '../../../redux/actions';
@@ -15,6 +16,18 @@ class PickLeague extends Component {
   static fetchData(dispatch, { leaguesList }) {
     return leagueList(Promise.resolve(leaguesList), pageName)(dispatch);
   }
+
+  static propTypes = {
+    fetchError: PropTypes.bool.isRequired,
+    leagueList: PropTypes.func.isRequired,
+    leaguesList: PropTypes.arrayOf(PropTypes.object),
+    page: PropTypes.string.isRequired,
+    updating: PropTypes.bool.isRequired,
+  };
+
+  static defaultProps = {
+    leaguesList: [],
+  };
 
   componentDidMount() {
     document.title = pageName;
@@ -59,7 +72,7 @@ class PickLeague extends Component {
                 <div className="classic-leagues--wrapper">
                   <h2>Classic Leagues</h2>
                   <p>Pick a league to view the standings:</p>
-                  {this.props.leaguesList && this.renderLeaguesList()}
+                  {this.props.leaguesList.length > 0 && this.renderLeaguesList()}
                 </div>
 
                 <div className="classic-leagues--wrapper">

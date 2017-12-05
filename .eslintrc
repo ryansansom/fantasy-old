@@ -21,6 +21,11 @@
       "logical": "parens-new-line",
       "prop": "parens-new-line"
     }],
+    "jsx-a11y/anchor-is-valid": [ "error", {
+      "components": [ "Link" ],
+      "specialLink": [ "to", "hrefLeft", "hrefRight" ],
+      "aspects": [ "noHref", "invalidHref", "preferButton" ]
+    }],
     "import/prefer-default-export": 0
   }
 }

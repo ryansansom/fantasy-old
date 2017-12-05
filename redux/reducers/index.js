@@ -9,6 +9,7 @@ import {
 
 const initialState = {
   fetchError: false,
+  standings: {},
   updating: false,
 };
 
@@ -19,6 +20,7 @@ function rootReducer(state = initialState, action) {
         updating: true,
         fetchError: false,
         page: action.page,
+        standings: {},
       });
     case PAGE:
       return Object.assign({}, state, {

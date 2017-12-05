@@ -9,8 +9,11 @@ if (process.env.CLIENT_RENDER) {
 
 class PlayerList extends Component {
   static propTypes = {
-    listConfig: PropTypes.array,
-    players: PropTypes.object.isRequired,
+    listConfig: PropTypes.arrayOf(PropTypes.object),
+    players: PropTypes.shape({
+      picks: PropTypes.arrayOf(PropTypes.object).isRequired,
+      subs: PropTypes.arrayOf(PropTypes.object).isRequired,
+    }).isRequired,
   };
 
   static defaultProps = {
@@ -27,7 +30,7 @@ class PlayerList extends Component {
     const len = getLength(listConfig);
     return (
       <div className="header-row">
-        {listConfig.map(({ header, colSpan }, i) => <div key={i} className={`col-${colSpan || 1}-of-${len} table-header`}>{header}</div>)}
+        {listConfig.map(({ header, colSpan }) => <div key={header} className={`col-${colSpan || 1}-of-${len} table-header`}>{header}</div>)}
       </div>
     );
   }
@@ -39,7 +42,7 @@ class PlayerList extends Component {
     const playerList = players
       .map((player, i) => (
         <li key={player.element}>
-          {listConfig.map(({ func, colSpan }, j) => <div key={j} className={`col-${colSpan || 1}-of-${len} player-picks-format`}>{func(player, i)}</div>)}
+          {listConfig.map(({ header, func, colSpan }) => <div key={header} className={`col-${colSpan || 1}-of-${len} player-picks-format`}>{func(player, i)}</div>)}
         </li>
       ));
 

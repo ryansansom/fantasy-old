@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { fetchStandings } from '../../../redux/actions';
@@ -20,6 +21,25 @@ function standingsData(leagueID) {
 }
 
 class Standings extends Component {
+  static propTypes = {
+    fetchError: PropTypes.bool.isRequired,
+    fetchStandings: PropTypes.func.isRequired,
+    page: PropTypes.string.isRequired,
+    params: PropTypes.shape({
+      leagueID: PropTypes.string.isRequired,
+    }).isRequired,
+    standings: PropTypes.shape({
+      entries: PropTypes.array,
+      leagueName: PropTypes.string,
+      players: PropTypes.array,
+    }).isRequired,
+    updating: PropTypes.bool.isRequired,
+  };
+
+  static defaultProps = {
+    standings: {},
+  };
+
   static fetchData(dispatch, { leagueID }) {
     return fetchStandings(standingsData(leagueID), pageName, true)(dispatch);
   }
@@ -37,14 +57,14 @@ class Standings extends Component {
     if (this.props.page !== pageName) this.props.fetchStandings(standingsData(this.props.params.leagueID), pageName, true);
   }
 
-  closeModal(newConfig) {
+  closeModal = (newConfig) => {
     // TODO: Compare new config with old and post only if changed
     postColumnCookie(newConfig);
 
     return this.setState({
       modalOpen: '',
     });
-  }
+  };
 
   render() {
     const { fetchError, standings } = this.props;
@@ -62,7 +82,7 @@ class Standings extends Component {
           )
         }
         { !fetchError && (
-          !standings
+          !standings.leagueName
             ? <span className="loading">Loading...</span>
             : (
               <StandardLayout title="Welcome to the new, improved view of Fantasy Premier League">
@@ -105,7 +125,7 @@ class Standings extends Component {
                         entries={standings.players || standings.entries} // Future support for renaming the API field
                         sortFunc={sortFunc}
                         modalOpen={this.state.modalOpen}
-                        closeModal={::this.closeModal}
+                        closeModal={this.closeModal}
                       />
                     )
                   }

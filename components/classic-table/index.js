@@ -23,10 +23,15 @@ function buildConfigFromProps(config, arr) {
 
 class ClassicTable extends Component {
   static propTypes = {
-    columns: PropTypes.object.isRequired, // Could do shape...
-    entries: PropTypes.array.isRequired,
+    closeModal: PropTypes.func.isRequired,
+    columns: PropTypes.shape({
+      playerCols: PropTypes.array,
+      tableCols: PropTypes.array,
+    }).isRequired, // Could do shape...
+    entries: PropTypes.arrayOf(PropTypes.object).isRequired,
     modalOpen: PropTypes.string.isRequired,
     sortFunc: PropTypes.func,
+    updateCols: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -39,12 +44,40 @@ class ClassicTable extends Component {
     this.tableCols = buildConfigFromProps(classicTableConfig, props.columns.tableCols);
   }
 
+  onTableConfigChange = (e) => {
+    const { playerCols, tableCols } = this;
+    const columnIndex = tableCols.findIndex(cfg => cfg.header === classicTableConfig[e.target.value].header);
+    if (columnIndex > -1) {
+      e.target.checked = true;
+      tableCols.splice(columnIndex, 1);
+      this.props.updateCols({ tableCols, playerCols });
+    } else {
+      e.target.checked = false;
+      tableCols.push(classicTableConfig[e.target.value]);
+      this.props.updateCols({ tableCols, playerCols });
+    }
+  };
+
+  onListConfigChange = (e) => {
+    const { playerCols, tableCols } = this;
+    const columnIndex = playerCols.findIndex(cfg => cfg.header === playerListConfig[e.target.value].header);
+    if (columnIndex > -1) {
+      e.target.checked = true;
+      playerCols.splice(columnIndex, 1);
+      this.props.updateCols({ tableCols, playerCols });
+    } else {
+      e.target.checked = false;
+      playerCols.push(playerListConfig[e.target.value]);
+      this.props.updateCols({ tableCols, playerCols });
+    }
+  };
+
   renderHeader() {
     const { tableCols } = this;
     const len = getLength(tableCols);
     return (
       <div className="header-row">
-        {tableCols.map(({ header, colSpan }, i) => <div key={i} className={`col-${colSpan || 1}-of-${len} table-header table-format`}>{header}</div>)}
+        {tableCols.map(({ header, colSpan }) => <div key={header} className={`col-${colSpan || 1}-of-${len} table-header table-format`}>{header}</div>)}
       </div>
     );
   }
@@ -59,7 +92,7 @@ class ClassicTable extends Component {
       .map((entry, i) => {
         const entryRow = (
           <div>
-            {tableCols.map(({ func, colSpan }, j) => <div key={j} className={`col-${colSpan || 1}-of-${len} table-format`}>{func(entry, i)}</div>)}
+            {tableCols.map(({ header, func, colSpan }) => <div key={header} className={`col-${colSpan || 1}-of-${len} table-format`}>{func(entry, i)}</div>)}
           </div>
         );
 
@@ -82,34 +115,6 @@ class ClassicTable extends Component {
     );
   }
 
-  onTableConfigChange(e) {
-    const { playerCols, tableCols } = this;
-    const columnIndex = tableCols.findIndex(cfg => cfg.header === classicTableConfig[e.target.value].header);
-    if (columnIndex > -1) {
-      e.target.checked = true;
-      tableCols.splice(columnIndex, 1);
-      this.props.updateCols({ tableCols, playerCols });
-    } else {
-      e.target.checked = false;
-      tableCols.push(classicTableConfig[e.target.value]);
-      this.props.updateCols({ tableCols, playerCols });
-    }
-  }
-
-  onListConfigChange(e) {
-    const { playerCols, tableCols } = this;
-    const columnIndex = playerCols.findIndex(cfg => cfg.header === playerListConfig[e.target.value].header);
-    if (columnIndex > -1) {
-      e.target.checked = true;
-      playerCols.splice(columnIndex, 1);
-      this.props.updateCols({ tableCols, playerCols });
-    } else {
-      e.target.checked = false;
-      playerCols.push(playerListConfig[e.target.value]);
-      this.props.updateCols({ tableCols, playerCols });
-    }
-  }
-
   render() {
     return (
       <div className="classic-standings">
@@ -118,8 +123,8 @@ class ClassicTable extends Component {
         { this.props.modalOpen && (
           <ColumnModal
             closeModal={this.props.closeModal}
-            onTableConfigChange={::this.onTableConfigChange}
-            onListConfigChange={::this.onListConfigChange}
+            onTableConfigChange={this.onTableConfigChange}
+            onListConfigChange={this.onListConfigChange}
             listConfig={this.playerCols}
             tableConfig={this.tableCols}
           />
