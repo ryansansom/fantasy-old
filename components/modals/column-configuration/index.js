@@ -18,7 +18,12 @@ const ColumnModal = (props) => {
 
   return (
     <div>
-      <div className="configure--wrapper" onClick={closeModal} />
+      <div
+        className="configure--wrapper"
+        role="presentation"
+        onClick={closeModal}
+        onKeyPress={closeModal}
+      />
       <div className="configure--modal">
         <div className="modal--wrapper">
           <h3 className="modal--header">Classic Table Column Configuration</h3>
@@ -37,9 +42,9 @@ const ColumnModal = (props) => {
             listConfig={props.listConfig}
             toggle={props.onListConfigChange}
           />
-          <a onClick={closeModal}>
+          <button onClick={closeModal}>
             Close
-          </a>
+          </button>
         </div>
       </div>
     </div>

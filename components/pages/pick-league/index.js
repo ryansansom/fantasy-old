@@ -47,7 +47,7 @@ class PickLeague extends Component {
           <li key={league.leagueId} className="league-list-item">
             <Link to={`/standings/${league.leagueId}`}>
               <span className="league-name col-9-of-10">{league.leagueName}</span>
-              <span className="link--right col-1-of-10">></span>
+              <span className="link--right col-1-of-10">&gt;</span>
             </Link>
           </li>
           ))}

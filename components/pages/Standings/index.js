@@ -32,7 +32,7 @@ class Standings extends Component {
       entries: PropTypes.array,
       leagueName: PropTypes.string,
       players: PropTypes.array,
-    }).isRequired,
+    }),
     updating: PropTypes.bool.isRequired,
   };
 
@@ -106,7 +106,7 @@ class Standings extends Component {
                   </a>
                 </div>
                 <div className="configure-button--wrapper col-1-of-2">
-                  <div
+                  <button
                     className="configure-button table-button button"
                     onClick={() => {
                     this.setState({
@@ -115,7 +115,7 @@ class Standings extends Component {
                   }}
                   >
                   Configure Columns
-                  </div>
+                  </button>
                 </div>
                 <div className="table-wrapper">
                   {this.props.updating
