@@ -11,7 +11,7 @@ const content = document.getElementById('content');
 const reduxState = JSON.parse(document.documentElement.getAttribute('redux-state'));
 const store = createStore(counterApp, reduxState, applyMiddleware(thunkMiddleware));
 
-ReactDOM.render(
+ReactDOM.hydrate(
   <Provider store={store}>
     <Router history={browserHistory} routes={routes} />
   </Provider>,
