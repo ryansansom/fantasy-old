@@ -4,8 +4,28 @@
  * Module dependencies.
  */
 
-import app from './app';
 import http from 'http';
+import app from './app';
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  const port = parseInt(val, 10);
+
+  if (isNaN(port)) { // eslint-disable-line no-restricted-globals
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
 
 /**
  * Get port from environment and store in Express.
@@ -21,40 +41,6 @@ app.set('port', port);
 const server = http.createServer(app);
 
 /**
- * Listen on provided port, on all network interfaces.
- */
-
-
-server.on('error', onError);
-server.on('listening', onListening);
-server.listen(port);
-
-process.on('SIGINT', () => {
-  console.log('\nShutting down process');
-  process.exit(0);
-});
-
-/**
- * Normalize a port into a number, string, or false.
- */
-
-function normalizePort(val) {
-  const port = parseInt(val, 10);
-
-  if (isNaN(port)) {
-    // named pipe
-    return val;
-  }
-
-  if (port >= 0) {
-    // port number
-    return port;
-  }
-
-  return false;
-}
-
-/**
  * Event listener for HTTP server "error" event.
  */
 
@@ -67,14 +53,14 @@ function onError(error) {
     ? `Pipe ${port}`
     : `Port ${port}`;
 
-    // handle specific listen errors with friendly messages
+  // handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
-      console.error(`${bind} requires elevated privileges`);
+      console.error(`${bind} requires elevated privileges`); // eslint-disable-line no-console
       process.exit(1);
       break;
     case 'EADDRINUSE':
-      console.error(`${bind} is already in use`);
+      console.error(`${bind} is already in use`); // eslint-disable-line no-console
       process.exit(1);
       break;
     default:
@@ -91,5 +77,18 @@ function onListening() {
   const bind = typeof addr === 'string'
     ? `pipe ${addr}`
     : `port ${addr.port}`;
-  console.log(`Listening on ${bind}`);
+  console.log(`Listening on ${bind}`); // eslint-disable-line no-console
 }
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.on('error', onError);
+server.on('listening', onListening);
+server.listen(port);
+
+process.on('SIGINT', () => {
+  console.log('\nShutting down process'); // eslint-disable-line no-console
+  process.exit(0);
+});

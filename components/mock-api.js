@@ -1,15 +1,5 @@
-// Only a function to get a new instance of the promise each time - to be removed/used for testing.
-export function mockRealAPI() {
-  return new Promise(((resolve) => {
-    // A slow mock async action of a real API response using setTimeout
-    setTimeout(() => {
-      resolve(data_131116);
-    }, 200);
-  }));
-}
-
 // Detailed standings response
-const data_131116 = {
+const data131116 = {
   leagueId: 73007,
   leagueName: 'Tesco Grads Classic',
   gw_ended: true,
@@ -4839,3 +4829,13 @@ const data_131116 = {
     projectedPoints: 46,
   }],
 };
+
+// Only a function to get a new instance of the promise each time - to be removed/used for testing.
+export function mockRealAPI() {
+  return new Promise(((resolve) => {
+    // A slow mock async action of a real API response using setTimeout
+    setTimeout(() => {
+      resolve(data131116);
+    }, 200);
+  }));
+}

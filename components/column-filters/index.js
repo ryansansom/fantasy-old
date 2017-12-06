@@ -1,5 +1,6 @@
+import React from 'react';
+import PropTypes from 'prop-types';
 import Accordion from '../accordion';
-import React, { PropTypes } from 'react';
 
 if (process.env.CLIENT_RENDER) {
   require('./styles.less');
@@ -8,14 +9,16 @@ if (process.env.CLIENT_RENDER) {
 const ColumnFilters = (props) => {
   const columnContent = Object.keys(props.config).map((key) => {
     const columnConfig = props.config[key];
+    const columnFilterId = `column-filter-${key}`;
     return (
-      <label className="filter" key={key}>
+      <label className="filter" key={key} htmlFor={columnFilterId}>
         <input
+          id={columnFilterId}
           type="checkbox"
           className="checkbox"
           onChange={props.toggle}
           value={key}
-          checked={!!props.listConfig.find(cfg => cfg.header === columnConfig.header)}
+          checked={props.listConfig.some(cfg => cfg.header === columnConfig.header)}
         />
         <span>
           {columnConfig.header}
@@ -37,8 +40,8 @@ const ColumnFilters = (props) => {
 
 ColumnFilters.propTypes = {
   accordionKey: PropTypes.string.isRequired,
-  config: PropTypes.object.isRequired,
-  listConfig: PropTypes.array.isRequired,
+  config: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  listConfig: PropTypes.arrayOf(PropTypes.object).isRequired,
   toggle: PropTypes.func.isRequired,
 };
 

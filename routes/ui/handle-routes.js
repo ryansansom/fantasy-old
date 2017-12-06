@@ -4,10 +4,10 @@ import path from 'path';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { match, RouterContext } from 'react-router';
-import routes from './routes';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
+import routes from './routes';
 import rootReducer from '../../redux/reducers';
 import { getInitialState } from '../../redux/initial-state';
 import propagateCookies from '../helpers/propogate-cookies';
@@ -35,14 +35,18 @@ export default (req, res, next) => {
           // Use cookie and data from api to set new cookies
           propagateCookies(req, res, data);
 
+          const content = (
+            <Provider store={store}>
+              <RouterContext {...renderProps} />
+            </Provider>
+          );
+
           // Populate pug template
           const state = store.getState();
           templateLocals.title = state.page; // Page title on server rendered page only
           templateLocals.reduxState = JSON.stringify(state);
           templateLocals.apiUrl = process.env.NODE_ENV === 'production' ? 'https://ryan-fantasy.herokuapp.com' : 'http://localhost:5000';
-          templateLocals.content = renderToString(<Provider store={store}>
-            <RouterContext {...renderProps} />
-                                                  </Provider>);
+          templateLocals.content = renderToString(content);
 
           res.status(200).send(layoutFunc(templateLocals));
         })

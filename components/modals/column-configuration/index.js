@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import * as classicTableConfig from '../../../lib/table-config/classic-table';
 import * as playerListConfig from '../../../lib/table-config/player-list';
 import ColumnFilters from '../../column-filters';
@@ -17,7 +18,12 @@ const ColumnModal = (props) => {
 
   return (
     <div>
-      <div className="configure--wrapper" onClick={closeModal} />
+      <div
+        className="configure--wrapper"
+        role="presentation"
+        onClick={closeModal}
+        onKeyPress={closeModal}
+      />
       <div className="configure--modal">
         <div className="modal--wrapper">
           <h3 className="modal--header">Classic Table Column Configuration</h3>
@@ -36,9 +42,9 @@ const ColumnModal = (props) => {
             listConfig={props.listConfig}
             toggle={props.onListConfigChange}
           />
-          <a onClick={closeModal}>
+          <button onClick={closeModal}>
             Close
-          </a>
+          </button>
         </div>
       </div>
     </div>
@@ -46,10 +52,11 @@ const ColumnModal = (props) => {
 };
 
 ColumnModal.propTypes = {
-  listConfig: PropTypes.array.isRequired,
+  closeModal: PropTypes.func.isRequired,
+  listConfig: PropTypes.arrayOf(PropTypes.object).isRequired,
   onTableConfigChange: PropTypes.func.isRequired,
   onListConfigChange: PropTypes.func.isRequired,
-  tableConfig: PropTypes.array.isRequired,
+  tableConfig: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default ColumnModal;
