@@ -2,6 +2,9 @@ const path = require('path');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
+const extractCSS = new ExtractTextPlugin('[name]-css.css');
+const extractLESS = new ExtractTextPlugin('[name]-less.css');
+
 module.exports = {
   entry: './routes/ui/client.js',
   output: {
@@ -9,22 +12,25 @@ module.exports = {
     path: path.join(__dirname, 'site/public/wp'),
   },
   module: {
-    preLoaders: [
+    rules: [
       {
         test: /\.js$/,
         exclude: /node_modules/,
         loaders: ['jsx-loader', 'babel-loader'],
       },
       { test: /\.json$/, loader: 'json-loader' },
-    ],
-    loaders: [
+
       {
         test: /\.less$/,
-        loader: ExtractTextPlugin.extract('css-loader!less-loader'),
+        loader: extractLESS.extract({
+          use: ['css-loader', 'less-loader'],
+        }),
       },
       {
         test: /\.css$/,
-        loader: ExtractTextPlugin.extract('css-loader'),
+        loader: extractCSS.extract({
+          use: 'css-loader',
+        }),
       },
     ],
   },
@@ -40,9 +46,8 @@ module.exports = {
     }),
     new webpack.optimize.OccurrenceOrderPlugin(true),
     // new webpack.optimize.UglifyJsPlugin({minimize: true}),
-    new ExtractTextPlugin('[name].css', {
-      allChunks: true,
-    }),
+    extractLESS,
+    extractCSS,
   ],
   node: {
     fs: 'empty',
