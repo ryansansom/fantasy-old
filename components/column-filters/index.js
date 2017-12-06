@@ -40,7 +40,7 @@ const ColumnFilters = (props) => {
 
 ColumnFilters.propTypes = {
   accordionKey: PropTypes.string.isRequired,
-  config: PropTypes.object.isRequired, // Dynamic keys?
+  config: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   listConfig: PropTypes.arrayOf(PropTypes.object).isRequired,
   toggle: PropTypes.func.isRequired,
 };
