@@ -7,13 +7,7 @@ import {
   LEAGUES,
 } from '../actions';
 
-const initialState = {
-  fetchError: false,
-  standings: {},
-  updating: false,
-};
-
-function rootReducer(state = initialState, action) {
+function rootReducer(state, action) {
   switch (action.type) {
     case UPDATING:
       return Object.assign({}, state, {

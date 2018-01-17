@@ -5,11 +5,11 @@ import { Provider } from 'react-redux';
 import thunkMiddleware from 'redux-thunk';
 import { Router, browserHistory } from 'react-router';
 import routes from './routes';
-import counterApp from '../../redux/reducers';
+import rootReducer from '../../redux/reducers';
 
 const content = document.getElementById('content');
 const reduxState = JSON.parse(document.documentElement.getAttribute('redux-state'));
-const store = createStore(counterApp, reduxState, applyMiddleware(thunkMiddleware));
+const store = createStore(rootReducer, reduxState, applyMiddleware(thunkMiddleware));
 
 ReactDOM.hydrate(
   <Provider store={store}>
