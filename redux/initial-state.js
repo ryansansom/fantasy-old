@@ -5,6 +5,7 @@ export function getInitialState(req) {
     columns: columnCookieFilter(req.cookies.columns),
     fetchError: false,
     standings: {},
+    modalOpen: '',
     updating: false,
   };
 }

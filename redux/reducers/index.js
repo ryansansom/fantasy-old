@@ -5,6 +5,8 @@ import {
   COLUMNS,
   PAGE,
   LEAGUES,
+  OPEN_MODAL,
+  CLOSE_MODAL,
 } from '../actions';
 
 function rootReducer(state, action) {
@@ -14,7 +16,6 @@ function rootReducer(state, action) {
         updating: true,
         fetchError: false,
         page: action.page,
-        standings: {},
       });
     case PAGE:
       return Object.assign({}, state, {
@@ -39,6 +40,14 @@ function rootReducer(state, action) {
       return Object.assign({}, state, {
         updating: false,
         leaguesList: action.value,
+      });
+    case OPEN_MODAL:
+      return Object.assign({}, state, {
+        modalOpen: action.name,
+      });
+    case CLOSE_MODAL:
+      return Object.assign({}, state, {
+        modalOpen: '',
       });
     default:
       return state;
