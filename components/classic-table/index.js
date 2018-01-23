@@ -7,7 +7,7 @@ import { getLength } from '../../lib/table-config/helpers';
 import PlayerList from '../player-list';
 import * as classicTableConfig from '../../lib/table-config/classic-table';
 import * as playerListConfig from '../../lib/table-config/player-list';
-import ColumnModal from '../modals/column-configuration';
+import Modals from '../modals/modals';
 
 if (process.env.CLIENT_RENDER) {
   require('./styles.less');
@@ -23,13 +23,11 @@ function buildConfigFromProps(config, arr) {
 
 class ClassicTable extends Component {
   static propTypes = {
-    closeModal: PropTypes.func.isRequired,
     columns: PropTypes.shape({
       playerCols: PropTypes.array,
       tableCols: PropTypes.array,
     }).isRequired, // Could do shape...
     entries: PropTypes.arrayOf(PropTypes.object).isRequired,
-    modalOpen: PropTypes.string.isRequired,
     sortFunc: PropTypes.func,
     updateCols: PropTypes.func.isRequired,
   };
@@ -120,16 +118,12 @@ class ClassicTable extends Component {
       <div className="classic-standings">
         { this.renderHeader() }
         { this.renderList() }
-        { this.props.modalOpen && (
-          <ColumnModal
-            closeModal={this.props.closeModal}
-            onTableConfigChange={this.onTableConfigChange}
-            onListConfigChange={this.onListConfigChange}
-            listConfig={this.playerCols}
-            tableConfig={this.tableCols}
-          />
-          )
-        }
+        <Modals
+          onTableConfigChange={this.onTableConfigChange}
+          onListConfigChange={this.onListConfigChange}
+          listConfig={this.playerCols}
+          tableConfig={this.tableCols}
+        />
       </div>
     );
   }

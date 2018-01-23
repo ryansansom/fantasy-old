@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
-import { fetchStandings } from '../../../redux/actions';
+import { fetchStandings, openModal } from '../../../redux/actions';
 import { mockRealAPI } from '../../mock-api';
-import { getStandings, postColumnCookie } from '../../../lib/internal-api';
+import { getStandings } from '../../../lib/internal-api';
 import ClassicTable from '../../classic-table';
 import StandardLayout from '../../layouts/standard';
 
@@ -24,6 +24,7 @@ class Standings extends Component {
   static propTypes = {
     fetchError: PropTypes.bool.isRequired,
     fetchStandings: PropTypes.func.isRequired,
+    openModal: PropTypes.func.isRequired,
     page: PropTypes.string.isRequired,
     params: PropTypes.shape({
       leagueID: PropTypes.string.isRequired,
@@ -44,27 +45,10 @@ class Standings extends Component {
     return fetchStandings(standingsData(leagueID), pageName, true)(dispatch);
   }
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      modalOpen: '',
-    };
-  }
-
   componentDidMount() {
     document.title = pageName;
     if (this.props.page !== pageName) this.props.fetchStandings(standingsData(this.props.params.leagueID), pageName, true);
   }
-
-  closeModal = (newConfig) => {
-    // TODO: Compare new config with old and post only if changed
-    postColumnCookie(newConfig);
-
-    return this.setState({
-      modalOpen: '',
-    });
-  };
 
   render() {
     const { fetchError, standings } = this.props;
@@ -97,9 +81,9 @@ class Standings extends Component {
                   <a
                     className="refresh-results table-button button"
                     onClick={(e) => {
-                    e.preventDefault();
-                    return this.props.fetchStandings(this.props.params.leagueID ? getStandings(this.props.params.leagueID) : mockRealAPI(), pageName, true);
-                  }}
+                      e.preventDefault();
+                      return this.props.fetchStandings(this.props.params.leagueID ? getStandings(this.props.params.leagueID) : mockRealAPI(), pageName, true);
+                    }}
                     href={refreshLinkUrl}
                   >
                   Refresh
@@ -109,9 +93,7 @@ class Standings extends Component {
                   <button
                     className="configure-button table-button button"
                     onClick={() => {
-                    this.setState({
-                      modalOpen: 'COLUMNS',
-                    });
+                    this.props.openModal('COLUMNS');
                   }}
                   >
                   Configure Columns
@@ -124,8 +106,6 @@ class Standings extends Component {
                       <ClassicTable
                         entries={standings.players || standings.entries} // Future support for renaming the API field
                         sortFunc={sortFunc}
-                        modalOpen={this.state.modalOpen}
-                        closeModal={this.closeModal}
                       />
                     )
                   }
@@ -146,4 +126,4 @@ function mapStateToProps({
   };
 }
 
-export default connect(mapStateToProps, { fetchStandings })(Standings);
+export default connect(mapStateToProps, { fetchStandings, openModal })(Standings);

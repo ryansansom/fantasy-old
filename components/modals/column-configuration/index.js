@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import * as classicTableConfig from '../../../lib/table-config/classic-table';
 import * as playerListConfig from '../../../lib/table-config/player-list';
 import ColumnFilters from '../../column-filters';
+import { postColumnCookie } from '../../../lib/internal-api';
 
 if (process.env.CLIENT_RENDER) {
   require('./styles.less');
@@ -10,10 +11,12 @@ if (process.env.CLIENT_RENDER) {
 
 const ColumnModal = (props) => {
   const closeModal = () => {
-    props.closeModal({
+    postColumnCookie({
       tableCols: props.tableConfig,
       playerCols: props.listConfig,
     });
+
+    props.closeModal();
   };
 
   return (
