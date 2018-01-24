@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getLength } from '../../lib/table-config/helpers';
 import * as playerListConfig from '../../lib/table-config/player-list';
+import { getListConfig } from '../../redux/reducers';
 
 if (process.env.CLIENT_RENDER) {
   require('./styles.less');
@@ -25,13 +26,6 @@ class PlayerList extends Component {
       playerListConfig.bonusPoints,
     ],
   };
-
-  shouldComponentUpdate(nextProps) {
-
-    Object.keys(nextProps).forEach(key => console.log(key, nextProps[key] === this.props[key]));
-
-    return true;
-  }
 
   renderHeader() {
     const { listConfig } = this.props;
@@ -89,17 +83,8 @@ class PlayerList extends Component {
   }
 }
 
-function buildConfigFromProps(config, arr) { // Ahhh not the same state, help, selector/reselect???
-  if (arr[0] && arr[0].func) return arr;
-  return arr.map((cfg) => {
-    const matchKey = Object.keys(config).find(cfgKey => config[cfgKey].header === cfg.header);
-    return config[matchKey];
-  });
-}
-
-const mapStateToProps = ({ playerCols }) => ({
-  playerCols,
-  listConfig: buildConfigFromProps(playerListConfig, playerCols),
+const mapStateToProps = state => ({
+  listConfig: getListConfig(state),
 });
 
 export default connect(mapStateToProps)(PlayerList);
