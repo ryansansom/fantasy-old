@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { updateCols } from '../../../redux/actions';
 import * as classicTableConfig from '../../../lib/table-config/classic-table';
 import * as playerListConfig from '../../../lib/table-config/player-list';
 import ColumnFilters from '../../column-filters';
@@ -19,6 +21,34 @@ const ColumnModal = (props) => {
     props.closeModal();
   };
 
+  const onListConfigChange = (e) => {
+    const { listConfig: playerCols } = props;
+    const columnIndex = playerCols.findIndex(cfg => cfg.header === playerListConfig[e.target.value].header);
+    if (columnIndex > -1) {
+      e.target.checked = true;
+      playerCols.splice(columnIndex, 1);
+      props.updateCols({ playerCols });
+    } else {
+      e.target.checked = false;
+      playerCols.push(playerListConfig[e.target.value]);
+      props.updateCols({ playerCols });
+    }
+  };
+
+  const onTableConfigChange = (e) => {
+    const { tableConfig: tableCols } = props;
+    const columnIndex = tableCols.findIndex(cfg => cfg.header === classicTableConfig[e.target.value].header);
+    if (columnIndex > -1) {
+      e.target.checked = true;
+      tableCols.splice(columnIndex, 1);
+      props.updateCols({ tableCols });
+    } else {
+      e.target.checked = false;
+      tableCols.push(classicTableConfig[e.target.value]);
+      props.updateCols({ tableCols });
+    }
+  };
+
   return (
     <div>
       <div
@@ -35,7 +65,7 @@ const ColumnModal = (props) => {
             accordionKey="classic-table"
             config={classicTableConfig}
             listConfig={props.tableConfig}
-            toggle={props.onTableConfigChange}
+            toggle={onTableConfigChange}
           />
           <h3 className="modal--header">Player List Column Configuration</h3>
           <p className="modal--content">Changes are applied and saved automatically</p>
@@ -43,7 +73,7 @@ const ColumnModal = (props) => {
             accordionKey="player-list"
             config={playerListConfig}
             listConfig={props.listConfig}
-            toggle={props.onListConfigChange}
+            toggle={onListConfigChange}
           />
           <button onClick={closeModal}>
             Close
@@ -57,9 +87,21 @@ const ColumnModal = (props) => {
 ColumnModal.propTypes = {
   closeModal: PropTypes.func.isRequired,
   listConfig: PropTypes.arrayOf(PropTypes.object).isRequired,
-  onTableConfigChange: PropTypes.func.isRequired,
-  onListConfigChange: PropTypes.func.isRequired,
   tableConfig: PropTypes.arrayOf(PropTypes.object).isRequired,
+  updateCols: PropTypes.func.isRequired,
 };
 
-export default ColumnModal;
+function buildConfigFromProps(config, arr) {
+  if (arr[0] && arr[0].func) return arr;
+  return arr.map((cfg) => {
+    const matchKey = Object.keys(config).find(cfgKey => config[cfgKey].header === cfg.header);
+    return config[matchKey];
+  });
+}
+
+const mapStateToProps = ({ tableCols, playerCols }) => ({
+  listConfig: buildConfigFromProps(playerListConfig, playerCols),
+  tableConfig: buildConfigFromProps(classicTableConfig, tableCols),
+});
+
+export default connect(mapStateToProps, { updateCols })(ColumnModal);

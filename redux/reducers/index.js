@@ -32,10 +32,21 @@ function rootReducer(state, action) {
         updating: false,
         standings: action.value,
       });
-    case COLUMNS:
-      return Object.assign({}, state, {
-        columns: action.value,
-      });
+    case COLUMNS: {
+      const tableCols = action.value.tableCols
+        ? {
+          tableCols: [...action.value.tableCols],
+        }
+        : {};
+
+      const playerCols = action.value.playerCols
+        ? {
+          playerCols: [...action.value.playerCols],
+        }
+        : {};
+
+      return Object.assign({}, state, tableCols, playerCols);
+    }
     case LEAGUES:
       return Object.assign({}, state, {
         updating: false,
