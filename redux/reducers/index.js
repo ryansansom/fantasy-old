@@ -1,3 +1,4 @@
+import { createSelector } from 'reselect';
 import {
   UPDATING,
   REAL_DATA,
@@ -8,6 +9,8 @@ import {
   OPEN_MODAL,
   CLOSE_MODAL,
 } from '../actions';
+import * as playerListConfig from '../../lib/table-config/player-list';
+import * as classicTableConfig from '../../lib/table-config/classic-table';
 
 function rootReducer(state, action) {
   switch (action.type) {
@@ -66,3 +69,24 @@ function rootReducer(state, action) {
 }
 
 export default rootReducer;
+
+function buildConfigFromProps(config, arr) {
+  if (arr[0] && arr[0].func) return arr;
+  return arr.map((cfg) => {
+    const matchKey = Object.keys(config).find(cfgKey => config[cfgKey].header === cfg.header);
+    return config[matchKey];
+  });
+}
+
+const getPlayerColumns = state => state.playerCols;
+const getTableColumns = state => state.tableCols;
+
+export const getListConfig = createSelector(
+  getPlayerColumns,
+  playerCols => buildConfigFromProps(playerListConfig, playerCols),
+);
+
+export const getTableConfig = createSelector(
+  getTableColumns,
+  tableCols => buildConfigFromProps(classicTableConfig, tableCols),
+);

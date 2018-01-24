@@ -6,6 +6,7 @@ import * as classicTableConfig from '../../../lib/table-config/classic-table';
 import * as playerListConfig from '../../../lib/table-config/player-list';
 import ColumnFilters from '../../column-filters';
 import { postColumnCookie } from '../../../lib/internal-api';
+import { getListConfig, getTableConfig } from '../../../redux/reducers';
 
 if (process.env.CLIENT_RENDER) {
   require('./styles.less');
@@ -91,17 +92,9 @@ ColumnModal.propTypes = {
   updateCols: PropTypes.func.isRequired,
 };
 
-function buildConfigFromProps(config, arr) {
-  if (arr[0] && arr[0].func) return arr;
-  return arr.map((cfg) => {
-    const matchKey = Object.keys(config).find(cfgKey => config[cfgKey].header === cfg.header);
-    return config[matchKey];
-  });
-}
-
-const mapStateToProps = ({ tableCols, playerCols }) => ({
-  listConfig: buildConfigFromProps(playerListConfig, playerCols),
-  tableConfig: buildConfigFromProps(classicTableConfig, tableCols),
+const mapStateToProps = state => ({
+  listConfig: getListConfig(state),
+  tableConfig: getTableConfig(state),
 });
 
 export default connect(mapStateToProps, { updateCols })(ColumnModal);

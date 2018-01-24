@@ -4,19 +4,11 @@ import { connect } from 'react-redux';
 import Accordion from '../accordion';
 import { getLength } from '../../lib/table-config/helpers';
 import PlayerList from '../player-list';
-import * as classicTableConfig from '../../lib/table-config/classic-table';
 import Modals from '../modals/modals';
+import { getTableConfig } from '../../redux/reducers';
 
 if (process.env.CLIENT_RENDER) {
   require('./styles.less');
-}
-
-function buildConfigFromProps(config, arr) {
-  if (arr[0] && arr[0].func) return arr;
-  return arr.map((cfg) => {
-    const matchKey = Object.keys(config).find(cfgKey => config[cfgKey].header === cfg.header);
-    return config[matchKey];
-  });
 }
 
 class ClassicTable extends Component {
@@ -86,8 +78,8 @@ class ClassicTable extends Component {
   }
 }
 
-const mapStateToProps = ({ tableCols }) => ({
-  tableCols: buildConfigFromProps(classicTableConfig, tableCols),
+const mapStateToProps = state => ({
+  tableCols: getTableConfig(state),
 });
 
 export default connect(mapStateToProps)(ClassicTable);
