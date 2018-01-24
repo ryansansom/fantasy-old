@@ -2,11 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Accordion from '../accordion';
-import { updateCols } from '../../redux/actions';
 import { getLength } from '../../lib/table-config/helpers';
 import PlayerList from '../player-list';
 import * as classicTableConfig from '../../lib/table-config/classic-table';
-import * as playerListConfig from '../../lib/table-config/player-list';
 import Modals from '../modals/modals';
 
 if (process.env.CLIENT_RENDER) {
@@ -23,55 +21,17 @@ function buildConfigFromProps(config, arr) {
 
 class ClassicTable extends Component {
   static propTypes = {
-    columns: PropTypes.shape({
-      playerCols: PropTypes.array,
-      tableCols: PropTypes.array,
-    }).isRequired, // Could do shape...
+    tableCols: PropTypes.arrayOf(PropTypes.object).isRequired,
     entries: PropTypes.arrayOf(PropTypes.object).isRequired,
     sortFunc: PropTypes.func,
-    updateCols: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
     sortFunc: (a, b) => (b.prevTotal + b.projectedPoints) - (a.prevTotal + a.projectedPoints),
   };
 
-  constructor(props) {
-    super(props);
-    this.playerCols = buildConfigFromProps(playerListConfig, props.columns.playerCols);
-    this.tableCols = buildConfigFromProps(classicTableConfig, props.columns.tableCols);
-  }
-
-  onTableConfigChange = (e) => {
-    const { playerCols, tableCols } = this;
-    const columnIndex = tableCols.findIndex(cfg => cfg.header === classicTableConfig[e.target.value].header);
-    if (columnIndex > -1) {
-      e.target.checked = true;
-      tableCols.splice(columnIndex, 1);
-      this.props.updateCols({ tableCols, playerCols });
-    } else {
-      e.target.checked = false;
-      tableCols.push(classicTableConfig[e.target.value]);
-      this.props.updateCols({ tableCols, playerCols });
-    }
-  };
-
-  onListConfigChange = (e) => {
-    const { playerCols, tableCols } = this;
-    const columnIndex = playerCols.findIndex(cfg => cfg.header === playerListConfig[e.target.value].header);
-    if (columnIndex > -1) {
-      e.target.checked = true;
-      playerCols.splice(columnIndex, 1);
-      this.props.updateCols({ tableCols, playerCols });
-    } else {
-      e.target.checked = false;
-      playerCols.push(playerListConfig[e.target.value]);
-      this.props.updateCols({ tableCols, playerCols });
-    }
-  };
-
   renderHeader() {
-    const { tableCols } = this;
+    const { tableCols } = this.props;
     const len = getLength(tableCols);
     return (
       <div className="header-row">
@@ -81,8 +41,7 @@ class ClassicTable extends Component {
   }
 
   renderList() {
-    const { entries, sortFunc } = this.props;
-    const { tableCols } = this;
+    const { entries, sortFunc, tableCols } = this.props;
     const len = getLength(tableCols);
 
     const entryList = entries
@@ -102,7 +61,10 @@ class ClassicTable extends Component {
             title={entry.entry.toString()}
             header={entryRow}
           >
-            <PlayerList accordionKey={`${entry.entry}--configure`} listConfig={this.playerCols} players={entry.players} />
+            <PlayerList
+              accordionKey={`${entry.entry}--configure`}
+              players={entry.players}
+            />
           </Accordion>
         );
       });
@@ -118,19 +80,14 @@ class ClassicTable extends Component {
       <div className="classic-standings">
         { this.renderHeader() }
         { this.renderList() }
-        <Modals
-          onTableConfigChange={this.onTableConfigChange}
-          onListConfigChange={this.onListConfigChange}
-          listConfig={this.playerCols}
-          tableConfig={this.tableCols}
-        />
+        <Modals />
       </div>
     );
   }
 }
 
-function mapStateToProps({ columns }) {
-  return { columns };
-}
+const mapStateToProps = ({ tableCols }) => ({
+  tableCols: buildConfigFromProps(classicTableConfig, tableCols),
+});
 
-export default connect(mapStateToProps, { updateCols })(ClassicTable);
+export default connect(mapStateToProps)(ClassicTable);

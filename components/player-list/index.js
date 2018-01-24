@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { getLength } from '../../lib/table-config/helpers';
-import * as config from '../../lib/table-config/player-list';
+import * as playerListConfig from '../../lib/table-config/player-list';
 
 if (process.env.CLIENT_RENDER) {
   require('./styles.less');
@@ -18,12 +19,19 @@ class PlayerList extends Component {
 
   static defaultProps = {
     listConfig: [
-      config.position,
-      config.playerName,
-      config.playerPoints,
-      config.bonusPoints,
+      playerListConfig.position,
+      playerListConfig.playerName,
+      playerListConfig.playerPoints,
+      playerListConfig.bonusPoints,
     ],
   };
+
+  shouldComponentUpdate(nextProps) {
+
+    Object.keys(nextProps).forEach(key => console.log(key, nextProps[key] === this.props[key]));
+
+    return true;
+  }
 
   renderHeader() {
     const { listConfig } = this.props;
@@ -81,4 +89,17 @@ class PlayerList extends Component {
   }
 }
 
-export default PlayerList;
+function buildConfigFromProps(config, arr) { // Ahhh not the same state, help, selector/reselect???
+  if (arr[0] && arr[0].func) return arr;
+  return arr.map((cfg) => {
+    const matchKey = Object.keys(config).find(cfgKey => config[cfgKey].header === cfg.header);
+    return config[matchKey];
+  });
+}
+
+const mapStateToProps = ({ playerCols }) => ({
+  playerCols,
+  listConfig: buildConfigFromProps(playerListConfig, playerCols),
+});
+
+export default connect(mapStateToProps)(PlayerList);

@@ -8,7 +8,9 @@ export const OPEN_MODAL = 'openModal';
 export const CLOSE_MODAL = 'closeModal';
 
 export function updateCols(cols) {
-  return { type: COLUMNS, value: cols };
+  return (dispatch) => {
+    dispatch({ type: COLUMNS, value: cols });
+  };
 }
 
 export function updatePage(page) {
