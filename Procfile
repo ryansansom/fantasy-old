@@ -1,1 +1,1 @@
-web: NODE_ENV=production npm run full-start
+web: NODE_ENV=production npm run full-start-prod

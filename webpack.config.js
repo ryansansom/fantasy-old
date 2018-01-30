@@ -5,12 +5,15 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const extractCSS = new ExtractTextPlugin('[name]-css.css');
 const extractLESS = new ExtractTextPlugin('[name]-less.css');
 
+const nodeEnv = process.env.NODE_ENV || 'production';
+
 module.exports = {
   entry: './routes/ui/client.js',
   output: {
     filename: '[name].js',
     path: path.join(__dirname, 'site/public/wp'),
   },
+  devtool: 'inline-source-map',
   module: {
     rules: [
       {
@@ -37,6 +40,7 @@ module.exports = {
   plugins: [
     new webpack.DefinePlugin({
       'process.env': {
+        NODE_ENV: JSON.stringify(nodeEnv),
         CLIENT_RENDER: true,
       },
     }),
@@ -45,7 +49,6 @@ module.exports = {
       filename: 'common.js',
     }),
     new webpack.optimize.OccurrenceOrderPlugin(true),
-    // new webpack.optimize.UglifyJsPlugin({minimize: true}),
     extractLESS,
     extractCSS,
   ],
