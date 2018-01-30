@@ -6,8 +6,10 @@
     "node": "9.2.0"
   },
   "scripts": {
-    "build": "webpack --progress --colors",
-    "full-start": "rm -rf site/public/wp/* && npm run build && npm start",
+    "build": "webpack --progress --colors --config webpack.prod.js",
+    "build-dev": "webpack --progress --colors",
+    "full-start-prod": "npm run build && npm start",
+    "full-start": "NODE_ENV=development npm run build-dev && npm start",
     "lint": "eslint --cache .",
     "fix": "eslint --fix .",
     "start": "node index"
@@ -57,6 +59,8 @@
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-jsx-a11y": "^6.0.2",
     "eslint-plugin-react": "^7.5.1",
-    "nodemon": "^1.10.2"
+    "nodemon": "^1.10.2",
+    "uglifyjs-webpack-plugin": "^1.1.8",
+    "webpack-merge": "^4.1.1"
   }
 }
