@@ -12,6 +12,7 @@ import rootReducer from '../../redux/reducers';
 import { getInitialState } from '../../redux/initial-state';
 import propagateCookies from '../helpers/propogate-cookies';
 import getOptions from '../helpers/options-creator';
+import { modernizrScript } from '../../site/assets/scripts/modernizr';
 
 const layoutLoc = path.join(__dirname, '../../views/layout.pug');
 const masterLayout = fs.readFileSync(layoutLoc, 'utf8');
@@ -45,6 +46,7 @@ export default (req, res, next) => {
           const state = store.getState();
           templateLocals.title = state.page; // Page title on server rendered page only
           templateLocals.reduxState = JSON.stringify(state);
+          templateLocals.modernizrScript = modernizrScript;
           templateLocals.apiUrl = process.env.NODE_ENV === 'production' ? 'https://ryan-fantasy.herokuapp.com' : 'http://localhost:5000';
           templateLocals.content = renderToString(content);
 
