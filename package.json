@@ -6,7 +6,7 @@
     "node": "9.2.0"
   },
   "scripts": {
-    "build": "webpack --progress --colors && cp site/assets/scripts/modernizr.js site/public/modernizr.js",
+    "build": "webpack --progress --colors",
     "full-start": "rm -rf site/public/wp/* && npm run build && npm start",
     "lint": "eslint --cache .",
     "fix": "eslint --fix .",

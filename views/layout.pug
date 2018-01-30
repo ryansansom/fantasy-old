@@ -2,16 +2,21 @@ doctype html
 html.no-js(
 page-props= JSON.stringify(props)
 api-url= apiUrl
-redux-state= reduxState)
+redux-state= reduxState
+)
     head
         title=title
         meta(charset='utf-8')
         meta(http-equiv='X-UA-Compatible', content='IE=edge')
         meta(name='description', content='')
         meta(name='viewport', content='width=device-width, initial-scale=1')
+        link(rel="preload" href="/wp/main-css.css" as="style")
+        link(rel="preload" href="/wp/main-less.css" as="style")
+        link(rel="preload" href="/wp/common.js" as="script")
+        link(rel="preload" href="/wp/main.js" as="script")
         link(rel="stylesheet" type="text/css" href="/wp/main-css.css")
         link(rel="stylesheet" type="text/css" href="/wp/main-less.css")
-        script(type='text/javascript' src='/modernizr.js')
+        script(type='text/javascript')!=modernizrScript
     body
         #content!= content
     script(type='text/javascript' src='/wp/common.js')
