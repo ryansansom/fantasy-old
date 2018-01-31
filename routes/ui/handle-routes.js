@@ -47,7 +47,6 @@ export default (req, res, next) => {
           templateLocals.title = state.page; // Page title on server rendered page only
           templateLocals.reduxState = JSON.stringify(state);
           templateLocals.modernizrScript = modernizrScript;
-          templateLocals.apiUrl = process.env.NODE_ENV === 'production' ? 'https://ryan-fantasy.herokuapp.com' : 'http://localhost:5000';
           templateLocals.content = renderToString(content);
 
           res.status(200).send(layoutFunc(templateLocals));

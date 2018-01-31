@@ -41,7 +41,7 @@ class Standings extends Component {
     standings: {},
   };
 
-  static fetchData(dispatch, { leagueID }) {
+  static fetchData(dispatch, { leagueID, standingsData }) {
     return fetchStandings(standingsData(leagueID), pageName, true)(dispatch);
   }
 
