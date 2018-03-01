@@ -1,4 +1,12 @@
 {
-  "presets": ["react", "es2015", "stage-0"],
-  "plugins": ["transform-runtime"]
+  "presets": [
+    "env",
+    "react"
+  ],
+  "plugins": [
+    "transform-runtime",
+    "transform-class-properties",
+    "transform-object-rest-spread",
+    "react-hot-loader/babel"
+  ]
 }
