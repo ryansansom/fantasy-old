@@ -2,7 +2,7 @@
 const data131116 = {
   leagueId: 73007,
   leagueName: 'Tesco Grads Classic',
-  gw_ended: true,
+  gwEnded: true,
   players: [{
     entry: 7407,
     team_name: 'Validus F.C.',
@@ -4828,6 +4828,7 @@ const data131116 = {
     currentPoints: 46,
     projectedPoints: 46,
   }],
+  mock: true,
 };
 
 // Only a function to get a new instance of the promise each time - to be removed/used for testing.
@@ -4835,7 +4836,10 @@ export function mockRealAPI() {
   return new Promise(((resolve) => {
     // A slow mock async action of a real API response using setTimeout
     setTimeout(() => {
-      resolve(data131116);
+      resolve({
+        ...data131116,
+        lastUpdated: Date.now(),
+      });
     }, 200);
   }));
 }

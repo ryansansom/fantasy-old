@@ -1,22 +1,27 @@
-export function leagueListCookie(req, data) {
-  // Read info from cookie, if error, set as blank rather than throw.
-  let parsedCookie;
-  try {
-    parsedCookie = JSON.parse(req.cookies.league_list);
-  } catch (e) {
-    parsedCookie = [];
+export function getLatestLeagueList(rawLeagueList, data) {
+  let leagueList;
+
+  if (!Array.isArray(rawLeagueList)) {
+    try {
+      leagueList = JSON.parse(rawLeagueList);
+    } catch (e) {
+      leagueList = [];
+    }
+  } else {
+    leagueList = [...rawLeagueList];
   }
 
+  // If provided, it will use data to update the list
   if (data) {
     const { leagueId, leagueName } = data;
 
     // Check for duplicates, and remove if matched one that already exists
-    const existIndex = parsedCookie.findIndex(league => league.leagueId === leagueId);
-    if (existIndex > -1) parsedCookie.splice(existIndex, 1);
+    const existIndex = leagueList.findIndex(league => league.leagueId === leagueId);
+    if (existIndex > -1) leagueList.splice(existIndex, 1);
 
     // Add the league to the list
-    parsedCookie.unshift({ leagueId, leagueName });
+    leagueList.unshift({ leagueId, leagueName });
   }
 
-  return parsedCookie;
+  return leagueList;
 }

@@ -1,14 +1,12 @@
+const webpack = require('webpack');
 const webpackMerge = require('webpack-merge');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const baseWebpackConfig = require('./webpack.base.js');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-
-const extractCSS = new ExtractTextPlugin({
-  filename: '[name].css',
-});
 
 module.exports = webpackMerge(baseWebpackConfig, {
-  devtool: 'source-map',
+  devtool: 'eval',
+  output: {
+    publicPath: 'http://localhost:8080/',
+  },
   module: {
     rules: [
       {
@@ -27,20 +25,22 @@ module.exports = webpackMerge(baseWebpackConfig, {
 
       {
         test: /\.less$/,
-        loader: extractCSS.extract({
-          use: ['css-loader', 'less-loader'],
-        }),
+        use: ['style-loader', 'css-loader', 'less-loader'],
       },
       {
         test: /\.css$/,
-        loader: extractCSS.extract({
-          use: 'css-loader',
-        }),
+        use: ['style-loader', 'css-loader'],
       },
     ],
   },
   plugins: [
-    extractCSS,
-    new UglifyJsPlugin(),
+    new webpack.NamedModulesPlugin(),
+    new webpack.HotModuleReplacementPlugin(),
   ],
+  devServer: {
+    contentBase: './site/public/wp',
+    publicPath: 'http://localhost:8080/',
+    hot: true,
+    headers: { 'Access-Control-Allow-Origin': '*' },
+  },
 });

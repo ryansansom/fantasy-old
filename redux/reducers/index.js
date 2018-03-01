@@ -1,6 +1,5 @@
 import { createSelector } from 'reselect';
 import {
-  UPDATING,
   REAL_DATA,
   FETCH_ERROR,
   COLUMNS,
@@ -8,21 +7,43 @@ import {
   LEAGUES,
   OPEN_MODAL,
   CLOSE_MODAL,
+  UPDATE_CLASSIC_LEAGUE,
+  UPDATE_MOCK_LEAGUE,
+  CLASSIC_LEAGUE_UPDATING,
 } from '../actions';
 import * as playerListConfig from '../../lib/table-config/player-list';
 import * as classicTableConfig from '../../lib/table-config/classic-table';
 
+function updateMockStandings(newStandings) {
+  newStandings.updating = false;
+
+  return {
+    mock: newStandings,
+  };
+}
+
+function updateClassicStandings(newStandings) {
+  newStandings.updating = false;
+
+  return {
+    [newStandings.leagueId]: newStandings,
+  };
+}
+
+function classicStandingsUpdating(classicLeagues, leagueId) {
+  return {
+    ...classicLeagues,
+    [leagueId]: {
+      ...classicLeagues[leagueId],
+      updating: true,
+    },
+  };
+}
+
 function rootReducer(state, action) {
   switch (action.type) {
-    case UPDATING:
-      return Object.assign({}, state, {
-        updating: true,
-        fetchError: false,
-        page: action.page,
-      });
     case PAGE:
       return Object.assign({}, state, {
-        updating: true,
         fetchError: false,
         page: action.page,
       });
@@ -30,10 +51,27 @@ function rootReducer(state, action) {
       return Object.assign({}, state, {
         fetchError: true,
       });
+    case CLASSIC_LEAGUE_UPDATING:
+      return Object.assign({}, state, {
+        classicLeagues: classicStandingsUpdating(state.classicLeagues, action.value),
+      });
     case REAL_DATA:
       return Object.assign({}, state, {
-        updating: false,
         standings: action.value,
+      });
+    case UPDATE_MOCK_LEAGUE:
+      return Object.assign({}, state, {
+        classicLeagues: {
+          ...state.classicLeagues,
+          ...updateMockStandings(action.value),
+        },
+      });
+    case UPDATE_CLASSIC_LEAGUE:
+      return Object.assign({}, state, {
+        classicLeagues: {
+          ...state.classicLeagues,
+          ...updateClassicStandings(action.value),
+        },
       });
     case COLUMNS: {
       const tableCols = action.value.tableCols
@@ -52,7 +90,6 @@ function rootReducer(state, action) {
     }
     case LEAGUES:
       return Object.assign({}, state, {
-        updating: false,
         leaguesList: action.value,
       });
     case OPEN_MODAL:

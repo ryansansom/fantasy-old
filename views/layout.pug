@@ -9,14 +9,16 @@ redux-state= reduxState
         meta(http-equiv='X-UA-Compatible', content='IE=edge')
         meta(name='description', content='')
         meta(name='viewport', content='width=device-width, initial-scale=1')
-        link(rel="preload" href="/wp/main-css.css" as="style")
-        link(rel="preload" href="/wp/main-less.css" as="style")
-        link(rel="preload" href="/wp/common.js" as="script")
-        link(rel="preload" href="/wp/main.js" as="script")
-        link(rel="stylesheet" type="text/css" href="/wp/main-css.css")
-        link(rel="stylesheet" type="text/css" href="/wp/main-less.css")
+        if manifest['/main.css']
+            link(rel="preload" href=manifest['/main.css'] as="style")
+        link(rel="preload" href=manifest['/main.js'] as="script")
+        link(rel="preload" href=manifest['/common.js'] as="script")
+        link(rel="preload" href=manifest['/vendor.js'] as="script")
+        if manifest['/main.css']
+            link(rel="stylesheet" type="text/css" href=manifest['/main.css'])
         script(type='text/javascript')!=modernizrScript
     body
         #content!= content
-    script(type='text/javascript' src='/wp/common.js')
-    script(type='text/javascript' src='/wp/main.js')
+    script(type='text/javascript' src=manifest['/common.js'])
+    script(type='text/javascript' src=manifest['/vendor.js'])
+    script(type='text/javascript' src=manifest['/main.js'])

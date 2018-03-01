@@ -2,11 +2,15 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
-import { fetchStandings, openModal } from '../../../redux/actions';
-import { mockRealAPI } from '../../mock-api';
+import { hot } from 'react-hot-loader';
+import { fetchStandings, openModal, updatePage } from '../../../redux/actions';
 import { getStandings } from '../../../lib/internal-api';
 import ClassicTable from '../../classic-table';
 import StandardLayout from '../../layouts/standard';
+
+const mockRealAPI = process.env.NODE_ENV === 'production'
+  ? Promise.resolve({})
+  : require('../../mock-api').mockRealAPI;
 
 const pageName = 'Standings';
 
@@ -14,8 +18,8 @@ if (process.env.CLIENT_RENDER) {
   require('./styles.less');
 }
 
-function standingsData(leagueID) {
-  return leagueID
+function getStandingsData(leagueID) {
+  return leagueID !== 'mock'
     ? getStandings(leagueID)
     : mockRealAPI();
 }
@@ -27,27 +31,33 @@ class Standings extends Component {
     openModal: PropTypes.func.isRequired,
     page: PropTypes.string.isRequired,
     params: PropTypes.shape({
-      leagueID: PropTypes.string.isRequired,
+      leagueID: PropTypes.string,
     }).isRequired,
     standings: PropTypes.shape({
       entries: PropTypes.array,
+      lastUpdated: PropTypes.number,
       leagueName: PropTypes.string,
       players: PropTypes.array,
     }),
-    updating: PropTypes.bool.isRequired,
+    updatePage: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
     standings: {},
   };
 
-  static fetchData(dispatch, { leagueID, standingsData }) {
-    return fetchStandings(standingsData(leagueID), pageName, true)(dispatch);
+  static fetchData({ dispatch, getState }, { leagueID, standingsData }) {
+    updatePage(pageName)(dispatch);
+
+    return fetchStandings(standingsData, leagueID)(dispatch, getState);
   }
 
   componentDidMount() {
     document.title = pageName;
-    if (this.props.page !== pageName) this.props.fetchStandings(standingsData(this.props.params.leagueID), pageName, true);
+    if (this.props.page !== pageName) {
+      this.props.updatePage(pageName);
+      this.props.fetchStandings(getStandingsData, this.props.params.leagueID || 'mock');
+    }
   }
 
   render() {
@@ -66,52 +76,66 @@ class Standings extends Component {
           )
         }
         { !fetchError && (
-          !standings.leagueName
-            ? <span className="loading">Loading...</span>
-            : (
-              <StandardLayout title="Welcome to the new, improved view of Fantasy Premier League">
-                <h2 className="league-header">League Information</h2>
-                <div className="league-name">
-                  <span>{standings.leagueName}</span>
-                  <span> (</span>
-                  <Link to="/">change...</Link>
-                  <span>)</span>
-                </div>
-                <div className="refresh-results--wrapper col-1-of-2">
-                  <a
-                    className="refresh-results table-button button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      return this.props.fetchStandings(this.props.params.leagueID ? getStandings(this.props.params.leagueID) : mockRealAPI(), pageName, true);
-                    }}
-                    href={refreshLinkUrl}
-                  >
-                  Refresh
-                  </a>
-                </div>
-                <div className="configure-button--wrapper col-1-of-2">
-                  <button
-                    className="configure-button table-button button"
-                    onClick={() => {
-                    this.props.openModal('COLUMNS');
-                  }}
-                  >
-                  Configure Columns
-                  </button>
-                </div>
-                <div className="table-wrapper">
-                  {this.props.updating
-                    ? <span>Updating...</span>
-                    : (
-                      <ClassicTable
-                        entries={standings.players || standings.entries} // Future support for renaming the API field
-                        sortFunc={sortFunc}
-                      />
-                    )
+          <StandardLayout title="Welcome to the new, improved view of Fantasy Premier League">
+            <h2 className="league-header">League Information</h2>
+            <div className="league-name">
+              <span>{ standings.leagueName || 'Loading...' }</span>
+              <span> (</span>
+              <Link to="/">change...</Link>
+              <span>)</span>
+            </div>
+            <div className="refresh-results--wrapper col-1-of-2">
+              <a
+                className="refresh-results table-button button"
+                onClick={(e) => {
+                  e.preventDefault();
+
+                  if (!this.props.params.leagueID) {
+                    return this.props.fetchStandings(mockRealAPI, 'mock');
                   }
-                </div>
-              </StandardLayout>
-            )
+
+                  return this.props.fetchStandings(getStandings, this.props.params.leagueID);
+                }}
+                href={refreshLinkUrl}
+              >
+                Refresh
+              </a>
+            </div>
+            <div className="configure-button--wrapper col-1-of-2">
+              <button
+                className="configure-button table-button button"
+                onClick={() => {
+                  this.props.openModal('COLUMNS');
+                }}
+              >
+                Configure Columns
+              </button>
+            </div>
+            <div className="update-info__wrapper">
+              <span className="update-info col-1-of-2">
+                { `Last updated at: ${
+                  standings.lastUpdated
+                    ? new Date(standings.lastUpdated).toLocaleTimeString(undefined, { timeZoneName: 'short' })
+                    : 'Never'
+                  }`
+                }
+              </span>
+              <span className="update-info col-1-of-2">
+                { standings.updating ? 'Getting latest standings...' : 'Latest standings applied' }
+              </span>
+            </div>
+            <div className="table-wrapper">
+              { !standings.players
+                ? <span>Loading...</span>
+                : (
+                  <ClassicTable
+                    entries={standings.players || standings.entries} // Future support for renaming the API field
+                    sortFunc={sortFunc}
+                  />
+                )
+              }
+            </div>
+          </StandardLayout>
         )}
       </div>
     );
@@ -119,11 +143,13 @@ class Standings extends Component {
 }
 
 function mapStateToProps({
-  fetchError, standings, updating, page,
-}) {
+  fetchError, classicLeagues = {}, page,
+}, ownProps) {
   return {
-    fetchError, standings, updating, page,
+    fetchError,
+    standings: classicLeagues[ownProps.params.leagueID || 'mock'],
+    page,
   };
 }
 
-export default connect(mapStateToProps, { fetchStandings, openModal })(Standings);
+export default hot(module)(connect(mapStateToProps, { fetchStandings, openModal, updatePage })(Standings));

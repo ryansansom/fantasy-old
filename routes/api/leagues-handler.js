@@ -1,3 +1,3 @@
-import { leagueListCookie } from '../../helpers/league-list';
+import { getLatestLeagueList } from '../../helpers/league-list';
 
-export default (req, res) => res.json(leagueListCookie(req));
+export default (req, res) => res.json(getLatestLeagueList(req.cookies.league_list));

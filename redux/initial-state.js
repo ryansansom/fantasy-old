@@ -8,6 +8,8 @@ export function getInitialState(req) {
     playerCols,
     fetchError: false,
     standings: {},
+    classicLeagues: {},
+    leaguesList: null,
     modalOpen: '',
     updating: false,
   };

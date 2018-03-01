@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
+import { hot } from 'react-hot-loader';
 import { updatePage } from '../../../redux/actions';
 
 const pageName = 'Refresh Auth Token';
@@ -11,7 +12,7 @@ if (process.env.CLIENT_RENDER) {
 }
 
 class PickLeague extends Component {
-  static fetchData(dispatch) {
+  static fetchData({ dispatch }) {
     return updatePage(pageName)(dispatch);
   }
 
@@ -58,4 +59,4 @@ function mapStateToProps({ page }) {
   return { page };
 }
 
-export default connect(mapStateToProps, { updatePage })(PickLeague);
+export default hot(module)(connect(mapStateToProps, { updatePage })(PickLeague));
