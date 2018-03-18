@@ -21,10 +21,11 @@ module.exports = {
       name: 'vendor',
       minChunks: ({ resource }) => /node_modules/.test(resource),
     }),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'common',
-      filename: 'common.js',
-    }),
+    // TODO: We can we-include this when we have split bundles
+    // new webpack.optimize.CommonsChunkPlugin({
+    //   name: 'common',
+    //   filename: 'common.js',
+    // }),
     new ManifestPlugin({
       basePath: '/',
       map: (bundle) => {
