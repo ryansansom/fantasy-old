@@ -10,6 +10,10 @@ import StandardLayout from '../../layouts/standard';
 
 const pageName = 'Standings';
 
+const getStandingsData = process.env.CLIENT_RENDER
+  ? getStandings
+  : require('../../../lib/get-detailed-standings').default;
+
 if (process.env.CLIENT_RENDER) {
   require('./styles.less');
 }
@@ -36,17 +40,17 @@ class Standings extends Component {
     standings: {},
   };
 
-  static fetchData({ dispatch, getState }, { leagueID, standingsData }) {
+  static fetchData({ dispatch, getState }, { leagueID }) {
     updatePage(pageName)(dispatch);
 
-    return fetchStandings(standingsData, leagueID)(dispatch, getState);
+    return fetchStandings(getStandingsData, leagueID)(dispatch, getState);
   }
 
   componentDidMount() {
     document.title = pageName;
     if (this.props.page !== pageName) {
       this.props.updatePage(pageName);
-      this.props.fetchStandings(getStandings, this.props.params.leagueID);
+      this.props.fetchStandings(getStandingsData, this.props.params.leagueID);
     }
   }
 
@@ -79,7 +83,7 @@ class Standings extends Component {
                 onClick={(e) => {
                   e.preventDefault();
 
-                  return this.props.fetchStandings(getStandings, this.props.params.leagueID);
+                  return this.props.fetchStandings(getStandingsData, this.props.params.leagueID);
                 }}
                 href={`/standings/${this.props.params.leagueID}`}
               >
