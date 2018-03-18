@@ -8,19 +8,10 @@ import {
   OPEN_MODAL,
   CLOSE_MODAL,
   UPDATE_CLASSIC_LEAGUE,
-  UPDATE_MOCK_LEAGUE,
   CLASSIC_LEAGUE_UPDATING,
 } from '../actions';
 import * as playerListConfig from '../../lib/table-config/player-list';
 import * as classicTableConfig from '../../lib/table-config/classic-table';
-
-function updateMockStandings(newStandings) {
-  newStandings.updating = false;
-
-  return {
-    mock: newStandings,
-  };
-}
 
 function updateClassicStandings(newStandings) {
   newStandings.updating = false;
@@ -58,13 +49,6 @@ function rootReducer(state, action) {
     case REAL_DATA:
       return Object.assign({}, state, {
         standings: action.value,
-      });
-    case UPDATE_MOCK_LEAGUE:
-      return Object.assign({}, state, {
-        classicLeagues: {
-          ...state.classicLeagues,
-          ...updateMockStandings(action.value),
-        },
       });
     case UPDATE_CLASSIC_LEAGUE:
       return Object.assign({}, state, {
