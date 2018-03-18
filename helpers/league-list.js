@@ -12,7 +12,7 @@ export function getLatestLeagueList(rawLeagueList, data) {
   }
 
   // If provided, it will use data to update the list
-  if (data) {
+  if (data && !data.mock) {
     const { leagueId, leagueName } = data;
 
     // Check for duplicates, and remove if matched one that already exists

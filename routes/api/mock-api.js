@@ -1,6 +1,6 @@
 // Detailed standings response
 const data131116 = {
-  leagueId: 73007,
+  leagueId: 0,
   leagueName: 'Tesco Grads Classic',
   gwEnded: true,
   players: [{

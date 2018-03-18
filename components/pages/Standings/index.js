@@ -8,20 +8,14 @@ import { getStandings } from '../../../lib/internal-api';
 import ClassicTable from '../../classic-table';
 import StandardLayout from '../../layouts/standard';
 
-const mockRealAPI = process.env.NODE_ENV === 'production'
-  ? Promise.resolve({})
-  : require('../../mock-api').mockRealAPI;
-
 const pageName = 'Standings';
+
+const getStandingsData = process.env.CLIENT_RENDER
+  ? getStandings
+  : require('../../../lib/get-detailed-standings').default;
 
 if (process.env.CLIENT_RENDER) {
   require('./styles.less');
-}
-
-function getStandingsData(leagueID) {
-  return leagueID !== 'mock'
-    ? getStandings(leagueID)
-    : mockRealAPI();
 }
 
 class Standings extends Component {
@@ -31,7 +25,7 @@ class Standings extends Component {
     openModal: PropTypes.func.isRequired,
     page: PropTypes.string.isRequired,
     params: PropTypes.shape({
-      leagueID: PropTypes.string,
+      leagueID: PropTypes.string.isRequired,
     }).isRequired,
     standings: PropTypes.shape({
       entries: PropTypes.array,
@@ -46,23 +40,22 @@ class Standings extends Component {
     standings: {},
   };
 
-  static fetchData({ dispatch, getState }, { leagueID, standingsData }) {
+  static fetchData({ dispatch, getState }, { leagueID }) {
     updatePage(pageName)(dispatch);
 
-    return fetchStandings(standingsData, leagueID)(dispatch, getState);
+    return fetchStandings(getStandingsData, leagueID)(dispatch, getState);
   }
 
   componentDidMount() {
     document.title = pageName;
     if (this.props.page !== pageName) {
       this.props.updatePage(pageName);
-      this.props.fetchStandings(getStandingsData, this.props.params.leagueID || 'mock');
+      this.props.fetchStandings(getStandingsData, this.props.params.leagueID);
     }
   }
 
   render() {
     const { fetchError, standings } = this.props;
-    const refreshLinkUrl = this.props.params.leagueID ? `/standings/${this.props.params.leagueID}` : '/standings';
 
     const sortFunc = (a, b) => (b.prevTotal + b.projectedPoints) - (a.prevTotal + a.projectedPoints);
 
@@ -90,13 +83,9 @@ class Standings extends Component {
                 onClick={(e) => {
                   e.preventDefault();
 
-                  if (!this.props.params.leagueID) {
-                    return this.props.fetchStandings(mockRealAPI, 'mock');
-                  }
-
-                  return this.props.fetchStandings(getStandings, this.props.params.leagueID);
+                  return this.props.fetchStandings(getStandingsData, this.props.params.leagueID);
                 }}
-                href={refreshLinkUrl}
+                href={`/standings/${this.props.params.leagueID}`}
               >
                 Refresh
               </a>
@@ -147,7 +136,7 @@ function mapStateToProps({
 }, ownProps) {
   return {
     fetchError,
-    standings: classicLeagues[ownProps.params.leagueID || 'mock'],
+    standings: classicLeagues[ownProps.params.leagueID],
     page,
   };
 }

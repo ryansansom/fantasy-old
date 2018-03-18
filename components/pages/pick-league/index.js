@@ -45,7 +45,7 @@ class PickLeague extends Component {
       const newList = JSON.parse(JSON.stringify(this.props.leaguesList));
       if (sampleLeagueEnabled) {
         newList.push({
-          leagueId: '',
+          leagueId: '0',
           leagueName: 'Sample League Data',
         });
       }

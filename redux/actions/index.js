@@ -8,7 +8,6 @@ export const LEAGUES = 'leagueList';
 export const OPEN_MODAL = 'openModal';
 export const CLOSE_MODAL = 'closeModal';
 export const UPDATE_CLASSIC_LEAGUE = 'updateClassicLeague';
-export const UPDATE_MOCK_LEAGUE = 'updateMockLeague';
 export const CLASSIC_LEAGUE_UPDATING = 'classicLeagueUpdating';
 
 export function updateCols(cols) {
@@ -34,13 +33,6 @@ export function fetchStandings(method, leagueId) {
     return method(leagueId)
       .then((res) => {
         const { leaguesList } = getState();
-        if (res.mock) {
-          // Can update the data without needing to update the league list cookie or state
-          return dispatch({
-            type: UPDATE_MOCK_LEAGUE,
-            value: res,
-          });
-        }
 
         if (leaguesList) {
           dispatch({
@@ -55,7 +47,7 @@ export function fetchStandings(method, leagueId) {
         });
       })
       .catch(() => dispatch({ type: FETCH_ERROR }));
-  }
+  };
 }
 
 export function leagueList(method) {
