@@ -25,7 +25,6 @@ export default (req, res, next) => {
   templateLocals.manifest = process.env.NODE_ENV === 'production'
     ? require('../../site/public/wp/manifest.json') // eslint-disable-line global-require
     : {
-      '/common.js': 'http://localhost:8080/common.js',
       '/vendor.js': 'http://localhost:8080/vendor.js',
       '/main.js': 'http://localhost:8080/main.js',
     };

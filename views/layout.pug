@@ -11,14 +11,12 @@ redux-state= reduxState
         meta(name='viewport', content='width=device-width, initial-scale=1')
         if manifest['/main.css']
             link(rel="preload" href=manifest['/main.css'] as="style")
-        link(rel="preload" href=manifest['/main.js'] as="script")
-        link(rel="preload" href=manifest['/common.js'] as="script")
         link(rel="preload" href=manifest['/vendor.js'] as="script")
+        link(rel="preload" href=manifest['/main.js'] as="script")
         if manifest['/main.css']
             link(rel="stylesheet" type="text/css" href=manifest['/main.css'])
         script(type='text/javascript')!=modernizrScript
     body
         #content!= content
-    script(type='text/javascript' src=manifest['/common.js'])
     script(type='text/javascript' src=manifest['/vendor.js'])
     script(type='text/javascript' src=manifest['/main.js'])
