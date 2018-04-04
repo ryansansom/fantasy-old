@@ -39,7 +39,10 @@ const schema = buildSchema(`
     activeChip: String
     transferCost: Int
     previousTotal: Int
-    players: [Int]
+    picks: [Int]
+    subs: [Int]
+    captain: Int
+    viceCaptain: Int
   }
 
   type ClassicLeague {
@@ -203,7 +206,7 @@ class Player extends RootClass {
   }
 
   async minutesPlayed() {
-    const elementFixtureDetails = await this.getElementFixtureDetail()
+    const elementFixtureDetails = await this.getElementFixtureDetail();
 
     return elementFixtureDetails.stats.minutes;
   }
@@ -258,7 +261,48 @@ class Entry extends RootClass {
   async players() {
     const { picks = [] } = await this.entryPicks(this.args.week);
 
-    return picks.map(pick => pick.element);
+    return picks;
+  }
+
+  async picksAndSubs() {
+    const players = await this.players();
+    const isBenchBoost = (await this.activeChip()) === 'bboost';
+
+    if (isBenchBoost) {
+      return {
+        picks: players.map(pick => pick.element),
+        subs: [],
+      };
+    }
+
+    return {
+      picks: players.slice(0, 11).map(pick => pick.element),
+      subs: players.slice(-4).map(pick => pick.element),
+    };
+  }
+
+  async picks() {
+    const { picks } = await this.picksAndSubs();
+
+    return picks;
+  }
+
+  async subs() {
+    const { subs } = await this.picksAndSubs();
+
+    return subs;
+  }
+
+  async captain() {
+    const players = await this.players();
+
+    return players.find(player => player.is_captain).element;
+  }
+
+  async viceCaptain() {
+    const players = await this.players();
+
+    return players.find(player => player.is_vice_captain).element;
   }
 }
 
@@ -276,34 +320,24 @@ class ClassicLeagueInfo extends RootClass {
   }
 
   lastUpdated = () => Date.now(); // TODO: Change this to resolve at the end of all requests
+}
 
-  async players() {
+class ClassicLeague extends RootClass {
+  leagueInfo() {
+    return new ClassicLeagueInfo(this);
+  }
+
+  async entries() {
     const players = await this.resources.classicLeagueStandings.getPlayersInfo(this.args.leagueId);
 
     return players.map(playerInfo => new Entry(this, playerInfo));
   }
-}
-
-class ClassicLeague extends RootClass {
-  get classicLeagueInfo() {
-    if (!this._classicLeagueInfo) {
-      this._classicLeagueInfo = new ClassicLeagueInfo(this);
-    }
-
-    return this._classicLeagueInfo;
-  }
-
-  async leagueInfo() {
-    return this.classicLeagueInfo;
-  }
-
-  entries() {
-    return this.classicLeagueInfo.players();
-  }
 
   async playerIds() {
-    const entries = await this.classicLeagueInfo.players();
-    const newEntries = await Promise.all([...entries.map(entry => entry.players())]);
+    const entries = await this.entries();
+    const newEntries = await Promise.all([
+      ...entries.map(async entry => (await entry.players()).map(player => player.element)),
+    ]);
     const rawPicks = newEntries.reduce((flattenedArray, currentValue) => flattenedArray.concat(currentValue), []);
 
     return Array.from(new Set(rawPicks))
