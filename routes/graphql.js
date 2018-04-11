@@ -1,6 +1,7 @@
 import graphqlHTTP from 'express-graphql';
 import { buildSchema } from 'graphql';
 import { getPlayerBP } from '../lib/helpers/get-players';
+import {playerPoints} from "../lib/table-config/player-list";
 
 const numberSort = (a, b) => {
   if (a < b) return -1;
@@ -39,9 +40,10 @@ const schema = buildSchema(`
     minutesPlayed: Int
   }
   
-  type AutoSubs {
-    subsOut: [Int]
-    subsIn: [Int]
+  type Projections {
+    autoSubsOut: [Int]
+    autoSubsIn: [Int]
+    playerPointsMultiplied: Int
   }
   
   type Entries {
@@ -58,7 +60,7 @@ const schema = buildSchema(`
     playerPointsMultiplied: Int
     multiplier: Int
     currentPoints: Int
-    autoSubs: AutoSubs
+    projections: Projections
   }
 
   type ClassicLeague {
@@ -402,22 +404,32 @@ class Entry extends RootClass {
     }, 0);
   }
 
-  async autoSubs() {
-    const autoSubs = {
-      subsOut: [],
-      subsIn: [],
+  async projections() {
+    const projections = {
+      autoSubsOut: [],
+      autoSubsIn: [],
+      playerPointsMultiplied: null,
     };
 
     // If the gameweek is ended, the auto subs have already been applied, so it makes the entire check redundant
     if (await this.resources.events.gwEnded(this.args.week)) {
-      return autoSubs;
+      return projections;
     }
 
-    const [pickIds, subIds] = await Promise.all([this.picks(), this.subs()]);
+    const [pickIds, subIds, captainId, viceCaptainId] = await Promise.all([this.picks(), this.subs(), this.captain(), this.viceCaptain()]);
+
+    projections.playerPointsMultiplied = captainId;
+
+    const captain = new Player(this, captainId);
+    const viceCaptain = new Player(this, viceCaptainId);
+
+    if (await captain.didntPlay() && await viceCaptain.playingOrDidPlay()) {
+      projections.playerPointsMultiplied = viceCaptainId;
+    }
 
     // If the subs length is 0, there are no subs to be made, so no need to check further
     if (subIds.length === 0) {
-      return autoSubs;
+      return projections;
     }
 
     const picks = pickIds.map(id => new Player(this, id));
@@ -428,22 +440,22 @@ class Entry extends RootClass {
     const gkSub = subs.shift();
 
     if ((await gk.didntPlay()) && await (gkSub.playingOrDidPlay())) {
-      autoSubs.subsOut.push(gk.id);
-      autoSubs.subsIn.push(gkSub.id);
+      projections.autoSubsOut.push(gk.id);
+      projections.autoSubsIn.push(gkSub.id);
     }
 
     // Now calculate autoSubs for remaining players
     picks.forEach(async (pick) => {
       // Ensure than the pick did not play their game
       if (await pick.didntPlay()) {
-        const remainingSubs = subs.filter(sub => !autoSubs.subsIn.includes(sub.id));
+        const remainingSubs = subs.filter(sub => !projections.autoSubsIn.includes(sub.id));
 
         // If there are valid substitutions left
         if (remainingSubs.length > 0) {
           for (let i = 0, len = remainingSubs.length; i < len; i++) {
             const potentialSub = remainingSubs[i];
 
-            // Check that the potenital sub actually played, or is in play
+            // Check that the potential sub actually played, or is in play
             // eslint-disable-next-line no-await-in-loop
             if (await potentialSub.playingOrDidPlay()) {
               // eslint-disable-next-line no-await-in-loop
@@ -451,14 +463,14 @@ class Entry extends RootClass {
 
               if (pickPositionType === subPositionType) {
                 // This is clearly valid, so no need to work out rest
-                autoSubs.subsOut.push(pick.id);
-                autoSubs.subsIn.push(potentialSub.id);
+                projections.autoSubsOut.push(pick.id);
+                projections.autoSubsIn.push(potentialSub.id);
 
                 break;
               }
 
-              const currentPicks = picks.filter(p => !autoSubs.subsOut.includes(p.id));
-              const currentSubs = subs.filter(sub => !autoSubs.subsIn.includes(sub.id)); // Optimise?
+              const currentPicks = picks.filter(p => !projections.autoSubsOut.includes(p.id));
+              const currentSubs = subs.filter(sub => !projections.autoSubsIn.includes(sub.id)); // Optimise?
 
               // eslint-disable-next-line no-await-in-loop
               const noOfPlayersInPosition = (await Promise.all(currentPicks.concat(currentSubs).map(player => player.positionType())))
@@ -466,8 +478,8 @@ class Entry extends RootClass {
 
               if (noOfPlayersInPosition > minElementTypes[pickPositionType]) {
                 // This is a valid sub, mark it as such and break the loop
-                autoSubs.subsOut.push(pick.id);
-                autoSubs.subsIn.push(potentialSub.id);
+                projections.autoSubsOut.push(pick.id);
+                projections.autoSubsIn.push(potentialSub.id);
                 break;
               }
             }
@@ -476,7 +488,7 @@ class Entry extends RootClass {
       }
     });
 
-    return autoSubs;
+    return projections;
   }
 }
 
