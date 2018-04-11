@@ -12,7 +12,7 @@
     "full-start": "NODE_ENV=development npm run build-dev & npm start",
     "lint": "eslint --cache .",
     "fix": "eslint --fix .",
-    "start": "NODE_ENV=development nodemon index"
+    "start": "NODE_ENV=development nodemon --inspect index"
   },
   "dependencies": {
     "babel-loader": "^7.1.4",

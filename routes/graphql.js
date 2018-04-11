@@ -7,6 +7,13 @@ const numberSort = (a, b) => {
   return b < a ? 1 : 0;
 };
 
+const minElementTypes = {
+  1: 1,
+  2: 3,
+  3: 2,
+  4: 1,
+};
+
 // Construct a schema, using GraphQL schema language
 const schema = buildSchema(`
   type ClassicLeagueInfo {
@@ -32,6 +39,11 @@ const schema = buildSchema(`
     minutesPlayed: Int
   }
   
+  type AutoSubs {
+    subsOut: [Int]
+    subsIn: [Int]
+  }
+  
   type Entries {
     id: Int
     name: String
@@ -43,6 +55,10 @@ const schema = buildSchema(`
     subs: [Int]
     captain: Int
     viceCaptain: Int
+    playerPointsMultiplied: Int
+    multiplier: Int
+    currentPoints: Int
+    autoSubs: AutoSubs
   }
 
   type ClassicLeague {
@@ -117,9 +133,9 @@ class Player extends RootClass {
   }
 
   async points() {
-    const element = await this.element;
+    const elementFixtureDetails = await this.getElementFixtureDetail();
 
-    return element.event_points;
+    return elementFixtureDetails.stats.total_points;
   }
 
   async expectedPoints() {
@@ -210,6 +226,44 @@ class Player extends RootClass {
 
     return elementFixtureDetails.stats.minutes;
   }
+
+  async projectedPoints() {
+    const [
+      points,
+      pointsFinalised,
+    ] = await Promise.all([
+      this.points(),
+      this.pointsFinalised(),
+    ]);
+
+    const additionalPoints = pointsFinalised ? await this.provisionalBonus() : 0;
+
+    return points + additionalPoints;
+  }
+
+  async didntPlay() {
+    const [
+      minutesPlayed,
+      gamesFinished,
+    ] = await Promise.all([
+      this.minutesPlayed(),
+      this.gamesFinished(),
+    ]);
+
+    return minutesPlayed === 0 && gamesFinished;
+  }
+
+  async playingOrDidPlay() {
+    const [
+      minutesPlayed,
+      gamesStarted,
+    ] = await Promise.all([
+      this.minutesPlayed(),
+      this.gamesStarted(),
+    ]);
+
+    return minutesPlayed > 0 && gamesStarted;
+  }
 }
 
 class Entry extends RootClass {
@@ -228,17 +282,10 @@ class Entry extends RootClass {
     );
   }
 
-  async currentEntryPicks() {
+  async previousEntryPicks(week) {
     return this.resources.entryPicks.getEntryPicks(
       this.id,
-      await this.resources.events.getWeek(),
-    );
-  }
-
-  async previousEntryPicks() {
-    return this.resources.entryPicks.getEntryPicks(
-      this.id,
-      (await this.resources.events.getWeek()) - 1,
+      (await this.resources.events.getWeek(week)) - 1,
     );
   }
 
@@ -251,11 +298,27 @@ class Entry extends RootClass {
   }
 
   async previousTotal() {
-    const gameweekEnded = await this.resources.events.gwEnded(this.args.week);
+    const [
+      requestedWeek,
+      currentWeek,
+      gameweekEnded,
+    ] = await Promise.all([
+      this.resources.events.getWeek(this.args.week),
+      this.resources.events.getCurrentWeek(),
+      this.resources.events.gwEnded(this.args.week),
+    ]);
 
-    if (gameweekEnded) return (await this.currentEntryPicks()).entry_history.total_points;
+    let promise;
 
-    return (await this.previousEntryPicks()).entry_history.total_points;
+    if (gameweekEnded) {
+      promise = requestedWeek === currentWeek
+        ? this.entryPicks(this.args.week)
+        : this.previousEntryPicks(this.args.week);
+    } else {
+      promise = this.previousEntryPicks();
+    }
+
+    return (await promise).entry_history.total_points;
   }
 
   async players() {
@@ -270,39 +333,150 @@ class Entry extends RootClass {
 
     if (isBenchBoost) {
       return {
-        picks: players.map(pick => pick.element),
+        picks: players,
         subs: [],
       };
     }
 
     return {
-      picks: players.slice(0, 11).map(pick => pick.element),
-      subs: players.slice(-4).map(pick => pick.element),
+      picks: players.slice(0, 11),
+      subs: players.slice(-4),
     };
   }
 
   async picks() {
     const { picks } = await this.picksAndSubs();
 
-    return picks;
+    return picks.map(pick => pick.element);
   }
 
   async subs() {
     const { subs } = await this.picksAndSubs();
 
-    return subs;
+    return subs.map(pick => pick.element);
   }
 
   async captain() {
     const players = await this.players();
 
-    return players.find(player => player.is_captain).element;
+    return (players.find(player => player.is_captain) || {}).element;
   }
 
   async viceCaptain() {
     const players = await this.players();
 
-    return players.find(player => player.is_vice_captain).element;
+    return (players.find(player => player.is_vice_captain) || {}).element;
+  }
+
+  async playerPointsMultiplied() {
+    const { picks } = await this.picksAndSubs();
+
+    return (picks.find(player => player.multiplier > 1) || {}).element;
+  }
+
+  async multiplier() {
+    const activeChip = await this.activeChip();
+
+    return activeChip === '3xc' ? 3 : 2;
+  }
+
+  async currentPoints() {
+    const [
+      picks,
+      multiplier,
+      playerMultiplied,
+    ] = await Promise.all([
+      this.picks(),
+      this.multiplier(),
+      this.playerPointsMultiplied(),
+    ]);
+    const multiplierIndex = picks.findIndex(pick => pick === playerMultiplied);
+    const pointsArray = await Promise.all(picks.map(id => (new Player(this, id)).points()));
+
+    return pointsArray.reduce((currentPoints, point, i) => {
+      if (i === multiplierIndex) {
+        return currentPoints + (multiplier * point);
+      }
+
+      return currentPoints + point;
+    }, 0);
+  }
+
+  async autoSubs() {
+    const autoSubs = {
+      subsOut: [],
+      subsIn: [],
+    };
+
+    // If the gameweek is ended, the auto subs have already been applied, so it makes the entire check redundant
+    if (await this.resources.events.gwEnded(this.args.week)) {
+      return autoSubs;
+    }
+
+    const [pickIds, subIds] = await Promise.all([this.picks(), this.subs()]);
+
+    // If the subs length is 0, there are no subs to be made, so no need to check further
+    if (subIds.length === 0) {
+      return autoSubs;
+    }
+
+    const picks = pickIds.map(id => new Player(this, id));
+    const subs = subIds.map(id => new Player(this, id));
+
+    // Much easier to work the logic of goalkeepers separately
+    const gk = picks.shift();
+    const gkSub = subs.shift();
+
+    if ((await gk.didntPlay()) && await (gkSub.playingOrDidPlay())) {
+      autoSubs.subsOut.push(gk.id);
+      autoSubs.subsIn.push(gkSub.id);
+    }
+
+    // Now calculate autoSubs for remaining players
+    picks.forEach(async (pick) => {
+      // Ensure than the pick did not play their game
+      if (await pick.didntPlay()) {
+        const remainingSubs = subs.filter(sub => !autoSubs.subsIn.includes(sub.id));
+
+        // If there are valid substitutions left
+        if (remainingSubs.length > 0) {
+          for (let i = 0, len = remainingSubs.length; i < len; i++) {
+            const potentialSub = remainingSubs[i];
+
+            // Check that the potenital sub actually played, or is in play
+            // eslint-disable-next-line no-await-in-loop
+            if (await potentialSub.playingOrDidPlay()) {
+              // eslint-disable-next-line no-await-in-loop
+              const [pickPositionType, subPositionType] = await Promise.all([pick.positionType(), potentialSub.positionType()]);
+
+              if (pickPositionType === subPositionType) {
+                // This is clearly valid, so no need to work out rest
+                autoSubs.subsOut.push(pick.id);
+                autoSubs.subsIn.push(potentialSub.id);
+
+                break;
+              }
+
+              const currentPicks = picks.filter(p => !autoSubs.subsOut.includes(p.id));
+              const currentSubs = subs.filter(sub => !autoSubs.subsIn.includes(sub.id)); // Optimise?
+
+              // eslint-disable-next-line no-await-in-loop
+              const noOfPlayersInPosition = (await Promise.all(currentPicks.concat(currentSubs).map(player => player.positionType())))
+                .filter(positionType => positionType === pickPositionType).length;
+
+              if (noOfPlayersInPosition > minElementTypes[pickPositionType]) {
+                // This is a valid sub, mark it as such and break the loop
+                autoSubs.subsOut.push(pick.id);
+                autoSubs.subsIn.push(potentialSub.id);
+                break;
+              }
+            }
+          }
+        }
+      }
+    });
+
+    return autoSubs;
   }
 }
 
