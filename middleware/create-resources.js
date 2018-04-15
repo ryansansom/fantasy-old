@@ -8,7 +8,7 @@ const entryPicksWrapper = (stringifiedKeys) => {
   return getEntryPicks(id, week);
 };
 
-const newDataLoader = func => new DataLoader(keys => Promise.all([...keys.map(key => func(key))]));
+const newDataLoader = func => new DataLoader(keys => Promise.all(keys.map(key => func(key))));
 
 export default (req, res, next) => {
   req.resources = new Resources({
