@@ -1,7 +1,6 @@
 import graphqlHTTP from 'express-graphql';
 import { buildSchema } from 'graphql';
-import { getPlayerBP } from '../lib/helpers/get-players';
-import {playerPoints} from "../lib/table-config/player-list";
+import { getPlayerBP, expectedElapsedTime } from '../lib/helpers/get-players';
 
 const numberSort = (a, b) => {
   if (a < b) return -1;
@@ -70,7 +69,7 @@ const schema = buildSchema(`
   }
 
   type Query {
-    classicLeague(leagueId: Int!, week: Int): ClassicLeague
+    classicLeague(leagueId: Int!, week: Int, projectionMinute: Int): ClassicLeague
   }
 `);
 
@@ -243,16 +242,26 @@ class Player extends RootClass {
     return points + additionalPoints;
   }
 
-  async didntPlay() {
+  async isXMinutesPastKickoff(minutesAfterKickoff) {
+    const fixtures = await this.getFixtures();
+
+    return fixtures.every(fixture => expectedElapsedTime(fixture.kickoff_time, minutesAfterKickoff));
+  }
+
+  async didntPlay(minutesAfterKickoff) {
+    const hasSpecifiedTimeElapsedPromise = minutesAfterKickoff && parseInt(minutesAfterKickoff, 10) > 0
+      ? this.isXMinutesPastKickoff(parseInt(minutesAfterKickoff, 10))
+      : this.gamesFinished();
+
     const [
       minutesPlayed,
-      gamesFinished,
+      hasSpecifiedTimeElapsed,
     ] = await Promise.all([
       this.minutesPlayed(),
-      this.gamesFinished(),
+      hasSpecifiedTimeElapsedPromise,
     ]);
 
-    return minutesPlayed === 0 && gamesFinished;
+    return minutesPlayed === 0 && hasSpecifiedTimeElapsed;
   }
 
   async playingOrDidPlay() {
@@ -423,7 +432,7 @@ class Entry extends RootClass {
     const captain = new Player(this, captainId);
     const viceCaptain = new Player(this, viceCaptainId);
 
-    if (await captain.didntPlay() && await viceCaptain.playingOrDidPlay()) {
+    if (await captain.didntPlay(this.args.projectionMinute) && await viceCaptain.playingOrDidPlay()) {
       projections.playerPointsMultiplied = viceCaptainId;
     }
 
@@ -439,21 +448,23 @@ class Entry extends RootClass {
     const gk = picks.shift();
     const gkSub = subs.shift();
 
-    if ((await gk.didntPlay()) && await (gkSub.playingOrDidPlay())) {
+    if ((await gk.didntPlay(this.args.projectionMinute)) && await (gkSub.playingOrDidPlay())) {
       projections.autoSubsOut.push(gk.id);
       projections.autoSubsIn.push(gkSub.id);
     }
 
-    // Now calculate autoSubs for remaining players
-    picks.forEach(async (pick) => {
+    for (let i = 0, picksLength = picks.length; i < picksLength; i++) {
+      const pick = picks[i];
+
       // Ensure than the pick did not play their game
-      if (await pick.didntPlay()) {
+      // eslint-disable-next-line no-await-in-loop
+      if (await pick.didntPlay(this.args.projectionMinute)) {
         const remainingSubs = subs.filter(sub => !projections.autoSubsIn.includes(sub.id));
 
         // If there are valid substitutions left
         if (remainingSubs.length > 0) {
-          for (let i = 0, len = remainingSubs.length; i < len; i++) {
-            const potentialSub = remainingSubs[i];
+          for (let j = 0, len = remainingSubs.length; j < len; j++) {
+            const potentialSub = remainingSubs[j];
 
             // Check that the potential sub actually played, or is in play
             // eslint-disable-next-line no-await-in-loop
@@ -486,7 +497,7 @@ class Entry extends RootClass {
           }
         }
       }
-    });
+    }
 
     return projections;
   }
