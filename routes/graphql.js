@@ -453,46 +453,54 @@ class Entry extends RootClass {
       projections.autoSubsIn.push(gkSub.id);
     }
 
-    for (let i = 0, picksLength = picks.length; i < picksLength; i++) {
-      const pick = picks[i];
+    function returnPickIfDidntPlay(potentialSubs, projectionMinute) {
+      return potentialSubs.map(pick => pick.didntPlay(projectionMinute)
+        .then((didntPlay) => {
+          if (!didntPlay) return null;
 
-      // Ensure than the pick did not play their game
-      // eslint-disable-next-line no-await-in-loop
-      if (await pick.didntPlay(this.args.projectionMinute)) {
-        const remainingSubs = subs.filter(sub => !projections.autoSubsIn.includes(sub.id));
+          return pick;
+        }));
+    }
 
-        // If there are valid substitutions left
-        if (remainingSubs.length > 0) {
-          for (let j = 0, len = remainingSubs.length; j < len; j++) {
-            const potentialSub = remainingSubs[j];
+    const potentialSubsOut = await Promise.all(returnPickIfDidntPlay(picks, this.args.projectionMinute))
+      .then(potentialSubs => potentialSubs.filter(potentialSub => !!potentialSub));
 
-            // Check that the potential sub actually played, or is in play
+    for (let i = 0, picksLength = potentialSubsOut.length; i < picksLength; i++) {
+      const pick = potentialSubsOut[i];
+
+      const remainingSubs = subs.filter(sub => !projections.autoSubsIn.includes(sub.id));
+
+      // If there are valid substitutions left
+      if (remainingSubs.length > 0) {
+        for (let j = 0, len = remainingSubs.length; j < len; j++) {
+          const potentialSub = remainingSubs[j];
+
+          // Check that the potential sub actually played, or is in play
+          // eslint-disable-next-line no-await-in-loop
+          if (await potentialSub.playingOrDidPlay()) {
             // eslint-disable-next-line no-await-in-loop
-            if (await potentialSub.playingOrDidPlay()) {
-              // eslint-disable-next-line no-await-in-loop
-              const [pickPositionType, subPositionType] = await Promise.all([pick.positionType(), potentialSub.positionType()]);
+            const [pickPositionType, subPositionType] = await Promise.all([pick.positionType(), potentialSub.positionType()]);
 
-              if (pickPositionType === subPositionType) {
-                // This is clearly valid, so no need to work out rest
-                projections.autoSubsOut.push(pick.id);
-                projections.autoSubsIn.push(potentialSub.id);
+            if (pickPositionType === subPositionType) {
+              // This is clearly valid, so no need to work out rest
+              projections.autoSubsOut.push(pick.id);
+              projections.autoSubsIn.push(potentialSub.id);
 
-                break;
-              }
+              break;
+            }
 
-              const currentPicks = picks.filter(p => !projections.autoSubsOut.includes(p.id));
-              const currentSubs = subs.filter(sub => !projections.autoSubsIn.includes(sub.id)); // Optimise?
+            const currentPicks = picks.filter(p => !projections.autoSubsOut.includes(p.id));
+            const currentSubs = subs.filter(sub => !projections.autoSubsIn.includes(sub.id)); // Optimise?
 
-              // eslint-disable-next-line no-await-in-loop
-              const noOfPlayersInPosition = (await Promise.all(currentPicks.concat(currentSubs).map(player => player.positionType())))
-                .filter(positionType => positionType === pickPositionType).length;
+            // eslint-disable-next-line no-await-in-loop
+            const noOfPlayersInPosition = (await Promise.all(currentPicks.concat(currentSubs).map(player => player.positionType())))
+              .filter(positionType => positionType === pickPositionType).length;
 
-              if (noOfPlayersInPosition > minElementTypes[pickPositionType]) {
-                // This is a valid sub, mark it as such and break the loop
-                projections.autoSubsOut.push(pick.id);
-                projections.autoSubsIn.push(potentialSub.id);
-                break;
-              }
+            if (noOfPlayersInPosition > minElementTypes[pickPositionType]) {
+              // This is a valid sub, mark it as such and break the loop
+              projections.autoSubsOut.push(pick.id);
+              projections.autoSubsIn.push(potentialSub.id);
+              break;
             }
           }
         }
