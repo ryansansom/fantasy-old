@@ -145,7 +145,7 @@ class Player extends RootClass {
     this._didntPlayMap = new Map();
   }
 
-  get element() {
+  element() {
     if (!this._element) {
       this._element = this.resources.elements.getElementById(this.id);
     }
@@ -153,230 +153,230 @@ class Player extends RootClass {
     return this._element;
   }
 
-  async points() {
+  points() {
     if (!this._points) {
-      const elementFixtureDetails = await this.getElementFixtureDetail();
-
-      this._points = elementFixtureDetails.stats.total_points;
+      this._points = this.getElementFixtureDetail()
+        .then(elementFixtureDetails => elementFixtureDetails.stats.total_points);
     }
 
     return this._points;
   }
 
-  async expectedPoints() {
+  expectedPoints() {
     if (!this._expectedPoints) {
-      const element = await this.element;
-
-      this._expectedPoints = element.ep_this;
+      this._expectedPoints = this.element()
+        .then(element => element.ep_this);
     }
 
     return this._expectedPoints;
   }
 
-  async expectedPointsNext() {
+  expectedPointsNext() {
     if (!this._expectedPointsNext) {
-      const element = await this.element;
-
-      this._expectedPointsNext = element.ep_next;
+      this._expectedPointsNext = this.element()
+        .then(element => element.ep_next);
     }
 
     return this._expectedPointsNext;
   }
 
-  async name() {
+  name() {
     if (!this._name) {
-      const element = await this.element;
-
-      this._name = `${element.first_name} ${element.second_name}`;
+      this._name = this.element()
+        .then(element => `${element.first_name} ${element.second_name}`);
     }
 
     return this._name;
   }
 
-  async position() {
+  position() {
     if (!this._position) {
-      const positionType = await this.positionType();
-
-      this._position = getPosition(positionType);
+      this._position = this.positionType()
+        .then(getPosition);
     }
 
     return this._position;
   }
 
-  async teamId() {
+  teamId() {
     if (!this._teamId) {
-      const element = await this.element;
-
-      this._teamId = element.team;
+      this._teamId = this.element()
+        .then(element => element.team);
     }
 
     return this._teamId;
   }
 
-  async positionType() {
+  positionType() {
     if (!this._positionType) {
-      const element = await this.element;
-
-      this._positionType = element.element_type;
+      this._positionType = this.element()
+        .then(element => element.element_type);
     }
 
     return this._positionType;
   }
 
-  async team() {
+  team() {
     if (!this._team) {
-      const teamId = await this.teamId();
-
-      this._team = teams[teamId - 1];
+      this._team = this.teamId()
+        .then(teamId => teams[teamId - 1]);
     }
 
     return this._team;
   }
 
-  async getFixtures() {
-    if (!this._getFixtures) {
-      const teamId = await this.teamId();
-
-      this._getFixtures = (await this.resources.liveEvent.getFormattedFixtures(await this.resources.events.getWeek(this.args.week)))
-        .filter(game => (teamId === game.team_a || teamId === game.team_h));
+  getFixtures() {
+    if (!this._fixtures) {
+      this._fixtures = this._getFixtures();
     }
 
-    return this._getFixtures;
+    return this._fixtures;
   }
 
-  async getElementFixtureDetail() {
-    if (!this._getElementFixtureDetail) {
-      this._getElementFixtureDetail = (await this.resources.liveEvent.getElements(await this.resources.events.getWeek(this.args.week)))[this.id.toString()];
+  async _getFixtures() {
+    const teamId = await this.teamId();
+
+    return (await this.resources.liveEvent.getFormattedFixtures(await this.resources.events.getWeek(this.args.week)))
+      .filter(game => (teamId === game.team_a || teamId === game.team_h));
+  }
+
+  getElementFixtureDetail() {
+    if (!this._elementFixtureDetail) {
+      this._elementFixtureDetail = this._getElementFixtureDetail();
     }
 
-    return this._getElementFixtureDetail;
+    return this._elementFixtureDetail;
   }
 
-  async actualBonus() {
+  async _getElementFixtureDetail() {
+    return (await this.resources.liveEvent.getElements(await this.resources.events.getWeek(this.args.week)))[this.id.toString()];
+  }
+
+  actualBonus() {
     if (!this._actualBonus) {
-      const fixtures = await this.getFixtures();
-
-      this._actualBonus = fixtures.reduce((prev, fixture) => prev + getPlayerBP(fixture.actual_bonus, this.id), 0);
+      this._actualBonus = this.getFixtures()
+        .then(fixtures => fixtures.reduce((prev, fixture) => prev + getPlayerBP(fixture.actual_bonus, this.id), 0));
     }
 
     return this._actualBonus;
   }
 
-  async provisionalBonus() {
+  provisionalBonus() {
     if (!this._provisionalBonus) {
-      const fixtures = await this.getFixtures();
-
-      this._provisionalBonus = fixtures.reduce((prev, fixture) => prev + getPlayerBP(fixture.provisional_bonus, this.id), 0);
+      this._provisionalBonus = this.getFixtures()
+        .then(fixtures => fixtures.reduce((prev, fixture) => prev + getPlayerBP(fixture.provisional_bonus, this.id), 0));
     }
 
     return this._provisionalBonus;
   }
 
-  async gamesStarted() {
+  gamesStarted() {
     if (!this._gamesStarted) {
-      const fixtures = await this.getFixtures();
-
-      this._gamesStarted = fixtures.some(fixture => fixture.started) || fixtures.length === 0;
+      this._gamesStarted = this.getFixtures()
+        .then(fixtures => fixtures.some(fixture => fixture.started) || fixtures.length === 0);
     }
 
     return this._gamesStarted;
   }
 
-  async gamesFinished() {
+  gamesFinished() {
     if (!this._gamesFinished) {
-      const fixtures = await this.getFixtures();
-
-      this._gamesFinished = fixtures.every(fixture => fixture.finished_provisional) || fixtures.length === 0;
+      this._gamesFinished = this.getFixtures()
+        .then(fixtures => fixtures.every(fixture => fixture.finished_provisional) || fixtures.length === 0);
     }
 
     return this._gamesFinished;
   }
 
-  async pointsFinalised() {
+  pointsFinalised() {
     if (!this._pointsFinalised) {
-      const fixtures = await this.getFixtures();
-
-      this._pointsFinalised = fixtures.every(fixture => fixture.finished) || fixtures.length === 0;
+      this._pointsFinalised = this.getFixtures()
+        .then(fixtures => fixtures.every(fixture => fixture.finished) || fixtures.length === 0);
     }
 
     return this._pointsFinalised;
   }
 
-  async minutesPlayed() {
+  minutesPlayed() {
     if (!this._minutesPlayed) {
-      const elementFixtureDetails = await this.getElementFixtureDetail();
-
-      this._minutesPlayed = elementFixtureDetails.stats.minutes;
+      this._minutesPlayed = this.getElementFixtureDetail()
+        .then(elementFixtureDetails => elementFixtureDetails.stats.minutes);
     }
 
     return this._minutesPlayed;
   }
 
-  async projectedPoints() {
+  projectedPoints() {
     if (!this._projectedPoints) {
-      const [
-        points,
-        pointsFinalised,
-      ] = await Promise.all([
-        this.points(),
-        this.pointsFinalised(),
-      ]);
-
-      const additionalPoints = pointsFinalised ? await this.provisionalBonus() : 0;
-
-      this._projectedPoints = points + additionalPoints;
+      this._projectedPoints = this._getProjectedPoints();
     }
 
     return this._projectedPoints;
   }
 
-  async isXMinutesPastKickoff(minutesAfterKickoff) {
-    if (!this._minutesElapsedMap.has(minutesAfterKickoff)) {
-      const fixtures = await this.getFixtures();
+  async _getProjectedPoints() {
+    const [
+      points,
+      pointsFinalised,
+    ] = await Promise.all([
+      this.points(),
+      this.pointsFinalised(),
+    ]);
 
+    const additionalPoints = pointsFinalised ? await this.provisionalBonus() : 0;
+
+    return points + additionalPoints;
+  }
+
+  isXMinutesPastKickoff(minutesAfterKickoff) {
+    if (!this._minutesElapsedMap.has(minutesAfterKickoff)) {
       this._minutesElapsedMap.set(
         minutesAfterKickoff,
-        fixtures.every(fixture => expectedElapsedTime(fixture.kickoff_time, minutesAfterKickoff)),
+        this.getFixtures()
+          .then(fixtures => fixtures.every(fixture => expectedElapsedTime(fixture.kickoff_time, minutesAfterKickoff))),
       );
     }
 
     return this._minutesElapsedMap.get(minutesAfterKickoff);
   }
 
-  async didntPlay(minutesAfterKickoff) {
+  didntPlay(minutesAfterKickoff) {
     if (!this._didntPlayMap.has(minutesAfterKickoff)) {
-      const hasSpecifiedTimeElapsedPromise = minutesAfterKickoff && parseInt(minutesAfterKickoff, 10) > 0
-        ? this.isXMinutesPastKickoff(parseInt(minutesAfterKickoff, 10))
-        : this.gamesFinished();
-
-      const [
-        minutesPlayed,
-        hasSpecifiedTimeElapsed,
-      ] = await Promise.all([
-        this.minutesPlayed(),
-        hasSpecifiedTimeElapsedPromise,
-      ]);
-
       this._didntPlayMap.set(
         minutesAfterKickoff,
-        minutesPlayed === 0 && hasSpecifiedTimeElapsed,
+        this._didntPlay(minutesAfterKickoff),
       );
     }
 
     return this._didntPlayMap.get(minutesAfterKickoff);
   }
 
-  async playingOrDidPlay() {
+  async _didntPlay(minutesAfterKickoff) {
+    const hasSpecifiedTimeElapsedPromise = minutesAfterKickoff && parseInt(minutesAfterKickoff, 10) > 0
+      ? this.isXMinutesPastKickoff(parseInt(minutesAfterKickoff, 10))
+      : this.gamesFinished();
+
+    const [
+      minutesPlayed,
+      hasSpecifiedTimeElapsed,
+    ] = await Promise.all([
+      this.minutesPlayed(),
+      hasSpecifiedTimeElapsedPromise,
+    ]);
+
+    return minutesPlayed === 0 && hasSpecifiedTimeElapsed;
+  }
+
+  playingOrDidPlay() {
     if (!this._playingOrDidPlay) {
-      const [
-        minutesPlayed,
-        gamesStarted,
-      ] = await Promise.all([
+      this._playingOrDidPlay = Promise.all([
         this.minutesPlayed(),
         this.gamesStarted(),
-      ]);
-
-      this._playingOrDidPlay = minutesPlayed > 0 && gamesStarted;
+      ])
+        .then(([
+          minutesPlayed,
+          gamesStarted,
+        ]) => minutesPlayed > 0 && gamesStarted);
     }
 
     return this._playingOrDidPlay;
@@ -395,287 +395,298 @@ class Entry extends RootClass {
     this._previousEntryPicksMap = new Map();
   }
 
-  async entryPicks(week) {
+  entryPicks(week) {
     if (!this._entryPicksMap.has(week)) {
       this._entryPicksMap.set(
         week,
-        this.resources.entryPicks.getEntryPicks(
-          this.id,
-          await this.resources.events.getWeek(week),
-        ),
+        this.resources.events.getWeek(week)
+          .then(weekNo => this.resources.entryPicks.getEntryPicks(this.id, weekNo)),
       );
     }
 
     return this._entryPicksMap.get(week);
   }
 
-  async previousEntryPicks(week) {
+  previousEntryPicks(week) {
     if (!this._previousEntryPicksMap.has(week)) {
       this._previousEntryPicksMap.set(
         week,
-        this.resources.entryPicks.getEntryPicks(
-          this.id,
-          (await this.resources.events.getWeek(week)) - 1,
-        ),
+        this.resources.events.getWeek(week)
+          .then(weekNo => this.resources.entryPicks.getEntryPicks(this.id, weekNo - 1)),
       );
     }
 
     return this._previousEntryPicksMap.get(week);
   }
 
-  async activeChip() {
+  activeChip() {
     if (!this._activeChip) {
-      this._activeChip = (await this.entryPicks(this.args.week)).active_chip;
+      this._activeChip = this.entryPicks(this.args.week)
+        .then(entryPicks => entryPicks.active_chip);
     }
 
     return this._activeChip;
   }
 
-  async transferCost() {
+  transferCost() {
     if (!this._transferCost) {
-      this._transferCost = (await this.entryPicks(this.args.week)).entry_history.event_transfers_cost;
+      this._transferCost = this.entryPicks(this.args.week)
+        .then(entryPicks => entryPicks.entry_history.event_transfers_cost);
     }
 
     return this._transferCost;
   }
 
-  async previousTotal() {
+  previousTotal() {
     if (!this._previousTotal) {
-      const [
-        requestedWeek,
-        currentWeek,
-        gameweekEnded,
-      ] = await Promise.all([
-        this.resources.events.getWeek(this.args.week),
-        this.resources.events.getCurrentWeek(),
-        this.resources.events.gwEnded(this.args.week),
-      ]);
-
-      let promise;
-
-      if (gameweekEnded) {
-        promise = requestedWeek === currentWeek
-          ? this.entryPicks(this.args.week)
-          : this.previousEntryPicks(this.args.week);
-      } else {
-        promise = this.previousEntryPicks();
-      }
-
-      this._previousTotal = (await promise).entry_history.total_points;
+      this._previousTotal = this._getPreviousTotal();
     }
 
     return this._previousTotal;
   }
 
-  async players() {
-    if (!this._players) {
-      const { picks = [] } = await this.entryPicks(this.args.week);
+  async _getPreviousTotal() {
+    const [
+      requestedWeek,
+      currentWeek,
+      gameweekEnded,
+    ] = await Promise.all([
+      this.resources.events.getWeek(this.args.week),
+      this.resources.events.getCurrentWeek(),
+      this.resources.events.gwEnded(this.args.week),
+    ]);
 
-      this._players = picks;
+    let promise;
+
+    if (gameweekEnded) {
+      promise = requestedWeek === currentWeek
+        ? this.entryPicks(this.args.week)
+        : this.previousEntryPicks(this.args.week);
+    } else {
+      promise = this.previousEntryPicks();
+    }
+
+    return (await promise).entry_history.total_points;
+  }
+
+  players() {
+    if (!this._players) {
+      this._players = this.entryPicks(this.args.week)
+        .then(({ picks = [] }) => picks);
     }
 
     return this._players;
   }
 
-  async picksAndSubs() {
+  picksAndSubs() {
     if (!this._picksAndSubs) {
-      const players = await this.players();
-      const isBenchBoost = (await this.activeChip()) === 'bboost';
-
-      if (isBenchBoost) {
-        return {
-          picks: players,
-          subs: [],
-        };
-      }
-
-      this._picksAndSubs = {
-        picks: players.slice(0, 11),
-        subs: players.slice(-4),
-      };
+      this._picksAndSubs = this._getPicksAndSubs();
     }
 
     return this._picksAndSubs;
   }
 
-  async picks() {
-    if (!this._picks) {
-      const { picks } = await this.picksAndSubs();
+  async _getPicksAndSubs() {
+    const players = await this.players();
+    const isBenchBoost = (await this.activeChip()) === 'bboost';
 
-      this._picks = picks.map(pick => pick.element);
+    if (isBenchBoost) {
+      return {
+        picks: players,
+        subs: [],
+      };
+    }
+
+    return {
+      picks: players.slice(0, 11),
+      subs: players.slice(-4),
+    };
+  }
+
+  picks() {
+    if (!this._picks) {
+      this._picks = this.picksAndSubs()
+        .then(({ picks }) => picks.map(pick => pick.element));
     }
 
     return this._picks;
   }
 
-  async subs() {
+  subs() {
     if (!this._subs) {
-      const { subs } = await this.picksAndSubs();
-
-      this._subs = subs.map(pick => pick.element);
+      this._subs = this.picksAndSubs()
+        .then(({ subs }) => subs.map(pick => pick.element));
     }
 
     return this._subs;
   }
 
-  async captain() {
+  captain() {
     if (!this._captain) {
-      const players = await this.players();
-
-      this._captain = (players.find(player => player.is_captain) || {}).element;
+      this._captain = this.players()
+        .then(players => (players.find(player => player.is_captain) || {}).element);
     }
 
     return this._captain;
   }
 
-  async viceCaptain() {
+  viceCaptain() {
     if (!this._viceCaptain) {
-      const players = await this.players();
-
-      this._viceCaptain = (players.find(player => player.is_vice_captain) || {}).element;
+      this._viceCaptain = this.players()
+        .then(players => (players.find(player => player.is_vice_captain) || {}).element);
     }
 
     return this._viceCaptain;
   }
 
-  async playerPointsMultiplied() {
+  playerPointsMultiplied() {
     if (!this._playerPointsMultiplied) {
-      const { picks } = await this.picksAndSubs();
-
-      this._playerPointsMultiplied = (picks.find(player => player.multiplier > 1) || {}).element;
+      this._playerPointsMultiplied = this.players()
+        .then(players => (players.find(player => player.multiplier > 1) || {}).element);
     }
 
     return this._playerPointsMultiplied;
   }
 
-  async multiplier() {
+  multiplier() {
     if (!this._multiplier) {
-      const activeChip = await this.activeChip();
+      this._multiplier = this.activeChip()
+        .then((activeChip) => {
+          if (activeChip === '3xc') {
+            return 3;
+          }
 
-      this._multiplier = activeChip === '3xc' ? 3 : 2;
+          return 2;
+        });
     }
 
     return this._multiplier;
   }
 
-  async currentPoints() {
+  currentPoints() {
     if (!this._currentPoints) {
-      const [
-        picks,
-        multiplier,
-        playerMultiplied,
-      ] = await Promise.all([
-        this.picks(),
-        this.multiplier(),
-        this.playerPointsMultiplied(),
-      ]);
-      const multiplierIndex = picks.findIndex(pick => pick === playerMultiplied);
-      const pointsArray = await Promise.all(picks.map(id => (this.allPlayers(id)).points()));
-
-      this._currentPoints = pointsArray.reduce((currentPoints, point, i) => {
-        if (i === multiplierIndex) {
-          return currentPoints + (multiplier * point);
-        }
-
-        return currentPoints + point;
-      }, 0);
+      this._currentPoints = this._getCurrentPoints();
     }
 
     return this._currentPoints;
   }
 
-  async projections() {
+  async _getCurrentPoints() {
+    const [
+      picks,
+      multiplier,
+      playerMultiplied,
+    ] = await Promise.all([
+      this.picks(),
+      this.multiplier(),
+      this.playerPointsMultiplied(),
+    ]);
+    const multiplierIndex = picks.findIndex(pick => pick === playerMultiplied);
+    const pointsArray = await Promise.all(picks.map(id => (this.allPlayers(id)).points()));
+
+    return pointsArray.reduce((currentPoints, point, i) => {
+      if (i === multiplierIndex) {
+        return currentPoints + (multiplier * point);
+      }
+
+      return currentPoints + point;
+    }, 0);
+  }
+
+  projections() {
     if (!this._projections) {
-      const projections = {
-        autoSubsOut: [],
-        autoSubsIn: [],
-        playerPointsMultiplied: null,
-      };
+      this._projections = this._getProjections();
+    }
 
-      // If the gameweek is ended, the auto subs have already been applied, so it makes the entire check redundant
-      if (await this.resources.events.gwEnded(this.args.week)) {
-        this._projections = projections;
-        return this._projections;
-      }
+    return this._projections;
+  }
 
-      const [pickIds, subIds, captainId, viceCaptainId] = await Promise.all([this.picks(), this.subs(), this.captain(), this.viceCaptain()]);
+  async _getProjections() {
+    const projections = {
+      autoSubsOut: [],
+      autoSubsIn: [],
+      playerPointsMultiplied: null,
+    };
 
-      projections.playerPointsMultiplied = captainId;
+    // If the gameweek is ended, the auto subs have already been applied, so it makes the entire check redundant
+    if (await this.resources.events.gwEnded(this.args.week)) {
+      return projections;
+    }
 
-      const captain = this.allPlayers(captainId);
-      const viceCaptain = this.allPlayers(viceCaptainId);
+    const [pickIds, subIds, captainId, viceCaptainId] = await Promise.all([this.picks(), this.subs(), this.captain(), this.viceCaptain()]);
 
-      if (await captain.didntPlay(this.args.projectionMinute) && await viceCaptain.playingOrDidPlay()) {
-        projections.playerPointsMultiplied = viceCaptainId;
-      }
+    projections.playerPointsMultiplied = captainId;
 
-      // If the subs length is 0, there are no subs to be made, so no need to check further
-      if (subIds.length === 0) {
-        this._projections = projections;
-        return this._projections;
-      }
+    const captain = this.allPlayers(captainId);
+    const viceCaptain = this.allPlayers(viceCaptainId);
 
-      const picks = pickIds.map(id => this.allPlayers(id));
-      const subs = subIds.map(id => this.allPlayers(id));
+    if (await captain.didntPlay(this.args.projectionMinute) && await viceCaptain.playingOrDidPlay()) {
+      projections.playerPointsMultiplied = viceCaptainId;
+    }
 
-      // Much easier to work the logic of goalkeepers separately
-      const gk = picks.shift();
-      const gkSub = subs.shift();
+    // If the subs length is 0, there are no subs to be made, so no need to check further
+    if (subIds.length === 0) {
+      return projections;
+    }
 
-      if ((await gk.didntPlay(this.args.projectionMinute)) && await (gkSub.playingOrDidPlay())) {
-        projections.autoSubsOut.push(gk.id);
-        projections.autoSubsIn.push(gkSub.id);
-      }
+    const picks = pickIds.map(id => this.allPlayers(id));
+    const subs = subIds.map(id => this.allPlayers(id));
 
-      const potentialSubsOut = await Promise.all(returnPickIfDidntPlay(picks, this.args.projectionMinute))
-        .then(potentialSubs => potentialSubs.filter(potentialSub => !!potentialSub));
+    // Much easier to work the logic of goalkeepers separately
+    const gk = picks.shift();
+    const gkSub = subs.shift();
 
-      for (let i = 0, picksLength = potentialSubsOut.length; i < picksLength; i++) {
-        const pick = potentialSubsOut[i];
+    if ((await gk.didntPlay(this.args.projectionMinute)) && await (gkSub.playingOrDidPlay())) {
+      projections.autoSubsOut.push(gk.id);
+      projections.autoSubsIn.push(gkSub.id);
+    }
 
-        const remainingSubs = subs.filter(sub => !projections.autoSubsIn.includes(sub.id));
+    const potentialSubsOut = await Promise.all(returnPickIfDidntPlay(picks, this.args.projectionMinute))
+      .then(potentialSubs => potentialSubs.filter(potentialSub => !!potentialSub));
 
-        // If there are valid substitutions left
-        if (remainingSubs.length > 0) {
-          for (let j = 0, len = remainingSubs.length; j < len; j++) {
-            const potentialSub = remainingSubs[j];
+    for (let i = 0, picksLength = potentialSubsOut.length; i < picksLength; i++) {
+      const pick = potentialSubsOut[i];
 
-            // Check that the potential sub actually played, or is in play
+      const remainingSubs = subs.filter(sub => !projections.autoSubsIn.includes(sub.id));
+
+      // If there are valid substitutions left
+      if (remainingSubs.length > 0) {
+        for (let j = 0, len = remainingSubs.length; j < len; j++) {
+          const potentialSub = remainingSubs[j];
+
+          // Check that the potential sub actually played, or is in play
+          // eslint-disable-next-line no-await-in-loop
+          if (await potentialSub.playingOrDidPlay()) {
             // eslint-disable-next-line no-await-in-loop
-            if (await potentialSub.playingOrDidPlay()) {
-              // eslint-disable-next-line no-await-in-loop
-              const [pickPositionType, subPositionType] = await Promise.all([pick.positionType(), potentialSub.positionType()]);
+            const [pickPositionType, subPositionType] = await Promise.all([pick.positionType(), potentialSub.positionType()]);
 
-              if (pickPositionType === subPositionType) {
-                // This is clearly valid, so no need to work out rest
-                projections.autoSubsOut.push(pick.id);
-                projections.autoSubsIn.push(potentialSub.id);
+            if (pickPositionType === subPositionType) {
+              // This is clearly valid, so no need to work out rest
+              projections.autoSubsOut.push(pick.id);
+              projections.autoSubsIn.push(potentialSub.id);
 
-                break;
-              }
+              break;
+            }
 
-              const currentPicks = picks.filter(p => !projections.autoSubsOut.includes(p.id));
-              const currentSubs = subs.filter(sub => !projections.autoSubsIn.includes(sub.id)); // Optimise?
+            const currentPicks = picks.filter(p => !projections.autoSubsOut.includes(p.id));
+            const currentSubs = subs.filter(sub => !projections.autoSubsIn.includes(sub.id)); // Optimise?
 
-              // eslint-disable-next-line no-await-in-loop
-              const noOfPlayersInPosition = (await Promise.all(currentPicks.concat(currentSubs).map(player => player.positionType())))
-                .filter(positionType => positionType === pickPositionType).length;
+            // eslint-disable-next-line no-await-in-loop
+            const noOfPlayersInPosition = (await Promise.all(currentPicks.concat(currentSubs).map(player => player.positionType())))
+              .filter(positionType => positionType === pickPositionType).length;
 
-              if (noOfPlayersInPosition > minElementTypes[pickPositionType]) {
-                // This is a valid sub, mark it as such and break the loop
-                projections.autoSubsOut.push(pick.id);
-                projections.autoSubsIn.push(potentialSub.id);
-                break;
-              }
+            if (noOfPlayersInPosition > minElementTypes[pickPositionType]) {
+              // This is a valid sub, mark it as such and break the loop
+              projections.autoSubsOut.push(pick.id);
+              projections.autoSubsIn.push(potentialSub.id);
+              break;
             }
           }
         }
       }
-
-      this._projections = projections;
     }
 
-    return this._projections;
+    return projections;
   }
 }
 
@@ -726,6 +737,14 @@ class ClassicLeague extends RootClass2 {
   }
 
   async entries() {
+    if (!this._entries) {
+      this._entries = this._getEntries();
+    }
+
+    return this._entries;
+  }
+
+  async _getEntries() {
     if (!this._entries) {
       const players = await this.resources.classicLeagueStandings.getPlayersInfo(this.args.leagueId);
 
