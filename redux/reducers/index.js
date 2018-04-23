@@ -13,11 +13,11 @@ import {
 import * as playerListConfig from '../../lib/table-config/player-list';
 import * as classicTableConfig from '../../lib/table-config/classic-table';
 
-function updateClassicStandings(newStandings) {
-  newStandings.updating = false;
+function updateClassicStandings(standings) {
+  standings.updating = false;
 
   return {
-    [newStandings.leagueId]: newStandings,
+    [standings.leagueId]: standings,
   };
 }
 

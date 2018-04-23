@@ -1,5 +1,5 @@
 import graphqlHTTP from 'express-graphql';
-import schema from '../lib/graphql/types';
+import schema from '../lib/graphql/schema';
 
 const graphiql = process.env.NODE_ENV !== 'production';
 
