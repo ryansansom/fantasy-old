@@ -19,6 +19,6 @@ router.use('/api', apiRoute);
 router.get('/cookie/leagues-list', leaguesList);
 router.post('/cookie/columns', cookieHandler);
 
-router.use('/', handleRoutes);
+router.use('/', createResources, handleRoutes);
 
 export default router;

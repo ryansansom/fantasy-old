@@ -1,4 +1,5 @@
 import { getLatestLeagueList } from '../../helpers/league-list';
+import classicStandingsBackwardsCompatibility from '../../lib/helpers/classic-standings-backwards-compatibility';
 
 export const REAL_DATA = 'realData';
 export const FETCH_ERROR = 'fetchError';
@@ -23,6 +24,10 @@ export function updatePage(page) {
   };
 }
 
+function getClassicLeagueQuery(leagueId) {
+  return `query { classicLeague(leagueId: ${leagueId}) { leagueInfo { id name gameweekEnded lastUpdated } entries { id name teamName activeChip transferCost previousTotal picks subs captain viceCaptain playerPointsMultiplied multiplier currentPoints projections { autoSubsOut autoSubsIn playerPointsMultiplied } } players { id points team position name expectedPoints expectedPointsNext actualBonus provisionalBonus gamesStarted gamesFinished pointsFinalised minutesPlayed } } }`;
+}
+
 export function fetchStandings(method, leagueId) {
   return (dispatch, getState) => {
     dispatch({
@@ -30,7 +35,8 @@ export function fetchStandings(method, leagueId) {
       value: leagueId,
     });
 
-    return method(leagueId)
+    return method(getClassicLeagueQuery(leagueId))
+      .then(classicStandingsBackwardsCompatibility)
       .then((res) => {
         const { leaguesList } = getState();
 

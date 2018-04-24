@@ -4,15 +4,11 @@ import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { hot } from 'react-hot-loader';
 import { fetchStandings, openModal, updatePage } from '../../../redux/actions';
-import { getStandings } from '../../../lib/internal-api';
+import graphqlExecutor from '../../../lib/graphql-executor';
 import ClassicTable from '../../classic-table';
 import StandardLayout from '../../layouts/standard';
 
 const pageName = 'Standings';
-
-const getStandingsData = process.env.CLIENT_RENDER
-  ? getStandings
-  : require('../../../lib/get-detailed-standings').default;
 
 if (process.env.CLIENT_RENDER) {
   require('./styles.less');
@@ -40,17 +36,17 @@ class Standings extends Component {
     standings: {},
   };
 
-  static fetchData({ dispatch, getState }, { leagueID }) {
+  static fetchData({ dispatch, getState }, { leagueID, graphqlContext }) {
     updatePage(pageName)(dispatch);
 
-    return fetchStandings(getStandingsData, leagueID)(dispatch, getState);
+    return fetchStandings(graphqlExecutor(graphqlContext), leagueID)(dispatch, getState);
   }
 
   componentDidMount() {
     document.title = pageName;
     if (this.props.page !== pageName) {
       this.props.updatePage(pageName);
-      this.props.fetchStandings(getStandingsData, this.props.params.leagueID);
+      this.props.fetchStandings(graphqlExecutor(), this.props.params.leagueID);
     }
   }
 
@@ -83,7 +79,7 @@ class Standings extends Component {
                 onClick={(e) => {
                   e.preventDefault();
 
-                  return this.props.fetchStandings(getStandingsData, this.props.params.leagueID);
+                  return this.props.fetchStandings(graphqlExecutor(), this.props.params.leagueID);
                 }}
                 href={`/standings/${this.props.params.leagueID}`}
               >
