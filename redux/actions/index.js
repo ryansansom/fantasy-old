@@ -1,7 +1,6 @@
 import { getLatestLeagueList } from '../../helpers/league-list';
 import classicStandingsBackwardsCompatibility from '../../lib/helpers/classic-standings-backwards-compatibility';
 
-export const REAL_DATA = 'realData';
 export const FETCH_ERROR = 'fetchError';
 export const COLUMNS = 'columns';
 export const PAGE = 'page';

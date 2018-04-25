@@ -1,6 +1,5 @@
 import { createSelector } from 'reselect';
 import {
-  REAL_DATA,
   FETCH_ERROR,
   COLUMNS,
   PAGE,
@@ -45,10 +44,6 @@ function rootReducer(state, action) {
     case CLASSIC_LEAGUE_UPDATING:
       return Object.assign({}, state, {
         classicLeagues: classicStandingsUpdating(state.classicLeagues, action.value),
-      });
-    case REAL_DATA:
-      return Object.assign({}, state, {
-        standings: action.value,
       });
     case UPDATE_CLASSIC_LEAGUE:
       return Object.assign({}, state, {
