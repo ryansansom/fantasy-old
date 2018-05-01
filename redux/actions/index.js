@@ -23,9 +23,7 @@ export function updatePage(page) {
   };
 }
 
-function getClassicLeagueQuery(leagueId) {
-  return `query { classicLeague(leagueId: ${leagueId}) { leagueInfo { id name gameweekEnded lastUpdated } entries { id name teamName activeChip transferCost previousTotal picks subs captain viceCaptain playerPointsMultiplied multiplier currentPoints projections { autoSubsOut autoSubsIn playerPointsMultiplied } } players { id points team position name expectedPoints expectedPointsNext actualBonus provisionalBonus gamesStarted gamesFinished pointsFinalised minutesPlayed } } }`;
-}
+const classicLeagueQuery = 'query ($leagueId: Int) { classicLeague(leagueId: $leagueId) { leagueInfo { id name gameweekEnded lastUpdated } entries { id name teamName activeChip transferCost previousTotal picks subs captain viceCaptain playerPointsMultiplied multiplier currentPoints projections { autoSubsOut autoSubsIn playerPointsMultiplied } } players { id points team position name expectedPoints expectedPointsNext actualBonus provisionalBonus gamesStarted gamesFinished pointsFinalised minutesPlayed } } }';
 
 export function fetchStandings(method, leagueId) {
   return (dispatch, getState) => {
@@ -34,7 +32,7 @@ export function fetchStandings(method, leagueId) {
       value: leagueId,
     });
 
-    return method(getClassicLeagueQuery(leagueId))
+    return method(classicLeagueQuery, { leagueId })
       .then(classicStandingsBackwardsCompatibility)
       .then((res) => {
         const { leaguesList } = getState();
