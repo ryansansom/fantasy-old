@@ -11,6 +11,7 @@
     "no-console": 2,
     "no-param-reassign": [2, { "props": false }],
     "no-plusplus": [2, { "allowForLoopAfterthoughts": true }],
+    "no-underscore-dangle": [2, { "allowAfterThis": true }],
     "react/jsx-filename-extension": [2, { "extensions": [".js"] }],
     "react/jsx-wrap-multilines": [2, {
       "declaration": "parens-new-line",

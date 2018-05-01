@@ -1,6 +1,5 @@
 import { createSelector } from 'reselect';
 import {
-  REAL_DATA,
   FETCH_ERROR,
   COLUMNS,
   PAGE,
@@ -13,11 +12,11 @@ import {
 import * as playerListConfig from '../../lib/table-config/player-list';
 import * as classicTableConfig from '../../lib/table-config/classic-table';
 
-function updateClassicStandings(newStandings) {
-  newStandings.updating = false;
+function updateClassicStandings(standings) {
+  standings.updating = false;
 
   return {
-    [newStandings.leagueId]: newStandings,
+    [standings.leagueId]: standings,
   };
 }
 
@@ -45,10 +44,6 @@ function rootReducer(state, action) {
     case CLASSIC_LEAGUE_UPDATING:
       return Object.assign({}, state, {
         classicLeagues: classicStandingsUpdating(state.classicLeagues, action.value),
-      });
-    case REAL_DATA:
-      return Object.assign({}, state, {
-        standings: action.value,
       });
     case UPDATE_CLASSIC_LEAGUE:
       return Object.assign({}, state, {

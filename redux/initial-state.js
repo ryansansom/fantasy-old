@@ -7,7 +7,6 @@ export function getInitialState(req) {
     tableCols,
     playerCols,
     fetchError: false,
-    standings: {},
     classicLeagues: {},
     leaguesList: null,
     modalOpen: '',
