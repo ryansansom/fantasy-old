@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import Accordion from '../accordion';
-import { getLength } from '../../lib/table-config/helpers';
-import PlayerList from '../player-list';
 import Modals from '../modals/modals';
-import { getTableConfig } from '../../redux/reducers';
+import ClassicTableHeader from './header';
+import PlayerListContainer from '../player-list/container';
+import { getEntriesIds } from '../../redux/reducers';
 
 if (process.env.CLIENT_RENDER) {
   require('./styles.less');
@@ -13,53 +12,25 @@ if (process.env.CLIENT_RENDER) {
 
 class ClassicTable extends Component {
   static propTypes = {
-    tableCols: PropTypes.arrayOf(PropTypes.object).isRequired,
-    entries: PropTypes.arrayOf(PropTypes.object).isRequired,
-    sortFunc: PropTypes.func,
+    entryIds: PropTypes.arrayOf(PropTypes.number).isRequired,
+    leagueId: PropTypes.number.isRequired,
   };
 
-  static defaultProps = {
-    sortFunc: (a, b) => (b.prevTotal + b.projectedPoints) - (a.prevTotal + a.projectedPoints),
-  };
-
-  renderHeader() {
-    const { tableCols } = this.props;
-    const len = getLength(tableCols);
-    return (
-      <div className="header-row">
-        {tableCols.map(({ header, colSpan }) => <div key={header} className={`col-${colSpan || 1}-of-${len} table-header table-format`}>{header}</div>)}
-      </div>
-    );
+  shouldComponentUpdate(nextProps) {
+    return !this.props.entryIds.every((id, i) => id === nextProps.entryIds[i]);
   }
 
   renderList() {
-    const { entries, sortFunc, tableCols } = this.props;
-    const len = getLength(tableCols);
+    const { entryIds } = this.props;
 
-    const entryList = entries
-      .sort(sortFunc)
-      .map((entry, i) => {
-        const entryRow = (
-          <div>
-            {tableCols.map(({ header, func, colSpan }) => <div key={header} className={`col-${colSpan || 1}-of-${len} table-format`}>{func(entry, i)}</div>)}
-          </div>
-        );
-
-        return (
-          <Accordion
-            tag="li"
-            key={entry.entry}
-            classes="entry-li"
-            title={entry.entry.toString()}
-            header={entryRow}
-          >
-            <PlayerList
-              accordionKey={`${entry.entry}--configure`}
-              players={entry.players}
-            />
-          </Accordion>
-        );
-      });
+    const entryList = entryIds
+      .map((id, index) => (
+        <PlayerListContainer
+          entryId={id}
+          leagueId={this.props.leagueId}
+          index={index}
+        />
+      ));
     return (
       <ul className="table-list">
         {entryList}
@@ -70,7 +41,7 @@ class ClassicTable extends Component {
   render() {
     return (
       <div className="classic-standings">
-        { this.renderHeader() }
+        <ClassicTableHeader />
         { this.renderList() }
         <Modals />
       </div>
@@ -78,8 +49,8 @@ class ClassicTable extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-  tableCols: getTableConfig(state),
+const mapStateToProps = (state, ownProps) => ({
+  entryIds: getEntriesIds(state, ownProps),
 });
 
 export default connect(mapStateToProps)(ClassicTable);

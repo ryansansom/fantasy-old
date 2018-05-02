@@ -4,8 +4,10 @@ import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { hot } from 'react-hot-loader';
 import { fetchStandings, openModal, updatePage } from '../../../redux/actions';
+import { getFetchError, getPage, getLeagueStandings, getClassicLeagueName, hasEntries } from '../../../redux/reducers';
 import graphqlExecutor from '../../../lib/graphql-executor';
 import ClassicTable from '../../classic-table';
+import StandingStatusInfo from '../../standings-status-info';
 import StandardLayout from '../../layouts/standard';
 
 const pageName = 'Standings';
@@ -18,6 +20,8 @@ class Standings extends Component {
   static propTypes = {
     fetchError: PropTypes.bool.isRequired,
     fetchStandings: PropTypes.func.isRequired,
+    hasEntries: PropTypes.bool.isRequired,
+    leagueName: PropTypes.string.isRequired,
     openModal: PropTypes.func.isRequired,
     page: PropTypes.string.isRequired,
     params: PropTypes.shape({
@@ -51,9 +55,7 @@ class Standings extends Component {
   }
 
   render() {
-    const { fetchError, standings } = this.props;
-
-    const sortFunc = (a, b) => (b.prevTotal + b.projectedPoints) - (a.prevTotal + a.projectedPoints);
+    const { fetchError } = this.props;
 
     return (
       <div className="standings">
@@ -68,7 +70,7 @@ class Standings extends Component {
           <StandardLayout title="Welcome to the new, improved view of Fantasy Premier League">
             <h2 className="league-header">League Information</h2>
             <div className="league-name">
-              <span>{ standings.leagueName || 'Loading...' }</span>
+              <span>{ this.props.leagueName || 'Loading...' }</span>
               <span> (</span>
               <Link to="/">change...</Link>
               <span>)</span>
@@ -96,26 +98,15 @@ class Standings extends Component {
                 Configure Columns
               </button>
             </div>
-            <div className="update-info__wrapper">
-              <span className="update-info col-1-of-2">
-                { `Last updated at: ${
-                  standings.lastUpdated
-                    ? new Date(standings.lastUpdated).toLocaleTimeString(undefined, { timeZoneName: 'short' })
-                    : 'Never'
-                  }`
-                }
-              </span>
-              <span className="update-info col-1-of-2">
-                { standings.updating ? 'Getting latest standings...' : 'Latest standings applied' }
-              </span>
-            </div>
+            <StandingStatusInfo
+              leagueId={this.props.params.leagueID}
+            />
             <div className="table-wrapper">
-              { !standings.players
+              { !this.props.hasEntries
                 ? <span>Loading...</span>
                 : (
                   <ClassicTable
-                    entries={standings.players || standings.entries} // Future support for renaming the API field
-                    sortFunc={sortFunc}
+                    leagueId={this.props.params.leagueID}
                   />
                 )
               }
@@ -127,13 +118,12 @@ class Standings extends Component {
   }
 }
 
-function mapStateToProps({
-  fetchError, classicLeagues = {}, page,
-}, ownProps) {
+function mapStateToProps(state, ownProps) {
   return {
-    fetchError,
-    standings: classicLeagues[ownProps.params.leagueID],
-    page,
+    fetchError: getFetchError(state),
+    leagueName: getClassicLeagueName(state, { leagueId: ownProps.params.leagueID }),
+    hasEntries: hasEntries(state, { leagueId: ownProps.params.leagueID }),
+    page: getPage(state),
   };
 }
 

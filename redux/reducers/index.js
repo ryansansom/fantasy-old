@@ -96,6 +96,40 @@ function buildConfigFromProps(config, arr) {
 
 const getPlayerColumns = state => state.playerCols;
 const getTableColumns = state => state.tableCols;
+export const getFetchError = state => state.fetchError;
+export const getPage = state => state.page;
+export const getLeagueStandings = (state, { leagueId }) => state.classicLeagues[leagueId] || {};
+export const getEntryId = (state, { entryId }) => entryId;
+
+export const getLastUpdated = createSelector(
+  getLeagueStandings,
+  standings => standings.lastUpdated,
+);
+export const getUpdatingStatus = createSelector(
+  getLeagueStandings,
+  standings => standings.updating,
+);
+export const getClassicLeagueName = createSelector(
+  getLeagueStandings,
+  standings => standings.leagueName,
+);
+export const getEntries = createSelector(
+  getLeagueStandings,
+  standings => (standings.players || []).sort((a, b) => (b.prevTotal + b.projectedPoints) - (a.prevTotal + a.projectedPoints)),
+);
+export const getEntriesIds = createSelector(
+  getEntries,
+  entries => entries.map(entry => entry.entry),
+);
+export const getEntry = createSelector(
+  [getEntries, getEntryId],
+  (entries, entryId) => entries.find(entry => entry.entry === entryId),
+);
+
+export const hasEntries = createSelector(
+  getEntries,
+  entries => entries.length > 0,
+);
 
 export const getListConfig = createSelector(
   getPlayerColumns,
