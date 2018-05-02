@@ -1,13 +1,18 @@
+const path = require('path');
 const webpackMerge = require('webpack-merge');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const baseWebpackConfig = require('./webpack.base.js');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const extractCSS = new ExtractTextPlugin({
-  filename: '[name].css',
+  filename: '[name].[hash].css',
 });
 
 module.exports = webpackMerge(baseWebpackConfig, {
+  output: {
+    filename: '[name].[hash].js',
+    path: path.join(__dirname, 'site/public/wp'),
+  },
   devtool: 'source-map',
   module: {
     rules: [
