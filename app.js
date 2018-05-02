@@ -13,7 +13,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(compression());
-app.use(express.static(path.join(__dirname, 'site/public')));
+app.use(express.static(path.join(__dirname, 'site/public'), {
+  maxAge: '1d', // TODO: Up this if working correctly
+}));
 
 app.use('/', routes);
 
