@@ -11,6 +11,7 @@ import {
 } from '../actions';
 import * as playerListConfig from '../../lib/table-config/player-list';
 import * as classicTableConfig from '../../lib/table-config/classic-table';
+import teams from '../../constants/teams';
 
 function updateClassicStandings(standings) {
   standings.updating = false;
@@ -100,6 +101,8 @@ export const getFetchError = state => state.fetchError;
 export const getPage = state => state.page;
 export const getLeagueStandings = (state, { leagueId }) => state.classicLeagues[leagueId] || {};
 export const getEntryId = (state, { entryId }) => entryId;
+export const getPlayerId = (state, { playerId }) => playerId;
+export const getIndex = (state, { index }) => index;
 
 export const getLastUpdated = createSelector(
   getLeagueStandings,
@@ -125,6 +128,10 @@ export const getEntry = createSelector(
   [getEntries, getEntryId],
   (entries, entryId) => entries.find(entry => entry.entry === entryId),
 );
+export const getEntryPlayerById = createSelector(
+  [getEntry, getPlayerId],
+  (entry, playerId) => entry.players.picks.concat(entry.players.subs).find(player => player.element === playerId),
+);
 
 export const hasEntries = createSelector(
   getEntries,
@@ -139,4 +146,130 @@ export const getListConfig = createSelector(
 export const getTableConfig = createSelector(
   getTableColumns,
   tableCols => buildConfigFromProps(classicTableConfig, tableCols),
+);
+
+const getTableConfigData = (entry, header, index = 0) => {
+  switch (header) {
+    case 'Position':
+      return index + 1;
+    case 'Player':
+      return entry.player_name;
+    case 'Previous Total':
+      return entry.prevTotal;
+    case 'Current Points':
+      return entry.currentPoints;
+    case 'Projected Points':
+      return entry.projectedPoints;
+    case 'Current Total':
+      return entry.prevTotal + entry.currentPoints;
+    case 'Projected Total':
+      return entry.prevTotal + entry.projectedPoints;
+    case 'Team Name':
+      return entry.team_name;
+    case 'Transfer Cost':
+      return -1 * entry.event_transfers_cost;
+    case 'Captain':
+      return (entry.players.picks.find(pick => pick.is_captain) || entry.players.subs.find(pick => pick.is_captain)).name;
+    case 'Vice Captain':
+      return (entry.players.picks.find(pick => pick.is_vice_captain) || entry.players.subs.find(pick => pick.is_vice_captain)).name;
+    case 'Active Chip':
+      return entry.active_chip;
+    case 'Players Played':
+      return entry.players.picks.filter(pick => !!pick.game_finished).length;
+    case 'Players Playing':
+      return entry.players.picks.filter(pick => pick.game_started && !pick.game_finished).length;
+    case 'Players To Play':
+      return entry.players.picks.filter(pick => !pick.game_started).length;
+    case 'Played status': {
+      const toPlay = entry.players.picks.filter(pick => !pick.game_started).length;
+      const inPlay = entry.players.picks.filter(pick => pick.game_started && !pick.game_finished).length;
+      const played = entry.players.picks.filter(pick => !!pick.game_finished).length;
+
+      return `${played} / ${inPlay} / ${toPlay}`;
+    }
+    case 'EP This':
+      return entry.ep_this;
+    case 'EP Next':
+      return entry.ep_next;
+    default:
+      return null;
+  }
+};
+
+const getPlayerConfigData = (player, header) => {
+  switch (header) {
+    case 'Position': {
+      switch (player.element_type) {
+        case 1:
+          return 'GK';
+        case 2:
+          return 'DEF';
+        case 3:
+          return 'MID';
+        case 4:
+          return 'FWD';
+        default:
+          return '';
+      }
+    }
+    case 'Player': {
+      let appendName = '';
+      if (player.is_captain) {
+        appendName = ' (C)';
+      } else if (player.is_vice_captain) {
+        appendName = ' (V)';
+      }
+
+      return player.name + appendName;
+    }
+    case 'Points':
+      return player.points * player.multiplier;
+    case 'Bonus Points': {
+      if (player.game_points_finalised) {
+        return player.actual_bonus > 0 ? `${player.actual_bonus} (incl.)` : 0;
+      } else if (player.actual_bonus) {
+        return `${player.provisional_bonus + player.actual_bonus} (${player.actual_bonus} incl.)`;
+      }
+      return player.provisional_bonus;
+    }
+    case 'Min. Played':
+      return player.minutes_played;
+    case 'Auto Sub?': {
+      if (player.autoSub_out) {
+        return 'OUT';
+      } else if (player.autoSub_in) {
+        return 'IN';
+      }
+      return '';
+    }
+    case 'Team':
+      return teams[player.team - 1] || '';
+    case 'EP This':
+      return player.ep_this;
+    case 'EP Next':
+      return player.ep_next;
+    default:
+      return null;
+  }
+};
+
+export const getTableConfigWithData = createSelector(
+  [getTableConfig, getEntry, getIndex],
+  (tableCols, entry, index) => tableCols.map(col => ({
+    ...col,
+    data: getTableConfigData(entry, col.header, index),
+  })),
+);
+
+export const getPlayerConfigWithData = createSelector(
+  [getListConfig, getEntryPlayerById],
+  (listCols, player) => listCols.map(col => ({
+    ...col,
+    data: getPlayerConfigData(player, col.header),
+  })),
+);
+
+export const getPlayers = createSelector(
+  getEntry,
+  entry => entry.players,
 );

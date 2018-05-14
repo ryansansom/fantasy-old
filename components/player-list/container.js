@@ -1,52 +1,49 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { connect } from '../../redux/connect-deep-compare';
 import Accordion from '../accordion';
 import { getLength } from '../../lib/table-config/helpers';
 import PlayerList from '../player-list';
-import { getEntry, getTableConfig } from '../../redux/reducers';
+import { getTableConfigWithData } from '../../redux/reducers';
 
 if (process.env.CLIENT_RENDER) {
   require('./styles.less');
 }
 
-class PlayerListContainer extends Component {
-  static propTypes = {
-    entry: PropTypes.object.isRequired,
-    index: PropTypes.number.isRequired,
-    tableCols: PropTypes.arrayOf(PropTypes.object).isRequired,
-  };
+const PlayerListContainer = (props) => {
+  const { tableCols, entryId, leagueId } = props;
+  const len = getLength(tableCols); // Could pass in
 
-  render() {
-    const { tableCols, entry, index } = this.props;
-    const len = getLength(tableCols); // Could pass in
+  const entryRow = (
+    <div>
+      {tableCols.map(({ header, data, colSpan }) => <div key={header} className={`col-${colSpan || 1}-of-${len} table-format`}>{data}</div>)}
+    </div>
+  );
 
-    const entryRow = (
-      <div>
-        {tableCols.map(({ header, func, colSpan }) => <div key={header} className={`col-${colSpan || 1}-of-${len} table-format`}>{func(entry, index)}</div>)}
-      </div>
-    );
+  return (
+    <Accordion
+      tag="li"
+      key={entryId}
+      classes="entry-li"
+      title={entryId.toString()}
+      header={entryRow}
+    >
+      <PlayerList
+        accordionKey={`${entryId}--configure`}
+        entryId={entryId}
+        leagueId={leagueId}
+      />
+    </Accordion>
+  );
+};
 
-    return (
-      <Accordion
-        tag="li"
-        key={entry.entry}
-        classes="entry-li"
-        title={entry.entry.toString()}
-        header={entryRow}
-      >
-        <PlayerList
-          accordionKey={`${entry.entry}--configure`}
-          players={entry.players}
-        />
-      </Accordion>
-    );
-  }
-}
+PlayerListContainer.propTypes = {
+  entryId: PropTypes.number.isRequired,
+  leagueId: PropTypes.string.isRequired,
+  tableCols: PropTypes.arrayOf(PropTypes.object).isRequired,
+};
 
 const mapStateToProps = (state, ownProps) => ({
-  entry: getEntry(state, ownProps),
-  tableCols: getTableConfig(state),
+  tableCols: getTableConfigWithData(state, ownProps),
 });
-
 export default connect(mapStateToProps)(PlayerListContainer);

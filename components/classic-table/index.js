@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { connect } from '../../redux/connect-deep-compare';
 import Modals from '../modals/modals';
 import ClassicTableHeader from './header';
 import PlayerListContainer from '../player-list/container';
@@ -13,12 +13,8 @@ if (process.env.CLIENT_RENDER) {
 class ClassicTable extends Component {
   static propTypes = {
     entryIds: PropTypes.arrayOf(PropTypes.number).isRequired,
-    leagueId: PropTypes.number.isRequired,
+    leagueId: PropTypes.string.isRequired,
   };
-
-  shouldComponentUpdate(nextProps) {
-    return !this.props.entryIds.every((id, i) => id === nextProps.entryIds[i]);
-  }
 
   renderList() {
     const { entryIds } = this.props;
@@ -26,6 +22,7 @@ class ClassicTable extends Component {
     const entryList = entryIds
       .map((id, index) => (
         <PlayerListContainer
+          key={id}
           entryId={id}
           leagueId={this.props.leagueId}
           index={index}

@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { hot } from 'react-hot-loader';
 import { fetchStandings, openModal, updatePage } from '../../../redux/actions';
-import { getFetchError, getPage, getLeagueStandings, getClassicLeagueName, hasEntries } from '../../../redux/reducers';
+import { getFetchError, getPage, getClassicLeagueName, hasEntries } from '../../../redux/reducers';
 import graphqlExecutor from '../../../lib/graphql-executor';
 import ClassicTable from '../../classic-table';
 import StandingStatusInfo from '../../standings-status-info';
@@ -27,17 +27,7 @@ class Standings extends Component {
     params: PropTypes.shape({
       leagueID: PropTypes.string.isRequired,
     }).isRequired,
-    standings: PropTypes.shape({
-      entries: PropTypes.array,
-      lastUpdated: PropTypes.number,
-      leagueName: PropTypes.string,
-      players: PropTypes.array,
-    }),
     updatePage: PropTypes.func.isRequired,
-  };
-
-  static defaultProps = {
-    standings: {},
   };
 
   static fetchData({ dispatch, getState }, { leagueID, graphqlContext }) {

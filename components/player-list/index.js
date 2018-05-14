@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { getLength } from '../../lib/table-config/helpers';
-import * as playerListConfig from '../../lib/table-config/player-list';
-import { getListConfig } from '../../redux/reducers';
+import { connect } from '../../redux/connect-deep-compare';
+import PlayerListHeader from './header';
+import PlayerLine from './player-line';
+import { getPlayers } from '../../redux/reducers';
 
 if (process.env.CLIENT_RENDER) {
   require('./styles.less');
@@ -11,41 +11,23 @@ if (process.env.CLIENT_RENDER) {
 
 class PlayerList extends Component {
   static propTypes = {
-    listConfig: PropTypes.arrayOf(PropTypes.object),
+    entryId: PropTypes.number.isRequired,
+    leagueId: PropTypes.string.isRequired,
     players: PropTypes.shape({
       picks: PropTypes.arrayOf(PropTypes.object).isRequired,
       subs: PropTypes.arrayOf(PropTypes.object).isRequired,
     }).isRequired,
   };
 
-  static defaultProps = {
-    listConfig: [
-      playerListConfig.position,
-      playerListConfig.playerName,
-      playerListConfig.playerPoints,
-      playerListConfig.bonusPoints,
-    ],
-  };
-
-  renderHeader() {
-    const { listConfig } = this.props;
-    const len = getLength(listConfig);
-    return (
-      <div className="header-row">
-        {listConfig.map(({ header, colSpan }) => <div key={header} className={`col-${colSpan || 1}-of-${len} table-header`}>{header}</div>)}
-      </div>
-    );
-  }
-
   renderList(players) {
-    const { listConfig } = this.props;
-    const len = getLength(listConfig);
-
     const playerList = players
-      .map((player, i) => (
-        <li key={player.element}>
-          {listConfig.map(({ header, func, colSpan }) => <div key={header} className={`col-${colSpan || 1}-of-${len} player-picks-format`}>{func(player, i)}</div>)}
-        </li>
+      .map(player => (
+        <PlayerLine
+          key={player.element}
+          entryId={this.props.entryId}
+          leagueId={this.props.leagueId}
+          playerId={player.element}
+        />
       ));
 
     return (
@@ -63,7 +45,7 @@ class PlayerList extends Component {
           ? (
             <div>
               <h3 className="list-header">Players</h3>
-              {this.renderHeader()}
+              <PlayerListHeader />
               {this.renderList(picks)}
             </div>
           )
@@ -73,7 +55,7 @@ class PlayerList extends Component {
           ? (
             <div>
               <h3 className="list-header">Subs</h3>
-              {this.renderHeader()}
+              <PlayerListHeader />
               {this.renderList(subs)}
             </div>
           )
@@ -83,8 +65,8 @@ class PlayerList extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-  listConfig: getListConfig(state),
+const mapStateToProps = (state, ownProps) => ({
+  players: getPlayers(state, ownProps),
 });
 
 export default connect(mapStateToProps)(PlayerList);
