@@ -36,17 +36,17 @@ class Standings extends Component {
     standings: {},
   };
 
-  static fetchData({ dispatch, getState }, { leagueID, graphqlContext }) {
+  static fetchData({ dispatch, getState }, { leagueID, isDraft, graphqlContext }) {
     updatePage(pageName)(dispatch);
 
-    return fetchStandings(graphqlExecutor(graphqlContext), leagueID)(dispatch, getState);
+    return fetchStandings(graphqlExecutor(graphqlContext), leagueID, isDraft)(dispatch, getState);
   }
 
   componentDidMount() {
     document.title = pageName;
     if (this.props.page !== pageName) {
       this.props.updatePage(pageName);
-      this.props.fetchStandings(graphqlExecutor(), this.props.params.leagueID);
+      this.props.fetchStandings(graphqlExecutor(), this.props.params.leagueID, this.props.location.query.draft);
     }
   }
 
@@ -79,7 +79,7 @@ class Standings extends Component {
                 onClick={(e) => {
                   e.preventDefault();
 
-                  return this.props.fetchStandings(graphqlExecutor(), this.props.params.leagueID);
+                  return this.props.fetchStandings(graphqlExecutor(), this.props.params.leagueID, this.props.location.query.draft);
                 }}
                 href={`/standings/${this.props.params.leagueID}`}
               >
