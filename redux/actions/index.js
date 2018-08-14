@@ -23,9 +23,7 @@ export function updatePage(page) {
   };
 }
 
-const classicLeagueQuery = 'query ($leagueId: Int) { classicLeague(leagueId: $leagueId) { leagueInfo { id name gameweekEnded lastUpdated } entries { id name teamName activeChip transferCost previousTotal picks subs captain viceCaptain playerPointsMultiplied multiplier currentPoints projections { autoSubsOut autoSubsIn playerPointsMultiplied } } players { id points team position name expectedPoints expectedPointsNext actualBonus provisionalBonus gamesStarted gamesFinished pointsFinalised minutesPlayed } } }';
-
-const draftLeagueQuery = 'query ($leagueId: Int) { draftLeague(leagueId: $leagueId) { leagueInfo { id name gameweekEnded lastUpdated } entries { id name teamName activeChip transferCost previousTotal picks subs captain viceCaptain playerPointsMultiplied multiplier currentPoints projections { autoSubsOut autoSubsIn playerPointsMultiplied } } players { id points team position name expectedPoints expectedPointsNext actualBonus provisionalBonus gamesStarted gamesFinished pointsFinalised minutesPlayed } } }';
+const classicStyleLeagueQuery = 'query ($leagueId: Int, $draft: Boolean) { classicStyleLeague(leagueId: $leagueId, draft: $draft) { leagueInfo { id name gameweekEnded lastUpdated } entries { id name teamName activeChip transferCost previousTotal picks subs captain viceCaptain playerPointsMultiplied multiplier currentPoints projections { autoSubsOut autoSubsIn playerPointsMultiplied } } players { id points team position name expectedPoints expectedPointsNext actualBonus provisionalBonus gamesStarted gamesFinished pointsFinalised minutesPlayed } } }';
 
 export function fetchStandings(method, leagueId, draft) {
   return (dispatch, getState) => {
@@ -34,11 +32,7 @@ export function fetchStandings(method, leagueId, draft) {
       value: leagueId,
     });
 
-    const query = draft
-      ? draftLeagueQuery
-      : classicLeagueQuery;
-
-    return method(query, { leagueId })
+    return method(classicStyleLeagueQuery, { leagueId, draft })
       .then(classicStandingsBackwardsCompatibility)
       .then((res) => {
         const { leaguesList } = getState();
