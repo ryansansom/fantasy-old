@@ -3,9 +3,11 @@ const teams = [
   'BOU',
   'BRI',
   'BUR',
+  'CAR',
   'CHE',
   'CRY',
   'EVE',
+  'FUL',
   'HUD',
   'LEI',
   'LIV',
@@ -13,12 +15,10 @@ const teams = [
   'MNU',
   'NEW',
   'SOU',
-  'STK',
-  'SWA',
   'TOT',
   'WAT',
-  'WBA',
   'WHU',
+  'WOL',
 ];
 
 export default teams;

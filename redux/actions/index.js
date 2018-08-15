@@ -1,5 +1,5 @@
 import { getLatestLeagueList } from '../../helpers/league-list';
-import classicStandingsBackwardsCompatibility from '../../lib/helpers/classic-standings-backwards-compatibility';
+import classicStyleStandingsBackwardsCompatibility from '../../lib/helpers/classic-standings-backwards-compatibility';
 
 export const FETCH_ERROR = 'fetchError';
 export const COLUMNS = 'columns';
@@ -33,7 +33,7 @@ export function fetchStandings(method, leagueId, draft) {
     });
 
     return method(classicStyleLeagueQuery, { leagueId, draft })
-      .then(classicStandingsBackwardsCompatibility)
+      .then(classicStyleStandingsBackwardsCompatibility)
       .then((res) => {
         const { leaguesList } = getState();
 
