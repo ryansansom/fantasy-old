@@ -25,14 +25,14 @@ export function updatePage(page) {
 
 const classicStyleLeagueQuery = 'query ($leagueId: Int, $draft: Boolean) { classicStyleLeague(leagueId: $leagueId, draft: $draft) { leagueInfo { id name gameweekEnded lastUpdated } entries { id name teamName activeChip transferCost previousTotal picks subs captain viceCaptain playerPointsMultiplied multiplier currentPoints projections { autoSubsOut autoSubsIn playerPointsMultiplied } } players { id points team position name expectedPoints expectedPointsNext actualBonus provisionalBonus gamesStarted gamesFinished pointsFinalised minutesPlayed } } }';
 
-export function fetchStandings(method, leagueId, draft) {
+export function fetchStandings(method, leagueId, leagueType) {
   return (dispatch, getState) => {
     dispatch({
       type: CLASSIC_LEAGUE_UPDATING,
       value: leagueId,
     });
 
-    return method(classicStyleLeagueQuery, { leagueId, draft })
+    return method(classicStyleLeagueQuery, { leagueId, draft: leagueType === 'draft' })
       .then(classicStyleStandingsBackwardsCompatibility)
       .then((res) => {
         const { leaguesList } = getState();

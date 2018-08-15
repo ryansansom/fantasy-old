@@ -21,7 +21,9 @@ class Standings extends Component {
     fetchStandings: PropTypes.func.isRequired,
     location: PropTypes.shape({
       pathname: PropTypes.string.isRequired,
-      query: PropTypes.object.isRequired,
+      query: PropTypes.shape({
+        leagueType: PropTypes.string,
+      }).isRequired,
       search: PropTypes.string.isRequired,
     }).isRequired,
     openModal: PropTypes.func.isRequired,
@@ -42,17 +44,17 @@ class Standings extends Component {
     standings: {},
   };
 
-  static fetchData({ dispatch, getState }, { leagueID, isDraft, graphqlContext }) {
+  static fetchData({ dispatch, getState }, { leagueID, leagueType, graphqlContext }) {
     updatePage(pageName)(dispatch);
 
-    return fetchStandings(graphqlExecutor(graphqlContext), leagueID, isDraft)(dispatch, getState);
+    return fetchStandings(graphqlExecutor(graphqlContext), leagueID, leagueType)(dispatch, getState);
   }
 
   componentDidMount() {
     document.title = pageName;
     if (this.props.page !== pageName) {
       this.props.updatePage(pageName);
-      this.props.fetchStandings(graphqlExecutor(), this.props.params.leagueID, this.props.location.query.draft);
+      this.props.fetchStandings(graphqlExecutor(), this.props.params.leagueID, this.props.location.query.leagueType);
     }
   }
 
@@ -85,7 +87,7 @@ class Standings extends Component {
                 onClick={(e) => {
                   e.preventDefault();
 
-                  return this.props.fetchStandings(graphqlExecutor(), this.props.params.leagueID, this.props.location.query.draft);
+                  return this.props.fetchStandings(graphqlExecutor(), this.props.params.leagueID, this.props.location.query.leagueType);
                 }}
                 href={url.format(this.props.location)}
               >
