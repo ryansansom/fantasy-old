@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import url from 'url';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { hot } from 'react-hot-loader';
@@ -18,6 +19,11 @@ class Standings extends Component {
   static propTypes = {
     fetchError: PropTypes.bool.isRequired,
     fetchStandings: PropTypes.func.isRequired,
+    location: PropTypes.shape({
+      pathname: PropTypes.string.isRequired,
+      query: PropTypes.object.isRequired,
+      search: PropTypes.string.isRequired,
+    }).isRequired,
     openModal: PropTypes.func.isRequired,
     page: PropTypes.string.isRequired,
     params: PropTypes.shape({
@@ -81,7 +87,7 @@ class Standings extends Component {
 
                   return this.props.fetchStandings(graphqlExecutor(), this.props.params.leagueID, this.props.location.query.draft);
                 }}
-                href={`/standings/${this.props.params.leagueID}`}
+                href={url.format(this.props.location)}
               >
                 Refresh
               </a>
