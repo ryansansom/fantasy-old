@@ -81,11 +81,14 @@ class PickLeague extends Component {
               {this.renderLeaguesList('classic')}
             </div>
 
-            <div className="classic-leagues--wrapper">
-              <h2>Draft Leagues</h2>
-              <p>Pick a league to view the standings:</p>
-              {this.renderLeaguesList('draft')}
-            </div>
+            {/* Whilst this feature is experimental, hide it from view */}
+            { this.props.leaguesList.draft.length > 0 && (
+              <div className="classic-leagues--wrapper">
+                <h2>Draft Leagues</h2>
+                <p>Pick a league to view the standings:</p>
+                {this.renderLeaguesList('draft')}
+              </div>
+            )}
 
             <div className="classic-leagues--wrapper">
               <h2>Head-to-head Leagues</h2>
