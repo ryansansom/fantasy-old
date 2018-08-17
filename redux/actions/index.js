@@ -41,7 +41,6 @@ export function fetchStandings(method, leagueId, leagueType) {
             leagueId: Number(leagueId),
             leagueType,
             leagueName: res.leagueName,
-            type: UPDATE_CLASSIC_LEAGUE,
           },
         };
 
