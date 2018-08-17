@@ -1,7 +1,7 @@
-import { UPDATE_CLASSIC_LEAGUE } from '../../redux/actions';
-import { getLatestLeagueList } from '../../helpers/league-list';
+import { generateLeagues } from '../../helpers/league-list';
 import { cookieOptions } from '../../constants/cookie-settings';
+import { safeJsonParse } from '../../helpers/safe-json-parse';
 
 export default (req, res, data = {}) => {
-  res.cookie('league_list', JSON.stringify(getLatestLeagueList(req.cookies.league_list, data.type === UPDATE_CLASSIC_LEAGUE && data.value)), cookieOptions);
+  res.cookie('league_list', JSON.stringify(generateLeagues(safeJsonParse(req.cookies.league_list), data.leagueList)), cookieOptions);
 };

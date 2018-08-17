@@ -1,27 +1,26 @@
-export function getLatestLeagueList(rawLeagueList, data) {
-  let leagueList;
-
-  if (!Array.isArray(rawLeagueList)) {
-    try {
-      leagueList = JSON.parse(rawLeagueList);
-    } catch (e) {
-      leagueList = [];
-    }
-  } else {
-    leagueList = [...rawLeagueList];
-  }
+export function generateLeagues(currentLeagues, data) {
+  const leagues = {
+    classic: (currentLeagues && currentLeagues.classic) || [],
+    h2h: (currentLeagues && currentLeagues.h2h) || [],
+    draft: (currentLeagues && currentLeagues.draft) || [],
+  };
 
   // If provided, it will use data to update the list
   if (data && !data.mock) {
     const { leagueId, leagueName } = data;
 
+    // Provides fallback to classic league type
+    const leagueType = Object.keys(leagues).includes(data.leagueType)
+      ? data.leagueType
+      : 'classic';
+
     // Check for duplicates, and remove if matched one that already exists
-    const existIndex = leagueList.findIndex(league => league.leagueId === leagueId);
-    if (existIndex > -1) leagueList.splice(existIndex, 1);
+    const existIndex = leagues[leagueType].findIndex(league => league.leagueId === leagueId);
+    if (existIndex > -1) leagues[leagueType].splice(existIndex, 1);
 
     // Add the league to the list
-    leagueList.unshift({ leagueId, leagueName });
+    leagues[leagueType].unshift({ leagueId, leagueName });
   }
 
-  return leagueList;
+  return leagues;
 }

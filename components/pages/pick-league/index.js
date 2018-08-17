@@ -4,7 +4,6 @@ import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { hot } from 'react-hot-loader';
 import { leagueList, updatePage } from '../../../redux/actions';
-import { getLeagueList } from '../../../lib/internal-api';
 import StandardLayout from '../../layouts/standard';
 
 const pageName = 'PickLeague';
@@ -24,26 +23,24 @@ class PickLeague extends Component {
 
   static propTypes = {
     fetchError: PropTypes.bool.isRequired,
-    leagueList: PropTypes.func.isRequired,
-    leaguesList: PropTypes.arrayOf(PropTypes.object),
+    leaguesList: PropTypes.shape({
+      classic: PropTypes.arrayOf(PropTypes.object).isRequired,
+      h2h: PropTypes.arrayOf(PropTypes.object).isRequired,
+      draft: PropTypes.arrayOf(PropTypes.object).isRequired,
+    }).isRequired,
     page: PropTypes.string.isRequired,
     updatePage: PropTypes.func.isRequired,
-  };
-
-  static defaultProps = {
-    leaguesList: null,
   };
 
   componentDidMount() {
     document.title = pageName;
     if (this.props.page !== pageName) this.props.updatePage(pageName);
-    if (!this.props.leaguesList) this.props.leagueList(getLeagueList());
   }
 
-  renderLeaguesList() {
-    if (this.props.leaguesList.length > 0) {
-      const newList = JSON.parse(JSON.stringify(this.props.leaguesList));
-      if (sampleLeagueEnabled) {
+  renderLeaguesList(type, sampleLeague) {
+    if (this.props.leaguesList[type].length > 0) {
+      const newList = JSON.parse(JSON.stringify(this.props.leaguesList[type]));
+      if (sampleLeagueEnabled && sampleLeague) {
         newList.push({
           leagueId: '0',
           leagueName: 'Sample League Data',
@@ -54,7 +51,7 @@ class PickLeague extends Component {
         <ul className="classic-leagues--list">
           {newList.map(league => (
             <li key={league.leagueId} className="league-list-item">
-              <Link to={`/standings/${league.leagueId}`}>
+              <Link to={`/standings/${league.leagueId}?leagueType=${type}`}>
                 <span className="league-name col-9-of-10">{league.leagueName}</span>
                 <span className="link--right col-1-of-10">&gt;</span>
               </Link>
@@ -81,10 +78,13 @@ class PickLeague extends Component {
             <div className="classic-leagues--wrapper">
               <h2>Classic Leagues</h2>
               <p>Pick a league to view the standings:</p>
-              { this.props.leaguesList
-                ? this.renderLeaguesList()
-                : <span>Loading...</span>
-              }
+              {this.renderLeaguesList('classic')}
+            </div>
+
+            <div className="classic-leagues--wrapper">
+              <h2>Draft Leagues</h2>
+              <p>Pick a league to view the standings:</p>
+              {this.renderLeaguesList('draft')}
             </div>
 
             <div className="classic-leagues--wrapper">

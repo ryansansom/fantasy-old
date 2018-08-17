@@ -1,4 +1,4 @@
-import { getLatestLeagueList } from '../../helpers/league-list';
+import { generateLeagues } from '../../helpers/league-list';
 import classicStyleStandingsBackwardsCompatibility from '../../lib/helpers/classic-standings-backwards-compatibility';
 
 export const FETCH_ERROR = 'fetchError';
@@ -36,18 +36,28 @@ export function fetchStandings(method, leagueId, leagueType) {
       .then(classicStyleStandingsBackwardsCompatibility)
       .then((res) => {
         const { leaguesList } = getState();
+        const returnValue = {
+          leagueList: {
+            leagueId: Number(leagueId),
+            leagueType,
+            leagueName: res.leagueName,
+            type: UPDATE_CLASSIC_LEAGUE,
+          },
+        };
 
         if (leaguesList) {
           dispatch({
             type: LEAGUES,
-            value: getLatestLeagueList(leaguesList, res),
+            value: generateLeagues(leaguesList, returnValue.leagueList),
           });
         }
 
-        return dispatch({
+        dispatch({
           type: UPDATE_CLASSIC_LEAGUE,
           value: res,
         });
+
+        return returnValue;
       })
       .catch(() => dispatch({ type: FETCH_ERROR }));
   };
