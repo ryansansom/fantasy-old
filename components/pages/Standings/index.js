@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import url from 'url';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { hot } from 'react-hot-loader';
@@ -18,6 +19,13 @@ class Standings extends Component {
   static propTypes = {
     fetchError: PropTypes.bool.isRequired,
     fetchStandings: PropTypes.func.isRequired,
+    location: PropTypes.shape({
+      pathname: PropTypes.string.isRequired,
+      query: PropTypes.shape({
+        leagueType: PropTypes.string,
+      }).isRequired,
+      search: PropTypes.string.isRequired,
+    }).isRequired,
     openModal: PropTypes.func.isRequired,
     page: PropTypes.string.isRequired,
     params: PropTypes.shape({
@@ -36,17 +44,17 @@ class Standings extends Component {
     standings: {},
   };
 
-  static fetchData({ dispatch, getState }, { leagueID, graphqlContext }) {
+  static fetchData({ dispatch, getState }, { leagueID, leagueType, graphqlContext }) {
     updatePage(pageName)(dispatch);
 
-    return fetchStandings(graphqlExecutor(graphqlContext), leagueID)(dispatch, getState);
+    return fetchStandings(graphqlExecutor(graphqlContext), leagueID, leagueType)(dispatch, getState);
   }
 
   componentDidMount() {
     document.title = pageName;
     if (this.props.page !== pageName) {
       this.props.updatePage(pageName);
-      this.props.fetchStandings(graphqlExecutor(), this.props.params.leagueID);
+      this.props.fetchStandings(graphqlExecutor(), this.props.params.leagueID, this.props.location.query.leagueType);
     }
   }
 
@@ -79,9 +87,9 @@ class Standings extends Component {
                 onClick={(e) => {
                   e.preventDefault();
 
-                  return this.props.fetchStandings(graphqlExecutor(), this.props.params.leagueID);
+                  return this.props.fetchStandings(graphqlExecutor(), this.props.params.leagueID, this.props.location.query.leagueType);
                 }}
-                href={`/standings/${this.props.params.leagueID}`}
+                href={url.format(this.props.location)}
               >
                 Refresh
               </a>

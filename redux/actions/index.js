@@ -1,5 +1,5 @@
-import { getLatestLeagueList } from '../../helpers/league-list';
-import classicStandingsBackwardsCompatibility from '../../lib/helpers/classic-standings-backwards-compatibility';
+import { generateLeagues } from '../../helpers/league-list';
+import classicStyleStandingsBackwardsCompatibility from '../../lib/helpers/classic-standings-backwards-compatibility';
 
 export const FETCH_ERROR = 'fetchError';
 export const COLUMNS = 'columns';
@@ -23,31 +23,40 @@ export function updatePage(page) {
   };
 }
 
-const classicLeagueQuery = 'query ($leagueId: Int) { classicLeague(leagueId: $leagueId) { leagueInfo { id name gameweekEnded lastUpdated } entries { id name teamName activeChip transferCost previousTotal picks subs captain viceCaptain playerPointsMultiplied multiplier currentPoints projections { autoSubsOut autoSubsIn playerPointsMultiplied } } players { id points team position name expectedPoints expectedPointsNext actualBonus provisionalBonus gamesStarted gamesFinished pointsFinalised minutesPlayed } } }';
+const classicStyleLeagueQuery = 'query ($leagueId: Int, $draft: Boolean) { classicStyleLeague(leagueId: $leagueId, draft: $draft) { leagueInfo { id name gameweekEnded lastUpdated } entries { id name teamName activeChip transferCost previousTotal picks subs captain viceCaptain playerPointsMultiplied multiplier currentPoints projections { autoSubsOut autoSubsIn playerPointsMultiplied } } players { id points team position name expectedPoints expectedPointsNext actualBonus provisionalBonus gamesStarted gamesFinished pointsFinalised minutesPlayed } } }';
 
-export function fetchStandings(method, leagueId) {
+export function fetchStandings(method, leagueId, leagueType) {
   return (dispatch, getState) => {
     dispatch({
       type: CLASSIC_LEAGUE_UPDATING,
       value: leagueId,
     });
 
-    return method(classicLeagueQuery, { leagueId })
-      .then(classicStandingsBackwardsCompatibility)
+    return method(classicStyleLeagueQuery, { leagueId, draft: leagueType === 'draft' })
+      .then(classicStyleStandingsBackwardsCompatibility)
       .then((res) => {
         const { leaguesList } = getState();
+        const returnValue = {
+          leagueList: {
+            leagueId: Number(leagueId),
+            leagueType,
+            leagueName: res.leagueName,
+          },
+        };
 
         if (leaguesList) {
           dispatch({
             type: LEAGUES,
-            value: getLatestLeagueList(leaguesList, res),
+            value: generateLeagues(leaguesList, returnValue.leagueList),
           });
         }
 
-        return dispatch({
+        dispatch({
           type: UPDATE_CLASSIC_LEAGUE,
           value: res,
         });
+
+        return returnValue;
       })
       .catch(() => dispatch({ type: FETCH_ERROR }));
   };
