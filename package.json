@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "engines": {
-    "node": "9.8.0"
+    "node": "10.10.0"
   },
   "scripts": {
     "build": "webpack --progress --colors",
@@ -22,7 +22,7 @@
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.5.0",
     "babel-register": "^6.5.2",
-    "bcrypt": "^1.0.2",
+    "bcrypt": "^3.0.0",
     "body-parser": "^1.15.2",
     "classnames": "^2.2.3",
     "compression": "^1.7.2",
