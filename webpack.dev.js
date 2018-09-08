@@ -14,9 +14,9 @@ module.exports = webpackMerge(baseWebpackConfig, {
         exclude: /node_modules/,
         loader: 'babel-loader',
         options: {
-          presets: ['env'],
+          presets: ['@babel/env'],
           plugins: [
-            'transform-class-properties',
+            '@babel/plugin-proposal-class-properties',
             'react-hot-loader/babel',
           ],
         },
